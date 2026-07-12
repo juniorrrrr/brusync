@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.git
+.husky
+*.log
+.env*
+!.env.example
+.DS_Store
+brusync-landing.html
