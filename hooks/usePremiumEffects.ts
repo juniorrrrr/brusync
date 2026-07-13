@@ -26,6 +26,22 @@ export function usePremiumEffects() {
     }
     document.addEventListener("pointermove", onPointerMove, { passive: true });
 
+    // Touch has no persistent hover, so a tap positions the spotlight glow
+    // directly and holds it briefly instead of tracking continuous movement.
+    let tapTimer: ReturnType<typeof setTimeout> | undefined;
+    function onPointerDown(e: PointerEvent) {
+      if (e.pointerType === "mouse") return;
+      const el = (e.target as HTMLElement)?.closest<HTMLElement>("[data-spot]");
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      el.style.setProperty("--my", `${e.clientY - r.top}px`);
+      el.classList.add("spot-tap");
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => el.classList.remove("spot-tap"), 900);
+    }
+    document.addEventListener("pointerdown", onPointerDown, { passive: true });
+
     const pulseInterval = window.setInterval(() => {
       const kpis = [...document.querySelectorAll<HTMLElement>(".kpi")];
       if (!kpis.length) return;
@@ -36,7 +52,9 @@ export function usePremiumEffects() {
 
     return () => {
       document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerdown", onPointerDown);
       if (spotRaf) cancelAnimationFrame(spotRaf);
+      clearTimeout(tapTimer);
       window.clearInterval(pulseInterval);
     };
   }, []);

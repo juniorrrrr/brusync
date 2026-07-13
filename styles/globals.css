@@ -106,7 +106,8 @@ button {
   background: var(--accent);
   color: var(--primary);
 }
-.btn-accent:hover {
+.btn-accent:hover,
+.btn-accent:active {
   background: #1fbfb3;
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(37, 208, 195, 0.35);
@@ -116,14 +117,16 @@ button {
   color: var(--primary);
   border: 1.5px solid var(--border);
 }
-.btn-outline:hover {
+.btn-outline:hover,
+.btn-outline:active {
   border-color: var(--accent);
   color: var(--accent);
 }
 .btn .arr {
   transition: transform 0.22s ease;
 }
-.btn:hover .arr {
+.btn:hover .arr,
+.btn:active .arr {
   transform: translateX(3px);
 }
 
@@ -1792,7 +1795,9 @@ canvas.particles {
   pointer-events: none;
   z-index: 2;
 }
-[data-spot]:hover::after {
+[data-spot]:hover::after,
+[data-spot]:active::after,
+[data-spot].spot-tap::after {
   opacity: 1;
 }
 
@@ -1840,7 +1845,8 @@ canvas.particles {
   transition: left 0.65s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
-.btn-accent:hover .sweep {
+.btn-accent:hover .sweep,
+.btn-accent:active .sweep {
   left: 130%;
 }
 
@@ -2093,19 +2099,28 @@ canvas.ag-canvas {
     height: clamp(400px, 62vh, 460px);
   }
   .ag-badge {
-    padding: 5px 8px;
+    padding: 4px 7px;
     font-size: 0;
   }
   .ag-badge svg {
-    width: 14px;
-    height: 14px;
-  }
-  .ag-badge:nth-child(2n) {
-    display: none;
+    width: 13px;
+    height: 13px;
   }
   .ag-core-card {
     padding: 14px 20px;
     min-width: 160px;
+  }
+}
+@media (max-width: 400px) {
+  .antigravity {
+    height: clamp(380px, 66vh, 440px);
+  }
+  .ag-badge {
+    padding: 3px 6px;
+  }
+  .ag-badge svg {
+    width: 12px;
+    height: 12px;
   }
 }
 
