@@ -1,8 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { useActionState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useParticleField } from "@/hooks/useParticleField";
+import { type LeadFormState, submitLead } from "@/services/leads";
+
+const initialState: LeadFormState = { status: "idle" };
 
 export function CTASection() {
   const particlesRef = useParticleField<HTMLCanvasElement>({
@@ -10,6 +13,7 @@ export function CTASection() {
     speed: 0.14,
     color: "rgba(37,208,195,.5)",
   });
+  const [state, formAction, pending] = useActionState(submitLead, initialState);
 
   return (
     <section className="cta" id="contato">
@@ -18,15 +22,53 @@ export function CTASection() {
       <canvas className="particles" ref={particlesRef} aria-hidden="true" />
       <Reveal as="div" className="container cta-inner">
         <h2>
-          Pare de abrir cinco sistemas diferentes
+          Pare de tomar decisões
           <br />
-          para entender sua empresa.
+          com dados espalhados.
         </h2>
-        <div className="cta-sub">Veja tudo em um único dashboard.</div>
-        <Button href="#contato" withArrow className="pulse-btn">
-          Quero uma demonstração
-        </Button>
-        <div className="cta-note">Demonstração gratuita e sem compromisso</div>
+        <div className="cta-sub">Solicite um diagnóstico gratuito da sua empresa.</div>
+
+        <form className="lead-form" action={formAction}>
+          <div className="lead-form-row">
+            <div className="lead-form-field">
+              <label htmlFor="name">Nome</label>
+              <input id="name" name="name" type="text" required autoComplete="name" />
+            </div>
+            <div className="lead-form-field">
+              <label htmlFor="company">Empresa</label>
+              <input id="company" name="company" type="text" required autoComplete="organization" />
+            </div>
+          </div>
+          <div className="lead-form-row">
+            <div className="lead-form-field">
+              <label htmlFor="email">E-mail</label>
+              <input id="email" name="email" type="email" required autoComplete="email" />
+            </div>
+            <div className="lead-form-field">
+              <label htmlFor="phone">Telefone</label>
+              <input id="phone" name="phone" type="tel" autoComplete="tel" />
+            </div>
+          </div>
+          <div className="lead-form-field">
+            <label htmlFor="message">O que você gostaria de resolver? (opcional)</label>
+            <textarea id="message" name="message" rows={3} />
+          </div>
+
+          <button type="submit" className="btn btn-accent pulse-btn" disabled={pending}>
+            {pending ? "Enviando..." : "Solicitar diagnóstico"}
+            <span className="sweep" />
+          </button>
+
+          {state.status !== "idle" && (
+            <p className={`lead-form-status ${state.status}`} role="status">
+              {state.message}
+            </p>
+          )}
+        </form>
+
+        <div className="cta-note">
+          Sem cadastro. Sem teste. Só uma conversa com um especialista.
+        </div>
       </Reveal>
     </section>
   );

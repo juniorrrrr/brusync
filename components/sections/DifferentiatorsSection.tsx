@@ -4,8 +4,8 @@ import type { DifferentiatorItem } from "@/types";
 
 const DIFFERENTIATORS: DifferentiatorItem[] = [
   {
-    title: "Dashboard personalizado",
-    description: "Construído conforme os indicadores e objetivos da sua empresa.",
+    title: "Automação de processos",
+    description: "Tarefas manuais e repetitivas passam a rodar sozinhas, sem retrabalho.",
     icon: (
       <svg
         aria-hidden="true"
@@ -16,10 +16,7 @@ const DIFFERENTIATORS: DifferentiatorItem[] = [
         stroke="currentColor"
         strokeWidth="2"
       >
-        <rect x="3" y="3" width="8" height="8" rx="1.5" />
-        <rect x="13" y="3" width="8" height="5" rx="1.5" />
-        <rect x="13" y="11" width="8" height="10" rx="1.5" />
-        <rect x="3" y="14" width="8" height="7" rx="1.5" />
+        <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
       </svg>
     ),
   },

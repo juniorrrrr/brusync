@@ -118,9 +118,9 @@ export function SolutionSection() {
 
         <Reveal delay={1}>
           <h2>
-            Tudo <span className="accent">conectado.</span>
+            Tudo <span className="accent">integrado.</span>
             <br />
-            Tudo em <span className="accent">tempo real.</span>
+            Tudo <span className="accent">inteligente.</span>
           </h2>
           <div className="sol-list">
             {SOLUTIONS.map((s) => (
@@ -134,7 +134,7 @@ export function SolutionSection() {
             ))}
           </div>
           <p className="sol-final">
-            Tudo em <i>um único painel.</i>
+            Tudo em <i>uma única fonte de verdade.</i>
           </p>
         </Reveal>
       </Container>

@@ -5,14 +5,8 @@ import type { TimelineStep } from "@/types";
 const STEPS: TimelineStep[] = [
   {
     number: "01",
-    title: (
-      <>
-        Entendemos
-        <br />
-        seu negócio
-      </>
-    ),
-    description: "Mapeamos seus desafios, objetivos e indicadores mais importantes.",
+    title: "Diagnóstico",
+    description: "Mapeamos onde seus dados estão, como fluem e onde sua empresa perde tempo.",
     icon: (
       <svg
         aria-hidden="true"
@@ -30,38 +24,8 @@ const STEPS: TimelineStep[] = [
   },
   {
     number: "02",
-    title: (
-      <>
-        Mapeamos seus
-        <br />
-        indicadores
-      </>
-    ),
-    description: "Definimos juntos as métricas que realmente importam para o crescimento.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      >
-        <path d="M9 11H3v10h6zM15 3H9v18h6zM21 7h-6v14h6z" />
-      </svg>
-    ),
-  },
-  {
-    number: "03",
-    title: (
-      <>
-        Integramos os
-        <br />
-        sistemas
-      </>
-    ),
-    description: "Conectamos suas plataformas e transformamos dados em informação.",
+    title: "Integração",
+    description: "Conectamos suas ferramentas — anúncios, CRM, ERP, planilhas — em um só fluxo.",
     icon: (
       <svg
         aria-hidden="true"
@@ -78,15 +42,83 @@ const STEPS: TimelineStep[] = [
     ),
   },
   {
-    number: "04",
-    title: (
-      <>
-        Criamos seu
-        <br />
-        dashboard
-      </>
+    number: "03",
+    title: "Centralização",
+    description: "Toda a informação passa a viver em uma única fonte de verdade.",
+    icon: (
+      <svg
+        aria-hidden="true"
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
+        <ellipse cx="12" cy="5.5" rx="8" ry="3" />
+        <path d="M4 5.5V12c0 1.7 3.6 3 8 3s8-1.3 8-3V5.5" />
+        <path d="M4 12v6.5c0 1.7 3.6 3 8 3s8-1.3 8-3V12" />
+      </svg>
     ),
-    description: "Desenvolvemos painéis intuitivos, visuais e 100% personalizados.",
+  },
+  {
+    number: "04",
+    title: "Automação",
+    description: "Processos manuais e repetitivos passam a rodar sozinhos.",
+    icon: (
+      <svg
+        aria-hidden="true"
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
+        <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+      </svg>
+    ),
+  },
+  {
+    number: "05",
+    title: "Inteligência Artificial",
+    description: "Aplicamos IA para identificar padrões, anomalias e oportunidades.",
+    icon: (
+      <svg
+        aria-hidden="true"
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
+        <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.7 1 1.5 1 2.5h6c0-1 .2-1.8 1-2.5A6 6 0 0 0 12 3z" />
+      </svg>
+    ),
+  },
+  {
+    number: "06",
+    title: "Indicadores",
+    description: "Definimos as métricas que realmente importam para o seu crescimento.",
+    icon: (
+      <svg
+        aria-hidden="true"
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
+        <path d="M9 11H3v10h6zM15 3H9v18h6zM21 7h-6v14h6z" />
+      </svg>
+    ),
+  },
+  {
+    number: "07",
+    title: "Dashboard Executivo",
+    description: "Entregamos painéis visuais, intuitivos e sob medida para sua gestão.",
     icon: (
       <svg
         aria-hidden="true"
@@ -103,15 +135,9 @@ const STEPS: TimelineStep[] = [
     ),
   },
   {
-    number: "05",
-    title: (
-      <>
-        Treinamos sua
-        <br />
-        equipe
-      </>
-    ),
-    description: "Capacitamos seu time para usar os dashboards com autonomia e confiança.",
+    number: "08",
+    title: "Tomada de decisão",
+    description: "Sua equipe decide com mais rapidez, confiança e menos achismo.",
     icon: (
       <svg
         aria-hidden="true"
@@ -122,37 +148,14 @@ const STEPS: TimelineStep[] = [
         stroke="currentColor"
         strokeWidth="1.8"
       >
-        <path d="M22 10 12 5 2 10l10 5 10-5zM6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" />
-      </svg>
-    ),
-  },
-  {
-    number: "06",
-    title: (
-      <>
-        Suporte
-        <br />
-        contínuo
-      </>
-    ),
-    description: "Acompanhamento próximo para evoluir seus dados e resultados.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      >
-        <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5c-1.5 0-3-.4-4.2-1.1L3 20l1.1-5.3A8.4 8.4 0 0 1 3 11.5 8.4 8.4 0 0 1 11.5 3a8.4 8.4 0 0 1 9.5 8.5z" />
+        <circle cx="12" cy="12" r="9" />
+        <path d="m8.5 12.5 2.5 2.5 4.5-5" />
       </svg>
     ),
   },
 ];
 
-const DELAYS: (1 | 2 | 3 | 4 | 5)[] = [1, 2, 3, 4, 5, 5];
+const DELAYS: (1 | 2 | 3 | 4 | 5)[] = [1, 2, 3, 4, 1, 2, 3, 4];
 
 export function ProcessTimeline() {
   return (

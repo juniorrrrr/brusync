@@ -350,7 +350,11 @@ export function DashboardShowcase() {
       </div>
       <Container>
         <Reveal as="h2" className="sec-title">
-          Dashboards para <span className="accent">cada área</span> do seu negócio
+          Um painel executivo para <span className="accent">cada área</span> do seu negócio
+        </Reveal>
+        <Reveal as="p" className="sec-sub">
+          O dashboard é a parte visível do projeto — o resultado de um trabalho de integração,
+          automação e Inteligência Artificial por trás dele.
         </Reveal>
         <Reveal className="show-wrap" delay={1}>
           <button

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { CTASection } from "@/components/sections/CTASection";
 import { DifferentiatorsSection } from "@/components/sections/DifferentiatorsSection";
 import { Hero } from "@/components/sections/Hero";
+import { IntelligenceSection } from "@/components/sections/IntelligenceSection";
 import { ProblemSection } from "@/components/sections/ProblemSection";
 import { ProcessTimeline } from "@/components/sections/ProcessTimeline";
 import { SolutionSection } from "@/components/sections/SolutionSection";
@@ -24,6 +25,7 @@ export default function Home() {
       <IntegrationsSection />
       <ProblemSection />
       <SolutionSection />
+      <IntelligenceSection />
       <DifferentiatorsSection />
       <DashboardShowcase />
       <ProcessTimeline />

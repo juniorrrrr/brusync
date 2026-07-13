@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroDashboardMock } from "@/components/dashboard-mock/HeroDashboardMock";
+import { DataFlowMockup } from "@/components/dashboard-mock/DataFlowMockup";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { useParticleField } from "@/hooks/useParticleField";
@@ -31,22 +31,21 @@ export function Hero() {
       <Container className="hero-grid">
         <div className="reveal in">
           <h1>
-            Todos os indicadores
+            Sua empresa já tem dados.
             <br />
-            da sua empresa.
-            <br />
-            <span className="accent">Um único lugar.</span>
+            <span className="accent">O que falta é inteligência sobre eles.</span>
           </h1>
           <p className="sub">
-            Centralizamos dados do Google Ads, Meta Ads, GA4, CRM, ERP e outras plataformas em
-            dashboards inteligentes para que você tome decisões com mais rapidez e confiança.
+            Integramos suas ferramentas, automatizamos processos manuais e aplicamos Inteligência
+            Artificial para transformar dados dispersos em indicadores estratégicos — o dashboard é
+            só a parte visível do projeto.
           </p>
           <div className="hero-actions">
             <Button href="#contato" withArrow>
-              Agendar demonstração
+              Solicitar diagnóstico
             </Button>
-            <Button href="#dashboards" variant="outline">
-              Ver dashboard ao vivo
+            <Button href="#processo" variant="outline">
+              Ver como funciona
             </Button>
           </div>
           <div className="hero-trust">
@@ -62,7 +61,7 @@ export function Hero() {
               >
                 <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
               </svg>
-              Dados em tempo real
+              Integração e automação
             </div>
             <div className="trust-item">
               <svg
@@ -77,7 +76,7 @@ export function Hero() {
                 <rect x="4" y="10" width="16" height="10" rx="2" />
                 <path d="M8 10V7a4 4 0 0 1 8 0v3" />
               </svg>
-              Integração segura
+              Inteligência Artificial aplicada
             </div>
             <div className="trust-item">
               <svg
@@ -94,12 +93,12 @@ export function Hero() {
                 <rect x="13" y="11" width="8" height="10" rx="1.5" />
                 <rect x="3" y="14" width="8" height="7" rx="1.5" />
               </svg>
-              Dashboards personalizados
+              Projeto sob medida
             </div>
           </div>
         </div>
 
-        <HeroDashboardMock />
+        <DataFlowMockup />
       </Container>
     </header>
   );

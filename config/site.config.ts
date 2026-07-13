@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Brusync",
   tagline: "Inteligência de dados para empresas",
   description:
-    "Centralizamos dados do Google Ads, Meta Ads, GA4, CRM, ERP e outras plataformas em dashboards inteligentes para acelerar a tomada de decisão.",
+    "Integramos suas ferramentas, automatizamos processos e aplicamos Inteligência Artificial para transformar dados dispersos em decisões estratégicas.",
   url: "https://brusync.com.br",
   locale: "pt-BR",
   contact: {

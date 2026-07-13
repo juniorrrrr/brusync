@@ -44,10 +44,10 @@ const FOOTER_COLUMNS = [
   {
     title: "Soluções",
     links: [
-      "Dashboards Personalizados",
-      "Integrações",
-      "Relatórios Automáticos",
-      "Consultoria em Dados",
+      "Inteligência de Dados",
+      "Integração de Sistemas",
+      "Automação de Processos",
+      "Inteligência Artificial",
     ],
   },
   {
