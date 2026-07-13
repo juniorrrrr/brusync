@@ -1,31 +1,18 @@
 "use client";
 
 import { memo } from "react";
-import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SHOWCASE_AREAS } from "@/constants";
 import { useDraggableCarousel } from "@/hooks/useDraggableCarousel";
 import { useTilt } from "@/hooks/useTilt";
 
-const CAT_COLORS = [
-  "#25D0C3",
-  "#1F5EFF",
-  "#081C3A",
-  "#7B61FF",
-  "#E9A23B",
-  "#1F5EFF",
-  "#081C3A",
-  "#25D0C3",
-];
+const CAT_COLORS = ["#25D0C3", "#1F5EFF", "#081C3A", "#7B61FF", "#E9A23B"];
 const PALETTES: [string, string][] = [
   ["#1F5EFF", "#25D0C3"],
   ["#25D0C3", "#1F5EFF"],
   ["#1F5EFF", "#081C3A"],
   ["#081C3A", "#25D0C3"],
   ["#25D0C3", "#081C3A"],
-  ["#1F5EFF", "#25D0C3"],
-  ["#081C3A", "#1F5EFF"],
-  ["#25D0C3", "#1F5EFF"],
 ];
 const NAMES: [string, string][] = [
   ["Ana P.", "#1F5EFF"],
@@ -51,7 +38,7 @@ function initials(name: string) {
 }
 
 function buildCardData(i: number) {
-  const [c1, c2] = PALETTES[i];
+  const [c1, c2] = PALETTES[i % PALETTES.length];
   const revenue = ((380 + i * 47) % 900) + 120;
   const meta = 82 + ((i * 3) % 14);
   const variation = 8 + ((i * 2) % 19);
@@ -94,7 +81,7 @@ const ShowcaseCard = memo(function ShowcaseCard({
         tiltRef.current = el;
       }}
     >
-      <div className="show-badge-cat" style={{ background: CAT_COLORS[index] }}>
+      <div className="show-badge-cat" style={{ background: CAT_COLORS[index % CAT_COLORS.length] }}>
         {area}
       </div>
       {index === 2 && <div className="show-badge-top">Mais utilizado</div>}
@@ -322,7 +309,9 @@ const ShowcaseCard = memo(function ShowcaseCard({
   );
 });
 
-export function DashboardShowcase() {
+/** Reusable draggable dashboard-mock carousel (cards only, no section chrome)
+ * so it can be embedded wherever the landing page needs to show the product. */
+export function DashboardCarousel() {
   const {
     viewportRef,
     trackRef,
@@ -335,86 +324,65 @@ export function DashboardShowcase() {
   } = useDraggableCarousel(SHOWCASE_AREAS.length);
 
   return (
-    <section className="dashsec" id="dashboards">
-      <div className="ambient" aria-hidden="true">
-        <div
-          className="orb orb-blue d1"
-          style={{ width: 360, height: 360, top: -90, left: "8%" }}
-        />
-        <div
-          className="orb orb-teal d2"
-          style={{ width: 320, height: 320, bottom: -80, right: "6%" }}
-        />
-        <div className="grid-lines" style={{ opacity: 0.4 }} />
-        <div className="noise-layer" />
-      </div>
-      <Container>
-        <Reveal as="h2" className="sec-title">
-          Um painel executivo para <span className="accent">cada área</span> do seu negócio
-        </Reveal>
-        <Reveal as="p" className="sec-sub">
-          Cada painel nasce de um projeto de integração, automação e Inteligência Artificial
-          construído para a sua operação.
-        </Reveal>
-        <Reveal className="show-wrap" delay={1}>
-          <button
-            type="button"
-            className="show-nav show-prev"
-            aria-label="Anterior"
-            onClick={goPrev}
-            style={activeIndex <= 0 ? { opacity: 0.35, pointerEvents: "none" } : undefined}
+    <>
+      <Reveal className="show-wrap" delay={1}>
+        <button
+          type="button"
+          className="show-nav show-prev"
+          aria-label="Anterior"
+          onClick={goPrev}
+          style={activeIndex <= 0 ? { opacity: 0.35, pointerEvents: "none" } : undefined}
+        >
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
           >
-            <svg
-              aria-hidden="true"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-          <div
-            className="show-viewport"
-            ref={viewportRef}
-            // biome-ignore lint/a11y/noNoninteractiveTabindex: custom carousel widget needs keyboard focus for arrow-key navigation
-            tabIndex={0}
-            role="region"
-            aria-roledescription="carousel"
-            aria-label="Carrossel de dashboards por área"
-          >
-            <div className="show-track" ref={trackRef}>
-              {SHOWCASE_AREAS.map((area, i) => (
-                <ShowcaseCard key={area} index={i} setCardRef={setCardRef(i)} />
-              ))}
-            </div>
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+        <div
+          className="show-viewport"
+          ref={viewportRef}
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: custom carousel widget needs keyboard focus for arrow-key navigation
+          tabIndex={0}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Carrossel de dashboards por área"
+        >
+          <div className="show-track" ref={trackRef}>
+            {SHOWCASE_AREAS.map((area, i) => (
+              <ShowcaseCard key={area} index={i} setCardRef={setCardRef(i)} />
+            ))}
           </div>
-          <button
-            type="button"
-            className="show-nav show-next"
-            aria-label="Próximo"
-            onClick={goNext}
-            style={activeIndex >= count - 1 ? { opacity: 0.35, pointerEvents: "none" } : undefined}
-          >
-            <svg
-              aria-hidden="true"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="m9 6 6 6-6 6" />
-            </svg>
-          </button>
-        </Reveal>
-        <div className="show-indicator">
-          <div className="show-indicator-fill" ref={indicatorFillRef} />
         </div>
-      </Container>
-    </section>
+        <button
+          type="button"
+          className="show-nav show-next"
+          aria-label="Próximo"
+          onClick={goNext}
+          style={activeIndex >= count - 1 ? { opacity: 0.35, pointerEvents: "none" } : undefined}
+        >
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="m9 6 6 6-6 6" />
+          </svg>
+        </button>
+      </Reveal>
+      <div className="show-indicator">
+        <div className="show-indicator-fill" ref={indicatorFillRef} />
+      </div>
+    </>
   );
 }

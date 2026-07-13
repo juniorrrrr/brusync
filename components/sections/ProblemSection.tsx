@@ -1,12 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { useDataFlow } from "@/hooks/useDataFlow";
 import type { ConsequenceItem, SourcePlatform } from "@/types";
 
-const SOURCES: SourcePlatform[] = [
+const DashboardCarousel = dynamic(() =>
+  import("@/components/dashboard-mock/DashboardCarousel").then((m) => m.DashboardCarousel),
+);
+
+const PLATFORMS: SourcePlatform[] = [
   {
     name: "Google Ads",
     icon: (
@@ -33,6 +38,30 @@ const SOURCES: SourcePlatform[] = [
     ),
   },
   {
+    name: "TikTok Ads",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path fill="#FE2C55" d="M9.5 8.5v7.2a2.4 2.4 0 1 1-2-2.36V10.9a5 5 0 1 0 4.6 4.98V9.9z" />
+        <path fill="#25F4EE" d="M8.7 7.7v7.2a2.4 2.4 0 1 1-2-2.36V10.1a5 5 0 1 0 4.6 4.98V9.1z" />
+        <path
+          fill="#081C3A"
+          d="M8.1 7.2v7.2a2.4 2.4 0 1 1-2-2.36V9.6a5 5 0 1 0 4.6 4.98V8.6a5.6 5.6 0 0 0 3.4 1.16V7.36a3.3 3.3 0 0 1-2.1-.76 3.4 3.4 0 0 1-1.2-2.5H8.6z"
+        />
+      </svg>
+    ),
+  },
+  {
+    name: "LinkedIn Ads",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect width="24" height="24" rx="5" fill="#0A66C2" />
+        <text x="12" y="16.5" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff">
+          in
+        </text>
+      </svg>
+    ),
+  },
+  {
     name: "Google Analytics 4",
     icon: (
       <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -43,19 +72,157 @@ const SOURCES: SourcePlatform[] = [
     ),
   },
   {
-    name: "CRM",
+    name: "Mercado Livre",
     icon: (
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#7B61FF" strokeWidth="2">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="#FFE600" />
+        <text x="12" y="16" textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#2D3277">
+          ML
+        </text>
       </svg>
     ),
   },
   {
-    name: "Planilhas",
+    name: "Shopee",
     icon: (
       <svg aria-hidden="true" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" fill="#107C41" />
+        <rect width="24" height="24" rx="6" fill="#EE4D2D" />
+        <path
+          fill="none"
+          stroke="#fff"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6.5 9.5h11l-.9 9.2a1.4 1.4 0 0 1-1.4 1.3H8.8a1.4 1.4 0 0 1-1.4-1.3z"
+        />
+        <path fill="none" stroke="#fff" strokeWidth="1.6" d="M9 9.2a3 3 0 0 1 6 0" />
+      </svg>
+    ),
+  },
+  {
+    name: "Amazon",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <text x="12" y="15" textAnchor="middle" fontSize="13" fontWeight="800" fill="#131921">
+          a
+        </text>
+        <path
+          fill="none"
+          stroke="#FF9900"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          d="M5.5 18c4 2.2 9 2.2 13 0"
+        />
+      </svg>
+    ),
+  },
+  {
+    name: "HubSpot",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" fill="none" stroke="#FF7A59" strokeWidth="1.8" />
+        <circle cx="12" cy="4" r="2" fill="#FF7A59" />
+        <circle cx="19" cy="15" r="2" fill="#FF7A59" />
+        <circle cx="5" cy="15" r="2" fill="#FF7A59" />
+      </svg>
+    ),
+  },
+  {
+    name: "Salesforce",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="#00A1E0">
+        <path d="M10 6.5a3.7 3.7 0 0 1 5.8 1.6 3 3 0 0 1 4.2 2.8 3.1 3.1 0 0 1-3.1 3.1H6.6A3.6 3.6 0 0 1 3 10.4a3.6 3.6 0 0 1 5.8-2.9A3.7 3.7 0 0 1 10 6.5z" />
+      </svg>
+    ),
+  },
+  {
+    name: "RD Station",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect width="24" height="24" rx="6" fill="#FF6B00" />
+        <text x="12" y="16" textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#fff">
+          RD
+        </text>
+      </svg>
+    ),
+  },
+  {
+    name: "SAP",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect width="24" height="24" rx="4" fill="#001E62" />
+        <text x="12" y="15.5" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#fff">
+          SAP
+        </text>
+      </svg>
+    ),
+  },
+  {
+    name: "Bling",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="#6FBE44" />
+        <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">
+          B
+        </text>
+      </svg>
+    ),
+  },
+  {
+    name: "Omie",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="#2D5BFF" />
+        <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">
+          O
+        </text>
+      </svg>
+    ),
+  },
+  {
+    name: "PostgreSQL",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5.5" rx="8" ry="3" fill="#336791" />
+        <path fill="#336791" opacity=".7" d="M4 5.5V12c0 1.7 3.6 3 8 3s8-1.3 8-3V5.5" />
+        <path fill="#336791" opacity=".45" d="M4 12v6.5c0 1.7 3.6 3 8 3s8-1.3 8-3V12" />
+      </svg>
+    ),
+  },
+  {
+    name: "MySQL",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5.5" rx="8" ry="3" fill="#00758F" />
+        <path fill="#00758F" opacity=".7" d="M4 5.5V12c0 1.7 3.6 3 8 3s8-1.3 8-3V5.5" />
+        <path fill="#00758F" opacity=".45" d="M4 12v6.5c0 1.7 3.6 3 8 3s8-1.3 8-3V12" />
+      </svg>
+    ),
+  },
+  {
+    name: "BigQuery",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="#E7EDF5" strokeWidth="3" />
+        <path d="M12 3a9 9 0 0 1 9 9h-9z" fill="#4285F4" />
+        <path d="M21 12a9 9 0 0 1-4 7.5l-5-7.5z" fill="#EA4335" />
+        <path d="M17 19.5A9 9 0 0 1 3 12h9z" fill="#FBBC04" />
+      </svg>
+    ),
+  },
+  {
+    name: "Supabase",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path fill="#3ECF8E" d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Google Sheets",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="2" fill="#0F9D58" />
         <path
           fill="#fff"
           d="M3 9h18v1.4H3zm0 4.5h18v1.4H3zM9 5h1.4v14H9zm5 0h1.4v14H14z"
@@ -65,12 +232,33 @@ const SOURCES: SourcePlatform[] = [
     ),
   },
   {
-    name: "ERP",
+    name: "Excel",
     icon: (
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#3E63DD" strokeWidth="2">
-        <ellipse cx="12" cy="5.5" rx="8" ry="3" />
-        <path d="M4 5.5V12c0 1.7 3.6 3 8 3s8-1.3 8-3V5.5" />
-        <path d="M4 12v6.5c0 1.7 3.6 3 8 3s8-1.3 8-3V12" />
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect x="2" y="4" width="13" height="16" rx="1.5" fill="#107C41" />
+        <path fill="#fff" d="m5.5 8 2.2 4-2.3 4h2l1.3-2.5L10 16h2l-2.3-4L12 8h-2L8.7 10.4 7.5 8z" />
+        <rect x="15" y="7" width="7" height="10" rx="1" fill="#185C37" />
+        <path fill="#fff" d="M16.5 9h4v1.4h-4zm0 2.5h4v1.4h-4zm0 2.5h4v1.4h-4z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Notion",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect width="24" height="24" rx="5" fill="#081C3A" />
+        <text x="12" y="16" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff">
+          N
+        </text>
+      </svg>
+    ),
+  },
+  {
+    name: "+ outras integrações",
+    icon: (
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v8M8 12h8" />
       </svg>
     ),
   },
@@ -79,7 +267,7 @@ const SOURCES: SourcePlatform[] = [
 const CONSEQUENCES: ConsequenceItem[] = [
   {
     title: "Perda de tempo",
-    description: "Processos manuais e retrabalho constante.",
+    description: "Horas semanais consumidas em processos manuais e retrabalho evitável.",
     icon: (
       <svg
         aria-hidden="true"
@@ -96,8 +284,8 @@ const CONSEQUENCES: ConsequenceItem[] = [
     ),
   },
   {
-    title: "Erros",
-    description: "Dados desencontrados e inconsistentes.",
+    title: "Erros de leitura",
+    description: "Números que não batem entre sistemas geram decisões sobre dados errados.",
     icon: (
       <svg
         aria-hidden="true"
@@ -113,8 +301,8 @@ const CONSEQUENCES: ConsequenceItem[] = [
     ),
   },
   {
-    title: "Decisões lentas",
-    description: "Falta de agilidade para responder ao mercado.",
+    title: "Decisões atrasadas",
+    description: "Enquanto os relatórios são consolidados, o mercado já mudou.",
     icon: (
       <svg
         aria-hidden="true"
@@ -131,8 +319,8 @@ const CONSEQUENCES: ConsequenceItem[] = [
     ),
   },
   {
-    title: "Falta de visão estratégica",
-    description: "Dificuldade para enxergar o todo do negócio.",
+    title: "Visão fragmentada",
+    description: "Cada área enxerga uma parte do negócio, nunca o todo.",
     icon: (
       <svg
         aria-hidden="true"
@@ -153,10 +341,8 @@ export function ProblemSection() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const linesRef = useRef<SVGGElement | null>(null);
   const particlesRef = useRef<SVGGElement | null>(null);
-  const kpiRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const barRefs = useRef<(SVGRectElement | null)[]>([]);
 
-  useDataFlow({ wrapRef, linesRef, particlesRef, kpiRefs, barRefs });
+  useDataFlow({ wrapRef, linesRef, particlesRef });
 
   return (
     <section className="problem">
@@ -170,17 +356,24 @@ export function ProblemSection() {
           com <span className="accent">dados espalhados?</span>
         </Reveal>
 
-        <Reveal className="src-grid" delay={1}>
-          {SOURCES.map((s) => (
-            <div key={s.name} className="src-card" data-spot="">
-              {s.icon}
-              {s.name}
-            </div>
-          ))}
+        <Reveal className="logo-marquee" delay={1}>
+          <div className="logo-track">
+            {(["a", "b"] as const).flatMap((set) =>
+              PLATFORMS.map((p) => (
+                <div
+                  className={`logo-chip${p.name.startsWith("+") ? " more" : ""}`}
+                  key={`${set}-${p.name}`}
+                >
+                  {p.icon}
+                  <span>{p.name}</span>
+                </div>
+              )),
+            )}
+          </div>
         </Reveal>
 
         <Reveal className="flow-mid" delay={2}>
-          Cada informação em um lugar diferente.
+          Seus dados existem. O problema é que eles nunca conversam entre si.
         </Reveal>
 
         <Reveal className="data-flow" delay={3} aria-hidden="true">
@@ -196,15 +389,12 @@ export function ProblemSection() {
                   <stop offset="0%" stopColor="#1F5EFF" />
                   <stop offset="100%" stopColor="#25D0C3" />
                 </linearGradient>
-                <filter id="dfBlur" x="-200%" y="-200%" width="500%" height="500%">
-                  <feGaussianBlur stdDeviation="3" />
-                </filter>
               </defs>
               <g className="df-lines" ref={linesRef} />
               <g className="df-particles" ref={particlesRef} />
             </svg>
 
-            <div className="df-core" style={{ left: "51.7%", top: "43.3%" }}>
+            <div className="df-core" style={{ left: "50%", top: "48%" }}>
               <div className="df-core-ring" />
               <div className="df-core-glow" />
               <div className="df-core-card">
@@ -214,87 +404,26 @@ export function ProblemSection() {
                 <div className="df-core-label">Processando</div>
               </div>
             </div>
-
-            <div className="df-dash" style={{ left: "91.4%", top: "80%" }}>
-              <div className="df-dash-head">Dashboard Inteligente</div>
-              <div className="df-dash-kpis">
-                <div className="df-kpi">
-                  <span
-                    ref={(el) => {
-                      kpiRefs.current[0] = el;
-                    }}
-                  >
-                    R$ 1,25M
-                  </span>
-                </div>
-                <div className="df-kpi">
-                  <span
-                    ref={(el) => {
-                      kpiRefs.current[1] = el;
-                    }}
-                  >
-                    312
-                  </span>
-                </div>
-              </div>
-              <svg
-                aria-hidden="true"
-                className="df-dash-chart"
-                viewBox="0 0 120 34"
-                width="100%"
-                height="34"
-                preserveAspectRatio="none"
-              >
-                <rect
-                  ref={(el) => {
-                    barRefs.current[0] = el;
-                  }}
-                  x="6"
-                  y="16"
-                  width="9"
-                  height="18"
-                  rx="2"
-                  fill="#1F5EFF"
-                />
-                <rect
-                  ref={(el) => {
-                    barRefs.current[1] = el;
-                  }}
-                  x="20"
-                  y="10"
-                  width="9"
-                  height="24"
-                  rx="2"
-                  fill="#25D0C3"
-                />
-                <rect
-                  ref={(el) => {
-                    barRefs.current[2] = el;
-                  }}
-                  x="34"
-                  y="18"
-                  width="9"
-                  height="16"
-                  rx="2"
-                  fill="#1F5EFF"
-                  opacity=".6"
-                />
-                <path
-                  d="M50 26 C60 20,66 14,76 16 S94 8,110 6"
-                  fill="none"
-                  stroke="#1F5EFF"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
           </div>
         </Reveal>
 
-        <Reveal className="cons-grid" delay={3}>
-          {CONSEQUENCES.map((c) => (
-            <div key={c.title} className="cons-card" data-spot="">
-              <div className="cons-ico">{c.icon}</div>
+        <Reveal className="flow-arrow" delay={4} aria-hidden="true">
+          ↓
+        </Reveal>
+        <Reveal as="h2" className="sec-title" delay={4}>
+          Da integração ao <span className="accent">painel certo</span> para cada área.
+        </Reveal>
+        <Reveal as="p" className="sec-sub" delay={4}>
+          Financeiro, marketing, comercial ou operações: cada equipe vê exatamente o que precisa.
+        </Reveal>
+
+        <DashboardCarousel />
+
+        <Reveal className="findings-list" delay={5}>
+          {CONSEQUENCES.map((c, i) => (
+            <div className="finding-row" key={c.title}>
+              <span className="finding-num">0{i + 1}</span>
+              <div className="finding-ico">{c.icon}</div>
               <div>
                 <h4>{c.title}</h4>
                 <p>{c.description}</p>

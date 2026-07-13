@@ -13,10 +13,6 @@ const IntegrationsSection = dynamic(() =>
   import("@/components/sections/IntegrationsSection").then((m) => m.IntegrationsSection),
 );
 
-const DashboardShowcase = dynamic(() =>
-  import("@/components/sections/DashboardShowcase").then((m) => m.DashboardShowcase),
-);
-
 export default function Home() {
   return (
     <>
@@ -27,7 +23,6 @@ export default function Home() {
       <SolutionSection />
       <IntelligenceSection />
       <DifferentiatorsSection />
-      <DashboardShowcase />
       <ProcessTimeline />
       <CTASection />
       <Footer />

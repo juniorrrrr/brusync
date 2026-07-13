@@ -568,33 +568,60 @@ button {
   background: var(--surface);
   padding: 96px 0;
 }
-.src-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 14px;
+.logo-marquee {
+  position: relative;
+  overflow: hidden;
   margin-top: 48px;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
-.src-card {
+.logo-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  animation: logoScroll 50s linear infinite;
+}
+.logo-marquee:hover .logo-track {
+  animation-play-state: paused;
+}
+@keyframes logoScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.logo-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  border-radius: 11px;
+  padding: 11px 16px;
   font-size: 12.5px;
   font-weight: 700;
+  color: var(--primary);
   box-shadow: var(--shadow-sm);
-  transition: 0.25s;
+  white-space: nowrap;
 }
-.src-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+.logo-chip svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
-.src-card svg {
-  width: 26px;
-  height: 26px;
+.logo-chip.more {
+  border-style: dashed;
+  color: var(--muted);
+  background: transparent;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-track {
+    animation: none;
+  }
 }
 .flow-mid {
   text-align: center;
@@ -627,10 +654,6 @@ button {
   opacity: 0.5;
   stroke-dasharray: 7 9;
   animation: dfFlow 1.7s linear infinite;
-}
-.df-path-out {
-  stroke-width: 2.1;
-  opacity: 0.6;
 }
 @keyframes dfFlow {
   to {
@@ -696,53 +719,6 @@ button {
   }
 }
 
-.df-dash {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  box-shadow: var(--shadow-md);
-  width: 150px;
-  pointer-events: none;
-}
-.df-dash-head {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 7px;
-}
-.df-dash-kpis {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 7px;
-}
-.df-kpi {
-  flex: 1;
-  background: var(--surface);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 10.5px;
-  font-weight: 800;
-  color: var(--primary);
-  transition:
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    color 0.3s ease;
-}
-.df-kpi.tick {
-  transform: scale(1.08);
-  color: var(--secondary);
-}
-.df-dash-chart rect {
-  transition:
-    height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    y 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 @media (max-width: 640px) {
   .data-flow {
     height: clamp(260px, 62vw, 340px);
@@ -755,56 +731,48 @@ button {
   .df-core-logo {
     font-size: 12px;
   }
-  .df-dash {
-    width: 118px;
-    padding: 8px 9px;
-  }
-  .df-dash-head {
-    font-size: 8px;
-  }
-  .df-kpi {
-    font-size: 9px;
-  }
 }
 
-.cons-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+/* ===== Findings list (consequências) ===== */
+.findings-list {
+  max-width: 860px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
 }
-.cons-card {
-  background: var(--danger-bg);
-  border: 1px solid var(--danger-bd);
-  border-radius: 12px;
-  padding: 20px;
+.finding-row {
   display: flex;
-  gap: 13px;
   align-items: flex-start;
-  transition: 0.25s;
+  gap: 20px;
+  padding: 22px 4px;
+  border-bottom: 1px solid var(--border);
 }
-.cons-card:hover {
-  transform: translateY(-4px);
-}
-.cons-ico {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  background: #fff;
-  border: 1px solid var(--danger-bd);
-  display: grid;
-  place-items: center;
-  color: var(--danger);
-  flex-shrink: 0;
-}
-.cons-card h4 {
-  font-size: 14px;
+.finding-num {
+  font-size: 13px;
   font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  padding-top: 2px;
 }
-.cons-card p {
-  font-size: 12.5px;
-  color: #7a6663;
+.finding-ico {
+  color: var(--muted);
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.finding-row h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.finding-row p {
+  font-size: 13.5px;
+  color: var(--muted);
   margin-top: 4px;
-  line-height: 1.45;
+  line-height: 1.5;
+}
+@media (max-width: 640px) {
+  .finding-row {
+    gap: 12px;
+  }
 }
 
 /* ===== Solution ===== */
@@ -999,12 +967,6 @@ button {
 }
 
 /* ===== Dashboard Showcase (premium carousel) ===== */
-.dashsec {
-  background: var(--surface);
-  padding: 96px 0;
-  overflow: hidden;
-  position: relative;
-}
 .show-wrap {
   position: relative;
   margin-top: 52px;
@@ -1637,12 +1599,6 @@ button {
   .hero p.sub {
     max-width: 100%;
   }
-  .src-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .cons-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
   .sol-grid {
     grid-template-columns: 1fr;
     gap: 44px;
@@ -1722,12 +1678,6 @@ button {
   .dash-row {
     grid-template-columns: 1fr;
   }
-  .src-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .cons-grid {
-    grid-template-columns: 1fr;
-  }
   .diff-grid {
     grid-template-columns: 1fr;
   }
@@ -1802,14 +1752,6 @@ button {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-}
-.noise-layer {
-  position: absolute;
-  inset: 0;
-  opacity: 0.035;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 canvas.particles {
   position: absolute;
@@ -2007,7 +1949,6 @@ canvas.particles {
   z-index: 1;
 }
 .problem,
-.dashsec,
 .footer {
   position: relative;
 }
