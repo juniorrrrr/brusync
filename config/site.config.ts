@@ -8,6 +8,6 @@ export const siteConfig = {
   contact: {
     phone: "(47) 98883-2025",
     email: "contato@brusync.com.br",
-    location: "Brusque, SC – Brasil",
+    location: "Brusque, SC, Brasil",
   },
 } as const;

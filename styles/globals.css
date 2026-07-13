@@ -52,14 +52,6 @@ button {
 .accent {
   color: var(--accent);
 }
-.eyebrow {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 /* ===== Reveal ===== */
 .reveal {
   opacity: 0;
@@ -401,37 +393,6 @@ button {
   padding: 16px 18px;
   background: #fbfcfe;
 }
-.dash-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-.dash-title {
-  font-weight: 800;
-  font-size: 14px;
-  color: var(--primary);
-}
-.dash-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 10px;
-}
-.dash-chip {
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 4px 8px;
-  background: #fff;
-}
-.dash-avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--secondary), var(--accent));
-}
 .kpis {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -481,28 +442,6 @@ button {
   color: var(--primary);
   margin-bottom: 8px;
 }
-.legend {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 9.5px;
-  font-weight: 600;
-  color: var(--muted);
-}
-.legend .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 3px;
-  display: inline-block;
-  margin-right: 6px;
-  vertical-align: -1px;
-}
-.donut-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 /* ===== Hero data-flow mockup ===== */
 .flow-card {
   background: #fff;
@@ -627,7 +566,7 @@ button {
 /* ===== Problem ===== */
 .problem {
   background: var(--surface);
-  padding: 90px 0;
+  padding: 96px 0;
 }
 .src-grid {
   display: grid;
@@ -1824,9 +1763,6 @@ button {
 .orb-teal {
   background: radial-gradient(circle, rgba(37, 208, 195, 0.45), transparent 70%);
 }
-.orb-navy {
-  background: radial-gradient(circle, rgba(8, 28, 58, 0.4), transparent 70%);
-}
 @keyframes drift1 {
   0%,
   100% {
@@ -1966,7 +1902,7 @@ canvas.particles {
   left: 130%;
 }
 
-/* Floating chips */
+/* Floating badges (antigravity field) */
 @keyframes floaty {
   0%,
   100% {
@@ -1975,26 +1911,6 @@ canvas.particles {
   50% {
     transform: translateY(-11px) rotate(var(--rot, 0deg));
   }
-}
-.float-chip {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  box-shadow: var(--shadow-md);
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--primary);
-  animation: floaty 5.5s ease-in-out infinite;
-  z-index: 2;
-}
-.float-chip svg {
-  color: var(--accent);
-  flex-shrink: 0;
 }
 
 /* Glow pulse (CTA button) */
@@ -2035,13 +1951,6 @@ canvas.particles {
 }
 .reveal.in .chart-line {
   stroke-dashoffset: 0;
-}
-.chart-dot {
-  opacity: 0;
-  transition: opacity 0.4s ease 1.35s;
-}
-.reveal.in .chart-dot {
-  opacity: 1;
 }
 .chart-bar {
   transform-box: fill-box;
@@ -2261,7 +2170,6 @@ canvas.ag-canvas {
 
 @media (prefers-reduced-motion: reduce) {
   .orb,
-  .float-chip,
   .pulse-btn,
   .kpi.pulse,
   .ag-badge,

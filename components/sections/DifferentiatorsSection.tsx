@@ -5,7 +5,8 @@ import type { DifferentiatorItem } from "@/types";
 const DIFFERENTIATORS: DifferentiatorItem[] = [
   {
     title: "Automação de processos",
-    description: "Tarefas manuais e repetitivas passam a rodar sozinhas, sem retrabalho.",
+    description:
+      "Menos horas perdidas em tarefas repetitivas, mais tempo para o que gera resultado.",
     icon: (
       <svg
         aria-hidden="true"
@@ -22,7 +23,7 @@ const DIFFERENTIATORS: DifferentiatorItem[] = [
   },
   {
     title: "Integração completa",
-    description: "Conectamos APIs, planilhas, CRMs e sistemas internos com segurança.",
+    description: "Nenhum sistema fica isolado: suas ferramentas passam a trabalhar juntas.",
     icon: (
       <svg
         aria-hidden="true"
@@ -58,7 +59,7 @@ const DIFFERENTIATORS: DifferentiatorItem[] = [
   },
   {
     title: "Inteligência para gestão",
-    description: "Menos relatórios. Mais clareza, estratégia e resultado.",
+    description: "Decisões deixam de esperar pelo relatório do fim do mês.",
     icon: (
       <svg
         aria-hidden="true"

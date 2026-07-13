@@ -75,7 +75,7 @@ const BADGES = [
     top: "88%",
     label: "API própria",
     icon: (
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#25D0C3" strokeWidth="2.4">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#25D0C3" strokeWidth="2">
         <path d="m8 6-5 6 5 6M16 6l5 6-5 6" />
       </svg>
     ),

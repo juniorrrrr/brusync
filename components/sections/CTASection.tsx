@@ -22,9 +22,9 @@ export function CTASection() {
       <canvas className="particles" ref={particlesRef} aria-hidden="true" />
       <Reveal as="div" className="container cta-inner">
         <h2>
-          Pare de tomar decisões
+          Chega de decidir
           <br />
-          com dados espalhados.
+          com base em intuição.
         </h2>
         <div className="cta-sub">Solicite um diagnóstico gratuito da sua empresa.</div>
 
