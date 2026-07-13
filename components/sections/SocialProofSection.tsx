@@ -106,10 +106,6 @@ export function SocialProofSection() {
         <Reveal as="h2" className="sec-title">
           O padrão que buscamos <span className="accent">em cada projeto</span>
         </Reveal>
-        <Reveal as="p" className="sec-sub">
-          Ainda estamos construindo nosso portfólio público de cases. Enquanto isso, veja o que
-          buscamos entregar em cada projeto.
-        </Reveal>
 
         <Reveal className="logo-marquee" delay={1}>
           <div className="logo-track">
