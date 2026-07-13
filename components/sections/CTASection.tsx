@@ -22,11 +22,11 @@ export function CTASection() {
       <canvas className="particles" ref={particlesRef} aria-hidden="true" />
       <Reveal as="div" className="container cta-inner">
         <h2>
-          Chega de decidir
+          Seu negócio merece um software
           <br />
-          com base em intuição.
+          feito exclusivamente para ele.
         </h2>
-        <div className="cta-sub">Solicite um diagnóstico gratuito da sua empresa.</div>
+        <div className="cta-sub">Vamos construir o seu sistema.</div>
 
         <form className="lead-form" action={formAction}>
           <div className="lead-form-row">
@@ -55,7 +55,7 @@ export function CTASection() {
           </div>
 
           <button type="submit" className="btn btn-accent pulse-btn" disabled={pending}>
-            {pending ? "Enviando..." : "Solicitar diagnóstico"}
+            {pending ? "Enviando..." : "Quero meu software"}
             <span className="sweep" />
           </button>
 
@@ -67,7 +67,7 @@ export function CTASection() {
         </form>
 
         <div className="cta-note">
-          Sem cadastro. Sem teste. Só uma conversa com um especialista.
+          Conversa sem compromisso. Sem contrato de fidelidade de plataforma pronta.
         </div>
       </Reveal>
     </section>

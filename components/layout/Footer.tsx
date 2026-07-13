@@ -43,12 +43,7 @@ const SOCIAL_ICONS: Record<string, ReactNode> = {
 const FOOTER_COLUMNS = [
   {
     title: "Soluções",
-    links: [
-      "Inteligência de Dados",
-      "Integração de Sistemas",
-      "Automação de Processos",
-      "Inteligência Artificial",
-    ],
+    links: ["Software sob medida", "White Label", "Integrações", "Agentes de IA"],
   },
   {
     title: "Recursos",
@@ -62,7 +57,7 @@ const FOOTER_COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="footer" id="cases">
+    <footer className="footer">
       <div className="hairline" aria-hidden="true" />
       <Container>
         <div className="foot-grid">
@@ -72,12 +67,13 @@ export function Footer() {
               <i>.</i>
             </span>
             <div className="foot-tag">
-              Conectando dados.
+              Software próprio.
               <br />
-              Orientando decisões.
+              Marca própria.
             </div>
             <p className="foot-desc">
-              Transformamos dados em inteligência para impulsionar o crescimento da sua empresa.
+              Desenvolvemos plataformas exclusivas, white label, para empresas que querem um sistema
+              — não mais uma assinatura.
             </p>
             <div className="foot-social">
               {socialLinks.map((s) => (

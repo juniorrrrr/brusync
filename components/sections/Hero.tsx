@@ -1,6 +1,6 @@
 "use client";
 
-import { DataFlowMockup } from "@/components/dashboard-mock/DataFlowMockup";
+import { BrandedAppMockup } from "@/components/dashboard-mock/BrandedAppMockup";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { useParticleField } from "@/hooks/useParticleField";
@@ -31,21 +31,21 @@ export function Hero() {
       <Container className="hero-grid">
         <div className="reveal in">
           <h1>
-            Sua empresa já tem dados.
+            Seu negócio merece um software
             <br />
-            <span className="accent">O que falta é inteligência sobre eles.</span>
+            <span className="accent">feito exclusivamente para ele.</span>
           </h1>
           <p className="sub">
-            Integramos suas ferramentas, automatizamos processos manuais e aplicamos Inteligência
-            Artificial para transformar dados dispersos em indicadores estratégicos. O dashboard é
-            só a parte visível do projeto.
+            Desenvolvemos plataformas completas e sob medida para empresas que não cabem mais em
+            ferramentas prontas: CRM, dashboards, automações e Inteligência Artificial — tudo com a
+            sua marca, o seu domínio e as suas regras de negócio.
           </p>
           <div className="hero-actions">
             <Button href="#contato" withArrow>
-              Solicitar diagnóstico
+              Quero meu software
             </Button>
             <Button href="#processo" variant="outline">
-              Ver como funciona
+              Ver como construímos
             </Button>
           </div>
           <div className="hero-trust">
@@ -59,9 +59,9 @@ export function Hero() {
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+                <path d="M20 6 9 17l-5-5" />
               </svg>
-              Integração e automação
+              Sistema 100% seu
             </div>
             <div className="trust-item">
               <svg
@@ -76,7 +76,7 @@ export function Hero() {
                 <rect x="4" y="10" width="16" height="10" rx="2" />
                 <path d="M8 10V7a4 4 0 0 1 8 0v3" />
               </svg>
-              Inteligência Artificial aplicada
+              Sua marca, seu domínio
             </div>
             <div className="trust-item">
               <svg
@@ -88,17 +88,14 @@ export function Hero() {
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <rect x="3" y="3" width="8" height="8" rx="1.5" />
-                <rect x="13" y="3" width="8" height="5" rx="1.5" />
-                <rect x="13" y="11" width="8" height="10" rx="1.5" />
-                <rect x="3" y="14" width="8" height="7" rx="1.5" />
+                <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
               </svg>
-              Projeto sob medida
+              Sem mensalidade de plataforma pronta
             </div>
           </div>
         </div>
 
-        <DataFlowMockup />
+        <BrandedAppMockup />
       </Container>
     </header>
   );

@@ -16,12 +16,6 @@ export interface SourcePlatform {
   icon: ReactNode;
 }
 
-export interface ConsequenceItem {
-  title: string;
-  description: string;
-  icon: ReactNode;
-}
-
 export interface SolutionItem {
   title: string;
   description: string;
@@ -39,6 +33,17 @@ export interface TimelineStep {
   title: ReactNode;
   description: string;
   icon: ReactNode;
+}
+
+export interface TestimonialItem {
+  quote: string;
+  role: string;
+  segment: string;
+}
+
+export interface QualityGoalItem {
+  value: string;
+  label: string;
 }
 
 export interface ShowcaseCard {

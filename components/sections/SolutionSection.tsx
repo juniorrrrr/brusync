@@ -6,7 +6,7 @@ import type { SolutionItem } from "@/types";
 const SOLUTIONS: SolutionItem[] = [
   {
     title: "Marketing",
-    description: "Acompanhe campanhas, resultados e ROI em tempo real.",
+    description: "Veja o retorno de cada campanha sem abrir uma planilha.",
     icon: (
       <svg
         aria-hidden="true"
@@ -24,7 +24,7 @@ const SOLUTIONS: SolutionItem[] = [
   },
   {
     title: "Vendas",
-    description: "Visualize funil, oportunidades e previsões de fechamento.",
+    description: "Acompanhe funil, oportunidades e previsões de fechamento em tempo real.",
     icon: (
       <svg
         aria-hidden="true"
@@ -43,7 +43,7 @@ const SOLUTIONS: SolutionItem[] = [
   },
   {
     title: "Financeiro",
-    description: "Receitas, custos e lucratividade sempre atualizados.",
+    description: "Receitas, custos e lucratividade sempre atualizados, sem planilha paralela.",
     icon: (
       <svg
         aria-hidden="true"
@@ -60,7 +60,7 @@ const SOLUTIONS: SolutionItem[] = [
   },
   {
     title: "Operação",
-    description: "Indicadores operacionais para mais eficiência e controle.",
+    description: "Indicadores da sua rotina, do seu jeito, para mais eficiência e controle.",
     icon: (
       <svg
         aria-hidden="true"
@@ -78,7 +78,7 @@ const SOLUTIONS: SolutionItem[] = [
   },
   {
     title: "Comercial",
-    description: "Performance de equipes, metas e resultados consolidados.",
+    description: "Performance de equipes, metas e resultados, num painel só seu.",
     icon: (
       <svg
         aria-hidden="true"
@@ -118,10 +118,14 @@ export function SolutionSection() {
 
         <Reveal delay={1}>
           <h2>
-            Tudo <span className="accent">integrado.</span>
+            Sua marca. Seu domínio.
             <br />
-            Tudo <span className="accent">inteligente.</span>
+            <span className="accent">Seu sistema, do seu jeito.</span>
           </h2>
+          <p className="sol-lead">
+            Veja como fica um painel construído para a sua empresa — com a sua identidade, os seus
+            dados e as métricas que realmente importam para a sua operação.
+          </p>
           <div className="sol-list">
             {SOLUTIONS.map((s) => (
               <div key={s.title} className="sol-item">
@@ -134,7 +138,7 @@ export function SolutionSection() {
             ))}
           </div>
           <p className="sol-final">
-            Tudo em <i>uma única fonte de verdade.</i>
+            Tudo dentro do <i>seu próprio sistema.</i>
           </p>
         </Reveal>
       </Container>

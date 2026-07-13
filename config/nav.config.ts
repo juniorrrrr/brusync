@@ -1,15 +1,15 @@
 import type { NavLink } from "@/types";
 
 export const navLinks: NavLink[] = [
-  { label: "Soluções", href: "#solucao", target: "solucao" },
+  { label: "Diferenciais", href: "#diferenciais", target: "diferenciais" },
+  { label: "Transformação", href: "#transformacao", target: "transformacao" },
+  { label: "Soluções", href: "#solucoes", target: "solucoes" },
   { label: "Como funciona", href: "#processo", target: "processo" },
   { label: "Integrações", href: "#integracoes", target: "integracoes" },
-  { label: "Inteligência Artificial", href: "#ia", target: "ia" },
-  { label: "Cases", href: "#cases", target: "cases" },
-  { label: "Contato", href: "#contato", target: "contato" },
+  { label: "Cases", href: "#prova-social", target: "prova-social" },
 ];
 
 export const ctaLink = {
-  label: "Solicitar diagnóstico",
+  label: "Quero meu software",
   href: "#contato",
 };

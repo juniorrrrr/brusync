@@ -1,15 +1,43 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { useDataFlow } from "@/hooks/useDataFlow";
-import type { ConsequenceItem, SourcePlatform } from "@/types";
+import type { SourcePlatform } from "@/types";
 
-const DashboardCarousel = dynamic(() =>
-  import("@/components/dashboard-mock/DashboardCarousel").then((m) => m.DashboardCarousel),
-);
+const AFTER_CHIPS = [
+  "Plataforma única",
+  "CRM integrado",
+  "Automação",
+  "Agentes de IA",
+  "Indicadores em tempo real",
+];
+
+const OWNERSHIP_COLUMNS = [
+  {
+    title: "Plataforma pronta (SaaS)",
+    tone: "bad" as const,
+    rows: [
+      "Mensalidade que só cresce",
+      "Sua marca escondida atrás da marca deles",
+      "Domínio de terceiros",
+      "Funcionalidades genéricas, iguais para todo mundo",
+      "Parou de pagar? Perdeu tudo.",
+    ],
+  },
+  {
+    title: "Software Brusync",
+    tone: "good" as const,
+    rows: [
+      "Você é dono do sistema",
+      "Sua marca, do login ao dashboard",
+      "Seu domínio",
+      "Construído para a forma como você trabalha",
+      "Cresce com a sua empresa, para sempre",
+    ],
+  },
+];
 
 const PLATFORMS: SourcePlatform[] = [
   {
@@ -264,80 +292,7 @@ const PLATFORMS: SourcePlatform[] = [
   },
 ];
 
-const CONSEQUENCES: ConsequenceItem[] = [
-  {
-    title: "Perda de tempo",
-    description: "Horas semanais consumidas em processos manuais e retrabalho evitável.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="13" r="8" />
-        <path d="M12 9v4l2.5 2.5M9 2h6" />
-      </svg>
-    ),
-  },
-  {
-    title: "Erros de leitura",
-    description: "Números que não batem entre sistemas geram decisões sobre dados errados.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="m13 2-2 8h5l-7 12 2-9H6z" />
-      </svg>
-    ),
-  },
-  {
-    title: "Decisões atrasadas",
-    description: "Enquanto os relatórios são consolidados, o mercado já mudou.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l-3 3" />
-      </svg>
-    ),
-  },
-  {
-    title: "Visão fragmentada",
-    description: "Cada área enxerga uma parte do negócio, nunca o todo.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M2 2l20 20M10.6 5.1A9.8 9.8 0 0 1 12 5c7 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6A16.9 16.9 0 0 0 2 12s3 7 10 7c1.6 0 3-.3 4.3-.9" />
-      </svg>
-    ),
-  },
-];
-
-export function ProblemSection() {
+export function TransformationSection() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const linesRef = useRef<SVGGElement | null>(null);
   const particlesRef = useRef<SVGGElement | null>(null);
@@ -345,15 +300,17 @@ export function ProblemSection() {
   useDataFlow({ wrapRef, linesRef, particlesRef });
 
   return (
-    <section className="problem">
+    <section className="problem" id="transformacao">
       <div className="ambient" aria-hidden="true">
         <div className="grid-lines" style={{ opacity: 0.55 }} />
       </div>
       <Container>
         <Reveal as="h2" className="sec-title">
-          Sua empresa toma decisões
-          <br />
-          com <span className="accent">dados espalhados?</span>
+          De ferramentas soltas para <span className="accent">o seu próprio sistema.</span>
+        </Reveal>
+        <Reveal as="p" className="sec-sub">
+          Hoje sua operação provavelmente está espalhada entre planilhas, sistemas prontos e
+          ferramentas que não conversam entre si — e cada uma cobra a sua própria mensalidade.
         </Reveal>
 
         <Reveal className="logo-marquee" delay={1}>
@@ -373,7 +330,7 @@ export function ProblemSection() {
         </Reveal>
 
         <Reveal className="flow-mid" delay={2}>
-          Seus dados existem. O problema é que eles nunca conversam entre si.
+          Cada uma dessas ferramentas faz uma parte do trabalho. Nenhuma delas é o seu sistema.
         </Reveal>
 
         <Reveal className="data-flow" delay={3} aria-hidden="true">
@@ -401,7 +358,7 @@ export function ProblemSection() {
                 <div className="df-core-logo">
                   Brusync<i>.</i>
                 </div>
-                <div className="df-core-label">Processando</div>
+                <div className="df-core-label">Sua plataforma</div>
               </div>
             </div>
           </div>
@@ -410,26 +367,36 @@ export function ProblemSection() {
         <Reveal className="flow-arrow" delay={4} aria-hidden="true">
           ↓
         </Reveal>
-        <Reveal as="h2" className="sec-title" delay={4}>
-          Da integração ao <span className="accent">painel certo</span> para cada área.
-        </Reveal>
-        <Reveal as="p" className="sec-sub" delay={4}>
-          Financeiro, marketing, comercial ou operações: cada equipe vê exatamente o que precisa.
-        </Reveal>
-
-        <DashboardCarousel />
-
-        <Reveal className="findings-list" delay={5}>
-          {CONSEQUENCES.map((c, i) => (
-            <div className="finding-row" key={c.title}>
-              <span className="finding-num">0{i + 1}</span>
-              <div className="finding-ico">{c.icon}</div>
-              <div>
-                <h4>{c.title}</h4>
-                <p>{c.description}</p>
-              </div>
-            </div>
+        <Reveal className="flow-outputs" delay={4}>
+          {AFTER_CHIPS.map((chip) => (
+            <span className="flow-chip" key={chip}>
+              {chip}
+            </span>
           ))}
+        </Reveal>
+
+        <Reveal className="own-compare" delay={5}>
+          <div className="own-heading">
+            <h3>Isso não é um software alugado.</h3>
+            <p>
+              É o seu <span className="accent">ativo digital.</span>
+            </p>
+          </div>
+          <div className="own-cols">
+            {OWNERSHIP_COLUMNS.map((col) => (
+              <div className={`own-col own-col-${col.tone}`} key={col.title}>
+                <h4>{col.title}</h4>
+                {col.rows.map((row) => (
+                  <div className="own-row" key={row}>
+                    <span className="own-mark" aria-hidden="true">
+                      {col.tone === "good" ? "✓" : "✕"}
+                    </span>
+                    {row}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </Reveal>
       </Container>
     </section>

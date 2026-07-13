@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef } from "react";
+import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 import { useAntigravityField } from "@/hooks/useAntigravityField";
 
 const BADGES = [
@@ -133,6 +135,15 @@ export function IntegrationsSection() {
 
   return (
     <section className="antigravity" id="integracoes" aria-label="Convergência de dados">
+      <Container>
+        <Reveal as="h2" className="sec-title">
+          Conectamos com o que <span className="accent">a sua empresa já usa</span>
+        </Reveal>
+        <Reveal as="p" className="sec-sub">
+          Nenhuma ferramenta fica de fora. O seu novo sistema se conecta a tudo o que já faz parte
+          da sua operação — e ainda centraliza tudo em um só lugar.
+        </Reveal>
+      </Container>
       <div className="ag-field" ref={fieldRef}>
         {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative, non-interactive canvas */}
         <canvas className="ag-canvas" ref={canvasRef} aria-hidden="true" />
