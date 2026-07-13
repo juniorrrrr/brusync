@@ -41,11 +41,6 @@ export interface TestimonialItem {
   segment: string;
 }
 
-export interface QualityGoalItem {
-  value: string;
-  label: string;
-}
-
 export interface ShowcaseCard {
   area: string;
   catColor: string;

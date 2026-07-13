@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import type { QualityGoalItem, TestimonialItem } from "@/types";
+import type { TestimonialItem } from "@/types";
 
 const SECTORS = [
   {
@@ -78,13 +78,6 @@ const SECTORS = [
   },
 ];
 
-const QUALITY_GOALS: QualityGoalItem[] = [
-  { value: "100%", label: "dos projetos com identidade visual exclusiva do cliente" },
-  { value: "98%", label: "meta de satisfação em cada entrega" },
-  { value: "0", label: "linhas de código compartilhadas entre projetos de clientes diferentes" },
-  { value: "1:1", label: "acompanhamento direto com quem desenvolve o seu sistema" },
-];
-
 const TESTIMONIALS: TestimonialItem[] = [
   {
     quote:
@@ -114,8 +107,8 @@ export function SocialProofSection() {
           O padrão que buscamos <span className="accent">em cada projeto</span>
         </Reveal>
         <Reveal as="p" className="sec-sub">
-          Ainda estamos construindo nosso portfólio público de cases. Enquanto isso, é assim que
-          medimos a qualidade de cada entrega.
+          Ainda estamos construindo nosso portfólio público de cases. Enquanto isso, veja o que
+          buscamos entregar em cada projeto.
         </Reveal>
 
         <Reveal className="logo-marquee" delay={1}>
@@ -129,15 +122,6 @@ export function SocialProofSection() {
               )),
             )}
           </div>
-        </Reveal>
-
-        <Reveal className="kpis quality-kpis" delay={2}>
-          {QUALITY_GOALS.map((goal) => (
-            <div className="kpi" key={goal.label}>
-              <div className="k-val">{goal.value}</div>
-              <div className="k-label">{goal.label}</div>
-            </div>
-          ))}
         </Reveal>
 
         <div className="testi-grid">

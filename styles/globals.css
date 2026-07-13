@@ -1454,28 +1454,11 @@ button {
   background: var(--surface);
   padding: 96px 0;
 }
-.quality-kpis {
-  margin-top: 48px;
-  grid-template-columns: repeat(4, 1fr);
-}
-.quality-kpis .kpi {
-  padding: 22px 18px;
-  text-align: center;
-}
-.quality-kpis .k-val {
-  font-size: 30px;
-  color: var(--secondary);
-}
-.quality-kpis .k-label {
-  margin-top: 6px;
-  font-size: 11.5px;
-  line-height: 1.4;
-}
 .testi-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
-  margin-top: 48px;
+  margin-top: 56px;
 }
 .testi-card {
   padding: 26px 24px;
@@ -1514,10 +1497,6 @@ button {
   margin-top: 2px;
 }
 @media (max-width: 900px) {
-  .quality-kpis {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
   .testi-grid {
     grid-template-columns: 1fr 1fr;
   }
