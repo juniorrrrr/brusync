@@ -6,7 +6,7 @@ export const siteConfig = {
   url: "https://brusync.com.br",
   locale: "pt-BR",
   contact: {
-    phone: "(47) 98883-2025",
+    phone: "(47) 99181-4518",
     email: "admin@brusync.com.br",
     location: "Brusque, SC, Brasil",
   },
