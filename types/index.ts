@@ -9,6 +9,8 @@ export interface NavLink {
 export interface SocialLink {
   label: string;
   href: string;
+  ariaLabel: string;
+  external?: boolean;
 }
 
 export interface SourcePlatform {

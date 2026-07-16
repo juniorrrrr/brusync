@@ -7,7 +7,7 @@ export const siteConfig = {
   locale: "pt-BR",
   contact: {
     phone: "(47) 98883-2025",
-    email: "contato@brusync.com.br",
+    email: "admin@brusync.com.br",
     location: "Brusque, SC, Brasil",
   },
 } as const;

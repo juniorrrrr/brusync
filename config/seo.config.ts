@@ -26,3 +26,42 @@ export const seoConfig: Metadata = {
     follow: true,
   },
 };
+
+interface PageMetadataInput {
+  title: string;
+  description: string;
+  path: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+}
+
+export function buildMetadata({
+  title,
+  description,
+  path,
+  type = "website",
+  publishedTime,
+}: PageMetadataInput): Metadata {
+  const url = `${siteConfig.url}${path}`;
+  const fullTitle = `${title} · ${siteConfig.name}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type,
+      locale: siteConfig.locale,
+      url,
+      title: fullTitle,
+      description,
+      siteName: siteConfig.name,
+      ...(type === "article" && publishedTime ? { publishedTime } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
+    },
+  };
+}

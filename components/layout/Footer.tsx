@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
+import { footerColumns } from "@/config/footer.config";
 import { siteConfig } from "@/config/site.config";
 import { socialLinks } from "@/config/social.config";
 
@@ -40,21 +41,6 @@ const SOCIAL_ICONS: Record<string, ReactNode> = {
   ),
 };
 
-const FOOTER_COLUMNS = [
-  {
-    title: "Soluções",
-    links: ["Software sob medida", "White Label", "Integrações", "Agentes de IA"],
-  },
-  {
-    title: "Recursos",
-    links: ["Cases", "Blog", "Materiais Ricos", "API"],
-  },
-  {
-    title: "Empresa",
-    links: ["Sobre a Brusync", "Trabalhe Conosco", "Política de Privacidade", "Termos de Uso"],
-  },
-];
-
 export function Footer() {
   return (
     <footer className="footer">
@@ -77,20 +63,24 @@ export function Footer() {
             </p>
             <div className="foot-social">
               {socialLinks.map((s) => (
-                <a key={s.label} href={s.href} aria-label={s.label}>
+                <a
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.ariaLabel}
+                  {...(s.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
                   {SOCIAL_ICONS[s.label]}
                 </a>
               ))}
             </div>
           </div>
 
-          {FOOTER_COLUMNS.map((col) => (
+          {footerColumns.map((col) => (
             <div className="foot-col" key={col.title}>
               <h5>{col.title}</h5>
               {col.links.map((link) => (
-                // biome-ignore lint/a11y/useValidAnchor: placeholder — page not built yet
-                <a href="#" key={link}>
-                  {link}
+                <a href={link.href} key={link.label}>
+                  {link.label}
                 </a>
               ))}
             </div>
@@ -125,7 +115,9 @@ export function Footer() {
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m2 7 10 6 10-6" />
               </svg>
-              {siteConfig.contact.email}
+              <a href={`mailto:${siteConfig.contact.email}`} className="foot-contact-link">
+                {siteConfig.contact.email}
+              </a>
             </div>
             <div className="foot-contact">
               <svg
