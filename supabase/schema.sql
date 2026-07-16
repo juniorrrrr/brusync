@@ -120,3 +120,52 @@ alter table public.leads add column if not exists timezone text;
 alter table public.leads add column if not exists user_agent text;
 
 create index if not exists leads_email_idx on public.leads (email);
+
+-- ============================================================================
+-- Brusync OS — perfis de usuário do painel interno (login em /login).
+-- Cada linha espelha um usuário do Supabase Auth (auth.users), acrescentando
+-- o papel (role) usado para controle de acesso. Nada aqui concede permissões
+-- ainda — é só a estrutura de dados; a Fase 1 do Brusync OS só autentica.
+-- ============================================================================
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  name text,
+  email text,
+  role text not null default 'cliente'
+    check (role in ('administrador', 'gestor', 'comercial', 'atendimento', 'cliente'))
+);
+
+alter table public.profiles enable row level security;
+
+-- Cada usuário autenticado só pode ler o próprio perfil. Não há policy de
+-- insert/update para anon/authenticated: a criação é feita pelo trigger
+-- abaixo (roda como security definer) e mudar o papel de alguém deve
+-- passar pela service role key, fora do alcance do próprio usuário.
+drop policy if exists "Usuários podem ver o próprio perfil" on public.profiles;
+create policy "Usuários podem ver o próprio perfil"
+  on public.profiles for select
+  using (auth.uid() = id);
+
+create index if not exists profiles_role_idx on public.profiles (role);
+
+-- Cria automaticamente um perfil (role padrão "cliente") sempre que um novo
+-- usuário é criado no Supabase Auth — assim nenhum login fica sem perfil.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, name)
+  values (new.id, new.email, new.raw_user_meta_data ->> 'name')
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();

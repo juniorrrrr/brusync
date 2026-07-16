@@ -21,6 +21,7 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.6",
     "clsx": "^2.1.1",
     "next": "^16.2.10",
