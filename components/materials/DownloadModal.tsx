@@ -4,8 +4,14 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Turnstile } from "@/components/materials/Turnstile";
 import type { MaterialItem } from "@/data/materials";
-import { MATERIAL_EVENTS, trackEvent } from "@/lib/tracking";
-import { getVisitorMeta, type VisitorMeta } from "@/lib/visitorMeta";
+import {
+  applyClarityTags,
+  describeOrigin,
+  EVENTS,
+  getTrackingContext,
+  type TrackingContext,
+  trackEvent,
+} from "@/lib/tracking";
 import { type MaterialLeadFormState, submitMaterialLead } from "@/services/materialLeads";
 
 const initialState: MaterialLeadFormState = { status: "idle" };
@@ -30,7 +36,7 @@ export function DownloadModal({
   const openedAtRef = useRef(0);
   const closedByDownloadRef = useRef(false);
   const downloadTriggeredRef = useRef(false);
-  const visitorMetaRef = useRef<VisitorMeta | null>(null);
+  const contextRef = useRef<TrackingContext | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -42,12 +48,13 @@ export function DownloadModal({
       openedAtRef.current = Date.now();
       closedByDownloadRef.current = false;
       downloadTriggeredRef.current = false;
-      visitorMetaRef.current = getVisitorMeta();
+      contextRef.current = getTrackingContext();
       setLeadStarted(false);
-      trackEvent(MATERIAL_EVENTS.MODAL_OPEN, {
+      applyClarityTags(contextRef.current.attribution, { material: material.slug });
+      trackEvent(EVENTS.MATERIAL_MODAL_OPEN, {
         material_slug: material.slug,
         source,
-        origin: visitorMetaRef.current.utmSource ?? visitorMetaRef.current.referer ?? "direct",
+        origin: describeOrigin(contextRef.current.attribution.lastTouch),
       });
     }
   }, [open, material.slug, source]);
@@ -63,7 +70,7 @@ export function DownloadModal({
 
   useEffect(() => {
     if (state.status === "error" || state.status === "rejected") {
-      trackEvent(MATERIAL_EVENTS.LEAD_REJECTED, {
+      trackEvent(EVENTS.MATERIAL_LEAD_REJECTED, {
         material_slug: material.slug,
         reason: state.status,
       });
@@ -75,15 +82,19 @@ export function DownloadModal({
     downloadTriggeredRef.current = true;
 
     const timeToConversionMs = Date.now() - openedAtRef.current;
-    trackEvent(MATERIAL_EVENTS.LEAD_SUBMIT, {
+    const origin = contextRef.current
+      ? describeOrigin(contextRef.current.attribution.lastTouch)
+      : "direto";
+    trackEvent(EVENTS.MATERIAL_LEAD_SUBMIT, {
       material_slug: material.slug,
       source,
       time_to_conversion_ms: timeToConversionMs,
-      origin: visitorMetaRef.current?.utmSource ?? visitorMetaRef.current?.referer ?? "direct",
+      origin,
     });
+    trackEvent(EVENTS.GENERATE_LEAD, { source: "materiais", material_slug: material.slug });
 
     const timer = setTimeout(() => {
-      trackEvent(MATERIAL_EVENTS.DOWNLOAD_START, { material_slug: material.slug });
+      trackEvent(EVENTS.MATERIAL_DOWNLOAD_START, { material_slug: material.slug });
       const link = document.createElement("a");
       link.href = state.downloadUrl as string;
       link.download = state.fileName ?? "";
@@ -92,7 +103,7 @@ export function DownloadModal({
       document.body.removeChild(link);
 
       window.setTimeout(() => {
-        trackEvent(MATERIAL_EVENTS.DOWNLOAD_COMPLETE, { material_slug: material.slug });
+        trackEvent(EVENTS.MATERIAL_DOWNLOAD_COMPLETE, { material_slug: material.slug });
         closedByDownloadRef.current = true;
         onClose();
       }, 500);
@@ -105,7 +116,7 @@ export function DownloadModal({
 
   function handleClose() {
     if (!closedByDownloadRef.current && state.status !== "success") {
-      trackEvent(MATERIAL_EVENTS.MODAL_CLOSE, { material_slug: material.slug, source });
+      trackEvent(EVENTS.MATERIAL_MODAL_CLOSE, { material_slug: material.slug, source });
     }
     onClose();
   }
@@ -113,13 +124,13 @@ export function DownloadModal({
   function handleFieldFocus() {
     if (!leadStarted) {
       setLeadStarted(true);
-      trackEvent(MATERIAL_EVENTS.LEAD_START, { material_slug: material.slug, source });
+      trackEvent(EVENTS.MATERIAL_LEAD_START, { material_slug: material.slug, source });
     }
   }
 
   if (!mounted || !open) return null;
 
-  const visitorMeta = visitorMetaRef.current ?? getVisitorMeta();
+  const context = contextRef.current ?? getTrackingContext();
 
   return createPortal(
     // biome-ignore lint/a11y/noStaticElementInteractions: overlay click-to-close is paired with a focusable/keyboard-operable close button inside the dialog
@@ -186,7 +197,7 @@ export function DownloadModal({
               <input type="hidden" name="materialSlug" value={material.slug} />
               <input type="hidden" name="source" value={source} />
               <input type="hidden" name="rendered_at" value={openedAtRef.current || Date.now()} />
-              <input type="hidden" name="visitor_meta" value={JSON.stringify(visitorMeta)} />
+              <input type="hidden" name="tracking_context" value={JSON.stringify(context)} />
 
               {/* Honeypot — campo invisível; bots costumam preencher todos os campos do formulário */}
               <div className="modal-honeypot" aria-hidden="true">

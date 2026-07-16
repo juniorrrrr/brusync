@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useParticleField } from "@/hooks/useParticleField";
+import { EVENTS, serializeTrackingContext, trackEvent } from "@/lib/tracking";
 import { type LeadFormState, submitLead } from "@/services/leads";
 
 const initialState: LeadFormState = { status: "idle" };
@@ -14,6 +15,20 @@ export function CTASection() {
     color: "rgba(37,208,195,.5)",
   });
   const [state, formAction, pending] = useActionState(submitLead, initialState);
+  const [trackingContext, setTrackingContext] = useState("");
+  const trackedSuccessRef = useRef(false);
+
+  useEffect(() => {
+    setTrackingContext(serializeTrackingContext());
+  }, []);
+
+  useEffect(() => {
+    if (state.status === "success" && !trackedSuccessRef.current) {
+      trackedSuccessRef.current = true;
+      trackEvent(EVENTS.CONTACT_SUBMIT);
+      trackEvent(EVENTS.GENERATE_LEAD, { source: "contato" });
+    }
+  }, [state.status]);
 
   return (
     <section className="cta" id="contato">
@@ -29,6 +44,7 @@ export function CTASection() {
         <div className="cta-sub">Vamos construir o seu sistema.</div>
 
         <form className="lead-form" action={formAction}>
+          <input type="hidden" name="tracking_context" value={trackingContext} />
           <div className="lead-form-row">
             <div className="lead-form-field">
               <label htmlFor="name">Nome</label>

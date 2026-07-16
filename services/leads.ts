@@ -1,5 +1,7 @@
 "use server";
 
+import { headers } from "next/headers";
+import { buildAttributionInsertFields, parseTrackingContext } from "@/lib/tracking";
 import { getSupabaseServerClient } from "@/services/supabase/server";
 
 export interface LeadFormState {
@@ -30,12 +32,19 @@ export async function submitLead(
 
   try {
     const supabase = getSupabaseServerClient();
+    const hdrs = await headers();
+    const context = parseTrackingContext(formData.get("tracking_context"));
+    const attribution = context
+      ? buildAttributionInsertFields(context, { userAgent: hdrs.get("user-agent") })
+      : {};
+
     const { error } = await supabase.from("leads").insert({
       name,
       email,
       company,
       phone: phone || null,
       message: message || null,
+      ...attribution,
     });
 
     if (error) {

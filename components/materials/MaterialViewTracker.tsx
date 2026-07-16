@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { MATERIAL_EVENTS, trackEvent } from "@/lib/tracking";
+import { applyClarityTags, EVENTS, getPersistedAttribution, trackEvent } from "@/lib/tracking";
 
 export function MaterialViewTracker({ slug }: { slug: string }) {
   useEffect(() => {
-    trackEvent(MATERIAL_EVENTS.VIEW, { material_slug: slug });
+    applyClarityTags(getPersistedAttribution(), { material: slug });
+    trackEvent(EVENTS.MATERIAL_VIEW, { material_slug: slug });
   }, [slug]);
 
   return null;

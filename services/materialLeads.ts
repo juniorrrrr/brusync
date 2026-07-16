@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { antiBotConfig } from "@/config/antiBot.config";
 import { getMaterial } from "@/data/materials";
+import { buildAttributionInsertFields, parseTrackingContext } from "@/lib/tracking";
 import { getSupabaseServerClient } from "@/services/supabase/server";
 import { verifyTurnstileToken } from "@/services/turnstile";
 
@@ -126,12 +127,10 @@ export async function submitMaterialLead(
       .select("*", { count: "exact", head: true })
       .eq("email", email);
 
-    let meta: Record<string, unknown> = {};
-    try {
-      meta = JSON.parse(String(formData.get("visitor_meta") ?? "{}"));
-    } catch {
-      meta = {};
-    }
+    const context = parseTrackingContext(formData.get("tracking_context"));
+    const attribution = context
+      ? buildAttributionInsertFields(context, { userAgent: hdrs.get("user-agent") })
+      : {};
 
     const { error } = await supabase.from("material_leads").insert({
       name,
@@ -140,23 +139,10 @@ export async function submitMaterialLead(
       material_slug: material.slug,
       material_title: material.title,
       source: String(formData.get("source") ?? "materiais"),
-      referer: typeof meta.referer === "string" ? meta.referer : null,
-      utm_source: typeof meta.utmSource === "string" ? meta.utmSource : null,
-      utm_medium: typeof meta.utmMedium === "string" ? meta.utmMedium : null,
-      utm_campaign: typeof meta.utmCampaign === "string" ? meta.utmCampaign : null,
-      utm_term: typeof meta.utmTerm === "string" ? meta.utmTerm : null,
-      utm_content: typeof meta.utmContent === "string" ? meta.utmContent : null,
-      user_agent: typeof meta.userAgent === "string" ? meta.userAgent : hdrs.get("user-agent"),
-      device: typeof meta.device === "string" ? meta.device : null,
-      os: typeof meta.os === "string" ? meta.os : null,
-      browser: typeof meta.browser === "string" ? meta.browser : null,
-      language: typeof meta.language === "string" ? meta.language : null,
-      visitor_id: typeof meta.visitorId === "string" ? meta.visitorId : null,
-      first_visit: typeof meta.firstVisit === "string" ? meta.firstVisit : null,
-      last_visit: typeof meta.lastVisit === "string" ? meta.lastVisit : null,
       download_count: (emailCount ?? 0) + 1,
       ip_address: ip,
       turnstile_verified: Boolean(process.env.TURNSTILE_SECRET_KEY),
+      ...attribution,
     });
 
     if (error) {
