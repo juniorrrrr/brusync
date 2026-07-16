@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 
 export interface Profile {
@@ -12,24 +13,25 @@ export interface Profile {
 
 /** Returns the current session's user, or null if not signed in. Cheap to
  * call from any Server Component — the session cookie is already resolved
- * by middleware on every request. */
-export async function getCurrentUser() {
+ * by middleware on every request. Wrapped in React's `cache()` so multiple
+ * calls within the same request/render (e.g. requireUser() followed by
+ * getCurrentProfile()) share a single supabase.auth.getUser() round trip
+ * instead of hitting Supabase Auth twice. */
+export const getCurrentUser = cache(async () => {
   const supabase = await getSupabaseAuthClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 /** Fetches the signed-in user's profile row (name, role). Returns null if
  * there's no session or the profile hasn't been created yet. */
 export async function getCurrentProfile(): Promise<Profile | null> {
-  const supabase = await getSupabaseAuthClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
 
+  const supabase = await getSupabaseAuthClient();
   const { data } = await supabase
     .from("profiles")
     .select("id, name, email, role")

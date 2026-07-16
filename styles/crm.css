@@ -990,3 +990,24 @@
     padding: 28px 22px 26px;
   }
 }
+
+/* ===== Loading skeleton ===== */
+@keyframes crmSkeletonPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.crm-skeleton {
+  background: var(--border);
+  border-radius: 7px;
+  animation: crmSkeletonPulse 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .crm-skeleton {
+    animation: none;
+  }
+}

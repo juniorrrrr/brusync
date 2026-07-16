@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import { PremiumEffects } from "@/components/layout/PremiumEffects";
 import { TrackingBootstrap } from "@/components/tracking/TrackingBootstrap";
 import { seoConfig } from "@/config/seo.config";
 import "./globals.css";
@@ -108,7 +107,6 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)
           </filter>
         </svg>
         {children}
-        <PremiumEffects />
         <TrackingBootstrap />
       </body>
     </html>
