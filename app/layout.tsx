@@ -15,6 +15,8 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = seoConfig;
 
+const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" className={jakarta.variable} suppressHydrationWarning>
@@ -56,6 +58,17 @@ fbq('init', '1306880141250915');
 fbq('track', 'PageView');`}
         </Script>
         {/* End Meta Pixel Code */}
+
+        {/* Microsoft Clarity — carregado apenas se NEXT_PUBLIC_CLARITY_PROJECT_ID estiver configurado */}
+        {clarityProjectId && (
+          <Script id="ms-clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){
+c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)
+})(window, document, "clarity", "script", "${clarityProjectId}");`}
+          </Script>
+        )}
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}

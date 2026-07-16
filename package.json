@@ -21,7 +21,7 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "@supabase/supabase-js": "^2.110.2",
+    "@supabase/supabase-js": "^2.110.6",
     "clsx": "^2.1.1",
     "next": "^16.2.10",
     "react": "^19.2.7",
@@ -30,7 +30,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.3",
+    "@biomejs/biome": "^2.5.4",
     "@react-pdf/renderer": "^4.5.1",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^26.1.1",
@@ -42,6 +42,14 @@
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.1",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.19"
+    },
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [

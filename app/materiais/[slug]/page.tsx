@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/layout/PageShell";
 import { MaterialCover } from "@/components/materials/MaterialCover";
+import { MaterialDownloadButton } from "@/components/materials/MaterialDownloadButton";
+import { MaterialViewTracker } from "@/components/materials/MaterialViewTracker";
 import { Container } from "@/components/ui/Container";
 import { buildMetadata } from "@/config/seo.config";
 import { siteConfig } from "@/config/site.config";
@@ -41,6 +43,7 @@ export default async function MaterialDetailPage({ params }: MaterialPageProps) 
 
   return (
     <PageShell>
+      <MaterialViewTracker slug={item.slug} />
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD, no user input
@@ -127,10 +130,10 @@ export default async function MaterialDetailPage({ params }: MaterialPageProps) 
                 ))}
               </ul>
 
-              <a
+              <MaterialDownloadButton
+                material={item}
+                source="materiais_detail_page"
                 className="mat-download-btn mat-detail-download"
-                href={`/materiais/${item.fileName}`}
-                download
               >
                 <svg
                   aria-hidden="true"
@@ -145,7 +148,7 @@ export default async function MaterialDetailPage({ params }: MaterialPageProps) 
                   <path d="M4 19h16" />
                 </svg>
                 Baixar {item.format} · {item.fileSizeLabel}
-              </a>
+              </MaterialDownloadButton>
             </div>
           </div>
         </Container>
