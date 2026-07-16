@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CaseCover } from "@/components/cases/CaseCover";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell } from "@/components/layout/PageShell";
 import { Button } from "@/components/ui/Button";
@@ -9,7 +10,7 @@ import { cases } from "@/data/cases";
 export const metadata: Metadata = buildMetadata({
   title: "Cases",
   description:
-    "Exemplos de plataformas white label que a Brusync desenvolve: dashboards executivos, CRMs personalizados e sistemas de gestão sob medida.",
+    "Plataformas white label desenvolvidas pela Brusync: dashboards executivos, CRM comercial, ERP e central de atendimento omnichannel, construídos sob medida.",
   path: "/cases",
 });
 
@@ -19,42 +20,50 @@ export default function CasesPage() {
       <PageHeader
         eyebrow="Cases"
         title="Software sob medida, para operações reais."
-        description="Confira exemplos do tipo de plataforma que desenvolvemos: sistemas próprios, com a marca do cliente, construídos para resolver problemas específicos de cada operação."
+        description="Plataformas completas desenvolvidas do zero pela Brusync — sistemas próprios, com a marca do cliente, construídos para resolver problemas específicos de cada operação."
       />
 
       <section className="page-section">
         <Container>
-          <div className="demo-banner">
-            <svg
-              aria-hidden="true"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 9v4M12 17h.01" />
-              <circle cx="12" cy="12" r="9" />
-            </svg>
-            Os projetos abaixo são demonstrativos e ilustram o tipo de solução que desenvolvemos. Em
-            breve, esta página será atualizada com cases reais de clientes.
-          </div>
-
-          <div className="case-grid">
+          <div className="case-index-grid">
             {cases.map((item) => (
-              <article className="case-card" key={item.slug}>
-                <span className="case-badge">Demonstrativo · {item.segment}</span>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                <div className="case-tags">
-                  {item.tags.map((tag) => (
-                    <span className="case-tag" key={tag}>
-                      {tag}
-                    </span>
-                  ))}
+              <a className="case-index-card" href={`/cases/${item.slug}`} key={item.slug}>
+                <CaseCover category={item.category} className="case-cover" />
+                <div className="case-index-body">
+                  <span className="case-index-cat">{item.category}</span>
+                  <h3>{item.name}</h3>
+                  <p>{item.summary}</p>
+                  <div className="case-index-stats">
+                    {item.stats.slice(0, 2).map((stat) => (
+                      <div key={stat.label}>
+                        <b>{stat.value}</b>
+                        <span>{stat.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="case-index-tags">
+                    {item.techStack.slice(0, 4).map((tech) => (
+                      <span className="case-index-tag" key={tech}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="case-index-link">
+                    Ver case completo
+                    <svg
+                      aria-hidden="true"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </span>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </Container>
@@ -63,7 +72,7 @@ export default function CasesPage() {
       <section className="page-section">
         <Container>
           <div className="article-cta">
-            <h3>Quer um case assim para a sua empresa?</h3>
+            <h3>Quer um sistema assim para a sua empresa?</h3>
             <p>Conte para a gente o que sua operação precisa e vamos desenhar juntos.</p>
             <Button href="/#contato" withArrow>
               Quero meu software
