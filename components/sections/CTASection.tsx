@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { SubmissionOutcome } from "@/components/sections/SubmissionOutcome";
 import { Reveal } from "@/components/ui/Reveal";
 import { useParticleField } from "@/hooks/useParticleField";
 import { EVENTS, serializeTrackingContext, trackEvent } from "@/lib/tracking";
@@ -9,75 +10,7 @@ import { type LeadFormState, submitLead } from "@/services/leads";
 const initialState: LeadFormState = { status: "idle" };
 const COOLDOWN_MS = 60_000;
 const COOLDOWN_KEY = "brusync_lead_cooldown_until";
-
-function formatCountdown(ms: number) {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const m = Math.floor(total / 60);
-  const s = total % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-function StatusCard({
-  variant,
-  cooldownMs,
-}: {
-  variant: "success" | "blocked";
-  cooldownMs: number;
-}) {
-  const isBlocked = variant === "blocked";
-  return (
-    <div className="cta-status">
-      <div className={`cta-status-icon${isBlocked ? " is-blocked" : ""}`} aria-hidden="true">
-        {isBlocked ? (
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3.2 2" />
-          </svg>
-        ) : (
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
-        )}
-      </div>
-
-      <h3>{isBlocked ? "Já recebemos sua solicitação." : "Projeto recebido."}</h3>
-      <p>
-        {isBlocked
-          ? "Nossa equipe já está com as informações do seu envio anterior. Uma nova solicitação pode ser feita em instantes."
-          : "Nossa equipe vai analisar o que você enviou e retorna em até um dia útil."}
-      </p>
-
-      {cooldownMs > 0 && (
-        <div className="cta-status-cooldown">
-          <span className="cta-status-dot" />
-          {isBlocked ? "Nova solicitação em " : "Próximo envio liberado em "}
-          {formatCountdown(cooldownMs)}
-        </div>
-      )}
-
-      <div className="cta-status-actions">
-        <a href="/cases" className="btn btn-outline">
-          Conhecer nossos cases
-        </a>
-        <a href="#processo" className="cta-status-link">
-          Ver como funciona o processo →
-        </a>
-      </div>
-    </div>
-  );
-}
+const FORM_LEAVE_MS = 320;
 
 export function CTASection() {
   const particlesRef = useParticleField<HTMLCanvasElement>({
@@ -90,7 +23,7 @@ export function CTASection() {
   const [renderedAt, setRenderedAt] = useState(0);
   const trackedSuccessRef = useRef(false);
 
-  const [phase, setPhase] = useState<"form" | "success" | "blocked">("form");
+  const [view, setView] = useState<"form" | "leaving" | "success" | "blocked">("form");
   const [cooldownMs, setCooldownMs] = useState(0);
 
   useEffect(() => {
@@ -99,7 +32,7 @@ export function CTASection() {
     const until = Number(window.localStorage.getItem(COOLDOWN_KEY) ?? 0);
     const remaining = until - Date.now();
     if (remaining > 0) {
-      setPhase("blocked");
+      setView("blocked");
       setCooldownMs(remaining);
     }
   }, []);
@@ -111,18 +44,20 @@ export function CTASection() {
     trackEvent(EVENTS.GENERATE_LEAD, { source: "contato" });
     window.localStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_MS));
     setCooldownMs(COOLDOWN_MS);
-    setPhase("success");
+    setView("leaving");
+    const timer = window.setTimeout(() => setView("success"), FORM_LEAVE_MS);
+    return () => window.clearTimeout(timer);
   }, [state.status]);
 
   useEffect(() => {
-    if (phase === "form") return;
+    if (view !== "success" && view !== "blocked") return;
     if (cooldownMs <= 0) {
-      if (phase === "blocked") setPhase("form");
+      if (view === "blocked") setView("form");
       return;
     }
     const timer = window.setTimeout(() => setCooldownMs((v) => Math.max(0, v - 1000)), 1000);
     return () => window.clearTimeout(timer);
-  }, [phase, cooldownMs]);
+  }, [view, cooldownMs]);
 
   return (
     <section className="cta" id="contato">
@@ -130,10 +65,10 @@ export function CTASection() {
       {/* biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative, non-interactive canvas */}
       <canvas className="particles" ref={particlesRef} aria-hidden="true" />
       <Reveal as="div" className="container cta-inner">
-        {phase !== "form" ? (
-          <StatusCard variant={phase} cooldownMs={cooldownMs} />
+        {view === "success" || view === "blocked" ? (
+          <SubmissionOutcome variant={view} cooldownMs={cooldownMs} />
         ) : (
-          <>
+          <div className={`cta-form-wrap${view === "leaving" ? " is-leaving" : ""}`}>
             <h2>
               Seu negócio merece um software
               <br />
@@ -202,7 +137,7 @@ export function CTASection() {
             <div className="cta-note">
               Conversa sem compromisso. Sem contrato de fidelidade de plataforma pronta.
             </div>
-          </>
+          </div>
         )}
       </Reveal>
     </section>
