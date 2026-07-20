@@ -24,6 +24,15 @@ function getClientIp(hdrs: Headers) {
   return hdrs.get("x-real-ip") ?? "unknown";
 }
 
+// DIAGNÓSTICO TEMPORÁRIO (remover após identificar a causa da regressão):
+// loga tudo que o Supabase/PostgREST devolve, em vez de engolir o erro.
+function logSupabaseIssue(label: string, payload: unknown) {
+  console.error(
+    `[submitLead:DIAG] ${label}`,
+    JSON.stringify(payload, Object.getOwnPropertyNames((payload as object) ?? {}), 2),
+  );
+}
+
 export async function submitLead(
   _prevState: LeadFormState,
   formData: FormData,
@@ -74,21 +83,35 @@ export async function submitLead(
     if (email) identifierFilters.push(["email", email]);
 
     for (const [column, value] of identifierFilters) {
-      const { count } = await supabase
+      const { count, error, status, statusText } = await supabase
         .from("leads")
         .select("*", { count: "exact", head: true })
         .eq(column, value)
         .gte("created_at", cooldownAgo);
+      if (error) {
+        logSupabaseIssue(`cooldown check failed (column=${column})`, {
+          error,
+          status,
+          statusText,
+        });
+      }
       if ((count ?? 0) > 0) {
         return { status: "error", message: COOLDOWN_MESSAGE };
       }
     }
 
-    const { count: hourCount } = await supabase
+    const {
+      count: hourCount,
+      error: hourError,
+      status: hourStatus,
+    } = await supabase
       .from("leads")
       .select("*", { count: "exact", head: true })
       .eq("ip_address", ip)
       .gte("created_at", hourAgo);
+    if (hourError) {
+      logSupabaseIssue("hourly rate-limit check failed", { error: hourError, status: hourStatus });
+    }
     if ((hourCount ?? 0) >= perIpPerHour) {
       return {
         status: "error",
@@ -96,11 +119,18 @@ export async function submitLead(
       };
     }
 
-    const { count: dayCount } = await supabase
+    const {
+      count: dayCount,
+      error: dayError,
+      status: dayStatus,
+    } = await supabase
       .from("leads")
       .select("*", { count: "exact", head: true })
       .eq("ip_address", ip)
       .gte("created_at", dayAgo);
+    if (dayError) {
+      logSupabaseIssue("daily rate-limit check failed", { error: dayError, status: dayStatus });
+    }
     if ((dayCount ?? 0) >= perIpPerDay) {
       return {
         status: "error",
@@ -112,7 +142,7 @@ export async function submitLead(
       ? buildAttributionInsertFields(context, { userAgent: hdrs.get("user-agent") })
       : {};
 
-    const { error } = await supabase.from("leads").insert({
+    const insertPayload = {
       name,
       email,
       company,
@@ -120,10 +150,12 @@ export async function submitLead(
       message: message || null,
       ip_address: ip,
       ...attribution,
-    });
+    };
+
+    const { error, status, statusText } = await supabase.from("leads").insert(insertPayload);
 
     if (error) {
-      console.error("submitLead: insert failed", error);
+      logSupabaseIssue("insert failed", { error, status, statusText, payload: insertPayload });
       return { status: "error", message: GENERIC_ERROR };
     }
 
@@ -132,7 +164,11 @@ export async function submitLead(
       message: "Recebemos sua solicitação. Entraremos em contato em breve.",
     };
   } catch (err) {
-    console.error("submitLead: unexpected error", err);
+    logSupabaseIssue("unexpected exception", {
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+      raw: err,
+    });
     return { status: "error", message: GENERIC_ERROR };
   }
 }
