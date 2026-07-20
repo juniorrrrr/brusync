@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { OwnershipCompare } from "@/components/sections/OwnershipCompare";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { useDataFlow } from "@/hooks/useDataFlow";
@@ -12,31 +13,6 @@ const AFTER_CHIPS = [
   "Automação",
   "Agentes de IA",
   "Indicadores em tempo real",
-];
-
-const OWNERSHIP_COLUMNS = [
-  {
-    title: "Plataforma pronta (SaaS)",
-    tone: "bad" as const,
-    rows: [
-      "Mensalidade que só cresce",
-      "Sua marca escondida atrás da marca deles",
-      "Domínio de terceiros",
-      "Funcionalidades genéricas, iguais para todo mundo",
-      "Parou de pagar? Perdeu tudo.",
-    ],
-  },
-  {
-    title: "Software Brusync",
-    tone: "good" as const,
-    rows: [
-      "Você é dono do sistema",
-      "Sua marca, do login ao dashboard",
-      "Seu domínio",
-      "Construído para a forma como você trabalha",
-      "Cresce com a sua empresa, para sempre",
-    ],
-  },
 ];
 
 const PLATFORMS: SourcePlatform[] = [
@@ -375,28 +351,8 @@ export function TransformationSection() {
           ))}
         </Reveal>
 
-        <Reveal className="own-compare" delay={5}>
-          <div className="own-heading">
-            <h3>Isso não é um software alugado.</h3>
-            <p>
-              É o seu <span className="accent">ativo digital.</span>
-            </p>
-          </div>
-          <div className="own-cols">
-            {OWNERSHIP_COLUMNS.map((col) => (
-              <div className={`own-col own-col-${col.tone}`} key={col.title}>
-                <h4>{col.title}</h4>
-                {col.rows.map((row) => (
-                  <div className="own-row" key={row}>
-                    <span className="own-mark" aria-hidden="true">
-                      {col.tone === "good" ? "✓" : "✕"}
-                    </span>
-                    {row}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+        <Reveal delay={5}>
+          <OwnershipCompare />
         </Reveal>
       </Container>
     </section>

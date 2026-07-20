@@ -7,6 +7,13 @@ export const antiBotConfig = {
     perIpPerHour: 5,
     perIpPerDay: 20,
   },
+  /** Formulário de contato (CTA "Quero meu software"). */
+  leadRateLimit: {
+    /** Nenhum identificador (IP, visitante, sessão ou e-mail) pode reenviar antes disso. */
+    cooldownMs: 60_000,
+    perIpPerHour: 8,
+    perIpPerDay: 25,
+  },
   /** Domínios de e-mail temporário/descartável conhecidos. */
   disposableEmailDomains: [
     "mailinator.com",

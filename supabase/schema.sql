@@ -119,7 +119,14 @@ alter table public.leads add column if not exists language text;
 alter table public.leads add column if not exists timezone text;
 alter table public.leads add column if not exists user_agent text;
 
+-- Sinal anti-abuso usado para rate limiting no servidor (mesmo padrão de
+-- material_leads: nunca exibido publicamente).
+alter table public.leads add column if not exists ip_address text;
+
 create index if not exists leads_email_idx on public.leads (email);
+create index if not exists leads_ip_created_idx on public.leads (ip_address, created_at desc);
+create index if not exists leads_visitor_created_idx on public.leads (visitor_id, created_at desc);
+create index if not exists leads_session_created_idx on public.leads (session_id, created_at desc);
 
 -- ============================================================================
 -- Brusync OS — perfis de usuário do painel interno (login em /login).
