@@ -21,23 +21,23 @@ export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColu
     setDraggingId(null);
     if (!leadId) return;
 
-    let moved = false;
+    // Read current state synchronously to decide whether a move is needed —
+    // a flag set *inside* the setColumns updater can't be read right after
+    // calling setColumns, because that updater runs during React's next
+    // render pass, not synchronously in this function.
+    const currentLead = columns.flatMap((col) => col.leads).find((l) => l.id === leadId);
+    if (!currentLead || currentLead.stageId === stageId) return;
+
     setColumns((prev) => {
-      let movedLead: CrmLeadWithRelations | undefined;
-      const withoutLead = prev.map((col) => {
-        const found = col.leads.find((l) => l.id === leadId);
-        if (found) movedLead = found;
-        return { ...col, leads: col.leads.filter((l) => l.id !== leadId) };
-      });
-      if (!movedLead || movedLead.stageId === stageId) return prev;
-      moved = true;
-      const updatedLead = { ...movedLead, stageId };
+      const updatedLead: CrmLeadWithRelations = { ...currentLead, stageId };
+      const withoutLead = prev.map((col) => ({
+        ...col,
+        leads: col.leads.filter((l) => l.id !== leadId),
+      }));
       return withoutLead.map((col) =>
         col.stage.id === stageId ? { ...col, leads: [updatedLead, ...col.leads] } : col,
       );
     });
-
-    if (!moved) return;
 
     startTransition(async () => {
       const result = await moveLeadStageAction(leadId, stageId);
