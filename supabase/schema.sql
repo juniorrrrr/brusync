@@ -176,3 +176,269 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ============================================================================
+-- Brusync OS — CRM (Fase 2): pipeline comercial, leads de trabalho e clientes.
+-- Tudo aditivo: public.leads (captura do formulário do site), material_leads
+-- e profiles continuam exatamente como estão. crm_leads é a entidade de
+-- funil comercial (diferente do registro bruto de marketing em public.leads)
+-- e pode opcionalmente referenciar o lead de marketing que a originou via
+-- source_lead_id — leads criados manualmente pelo time comercial não têm
+-- esse vínculo.
+-- ============================================================================
+
+-- Função utilitária para manter updated_at em dia nas tabelas que a possuem.
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+-- ----------------------------------------------------------------------------
+-- Estágios do pipeline. Guardados em tabela (não enum) para permitir que uma
+-- fase futura ofereça uma UI de configuração sem exigir migration de schema;
+-- esta fase não entrega essa UI, só a estrutura.
+-- ----------------------------------------------------------------------------
+create table if not exists public.pipeline_stages (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  key text not null unique,
+  label text not null,
+  color text not null default 'neutral' check (color in ('info', 'warn', 'ok', 'neutral', 'danger')),
+  position integer not null,
+  is_won boolean not null default false
+);
+
+alter table public.pipeline_stages enable row level security;
+
+insert into public.pipeline_stages (key, label, color, position, is_won)
+values
+  ('novo', 'Novo', 'info', 1, false),
+  ('contato', 'Em contato', 'warn', 2, false),
+  ('qualificado', 'Qualificado', 'warn', 3, false),
+  ('proposta', 'Proposta', 'info', 4, false),
+  ('fechado', 'Fechado', 'ok', 5, true)
+on conflict (key) do nothing;
+
+-- ----------------------------------------------------------------------------
+-- Leads do funil comercial (entidade de trabalho do CRM).
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_leads (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  source_lead_id uuid references public.leads (id) on delete set null,
+  name text not null,
+  company text,
+  email text,
+  phone text,
+  origin text,
+  stage_id uuid not null references public.pipeline_stages (id),
+  owner_id uuid references public.profiles (id) on delete set null,
+  potential_value numeric(14, 2),
+  score integer not null default 0,
+  tags text[] not null default '{}',
+  last_interaction_at timestamptz,
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.crm_leads enable row level security;
+
+create index if not exists crm_leads_stage_idx on public.crm_leads (stage_id);
+create index if not exists crm_leads_owner_idx on public.crm_leads (owner_id);
+create index if not exists crm_leads_email_idx on public.crm_leads (email);
+create index if not exists crm_leads_created_idx on public.crm_leads (created_at desc);
+create index if not exists crm_leads_source_lead_idx on public.crm_leads (source_lead_id);
+
+drop trigger if exists set_crm_leads_updated_at on public.crm_leads;
+create trigger set_crm_leads_updated_at
+  before update on public.crm_leads
+  for each row execute function public.set_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- Timeline unificada de um lead: notas, mudanças de estágio, ligações,
+-- e-mails, reuniões e tarefas. due_at/done só fazem sentido para type='task'
+-- ("Próximas tarefas" no dashboard); ficam null para os demais tipos.
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_lead_activities (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  crm_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  type text not null check (type in ('note', 'stage_change', 'call', 'email', 'meeting', 'task', 'system')),
+  title text not null,
+  body text,
+  metadata jsonb,
+  due_at timestamptz,
+  done boolean not null default false,
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.crm_lead_activities enable row level security;
+
+create index if not exists crm_lead_activities_lead_idx on public.crm_lead_activities (crm_lead_id, created_at desc);
+create index if not exists crm_lead_activities_task_idx on public.crm_lead_activities (due_at) where type = 'task' and done = false;
+
+-- ----------------------------------------------------------------------------
+-- Arquivos anexados a um lead. Os binários ficam no bucket Storage privado
+-- crm-lead-files (criado abaixo); esta tabela só guarda os metadados.
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_lead_files (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  crm_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  storage_path text not null,
+  file_name text not null,
+  file_size integer,
+  mime_type text,
+  uploaded_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.crm_lead_files enable row level security;
+
+create index if not exists crm_lead_files_lead_idx on public.crm_lead_files (crm_lead_id);
+
+-- ----------------------------------------------------------------------------
+-- Clientes: entidade própria (não é uma view/filtro sobre crm_leads), com
+-- vínculo opcional ao lead que a originou, para suportar ciclo de vida e
+-- campos próprios de cliente sem acoplar ao funil de vendas.
+-- ----------------------------------------------------------------------------
+create table if not exists public.clients (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  source_crm_lead_id uuid references public.crm_leads (id) on delete set null,
+  company text not null,
+  name text,
+  email text,
+  phone text,
+  owner_id uuid references public.profiles (id) on delete set null,
+  status text not null default 'ativo' check (status in ('ativo', 'inativo', 'em_risco')),
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.clients enable row level security;
+
+create index if not exists clients_owner_idx on public.clients (owner_id);
+create index if not exists clients_status_idx on public.clients (status);
+create index if not exists clients_source_lead_idx on public.clients (source_crm_lead_id);
+
+drop trigger if exists set_clients_updated_at on public.clients;
+create trigger set_clients_updated_at
+  before update on public.clients
+  for each row execute function public.set_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- RLS: acesso interno (equipe Brusync). O papel "cliente" de profiles.role é
+-- reservado a um futuro portal externo — nesta fase ele não enxerga nenhuma
+-- tabela de CRM. Toda leitura/escrita passa pelo client autenticado por
+-- cookie (services/supabase/authServer.ts), nunca pela service role.
+-- ----------------------------------------------------------------------------
+create or replace function public.is_internal_staff()
+returns boolean
+language sql
+stable
+security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid()
+      and role in ('administrador', 'gestor', 'comercial', 'atendimento')
+  );
+$$;
+
+drop policy if exists "Equipe interna lê pipeline_stages" on public.pipeline_stages;
+create policy "Equipe interna lê pipeline_stages"
+  on public.pipeline_stages for select
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê crm_leads" on public.crm_leads;
+create policy "Equipe interna lê crm_leads"
+  on public.crm_leads for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_leads" on public.crm_leads;
+create policy "Equipe interna cria crm_leads"
+  on public.crm_leads for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza crm_leads" on public.crm_leads;
+create policy "Equipe interna atualiza crm_leads"
+  on public.crm_leads for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga crm_leads" on public.crm_leads;
+create policy "Equipe interna apaga crm_leads"
+  on public.crm_leads for delete
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê crm_lead_activities" on public.crm_lead_activities;
+create policy "Equipe interna lê crm_lead_activities"
+  on public.crm_lead_activities for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_lead_activities" on public.crm_lead_activities;
+create policy "Equipe interna cria crm_lead_activities"
+  on public.crm_lead_activities for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza crm_lead_activities" on public.crm_lead_activities;
+create policy "Equipe interna atualiza crm_lead_activities"
+  on public.crm_lead_activities for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga crm_lead_activities" on public.crm_lead_activities;
+create policy "Equipe interna apaga crm_lead_activities"
+  on public.crm_lead_activities for delete
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê crm_lead_files" on public.crm_lead_files;
+create policy "Equipe interna lê crm_lead_files"
+  on public.crm_lead_files for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_lead_files" on public.crm_lead_files;
+create policy "Equipe interna cria crm_lead_files"
+  on public.crm_lead_files for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga crm_lead_files" on public.crm_lead_files;
+create policy "Equipe interna apaga crm_lead_files"
+  on public.crm_lead_files for delete
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê clients" on public.clients;
+create policy "Equipe interna lê clients"
+  on public.clients for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria clients" on public.clients;
+create policy "Equipe interna cria clients"
+  on public.clients for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza clients" on public.clients;
+create policy "Equipe interna atualiza clients"
+  on public.clients for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga clients" on public.clients;
+create policy "Equipe interna apaga clients"
+  on public.clients for delete
+  using (public.is_internal_staff());
+
+-- ----------------------------------------------------------------------------
+-- Storage: bucket privado para os arquivos anexados a um lead. Nunca
+-- público — acesso só via signed URL gerada no servidor.
+-- ----------------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('crm-lead-files', 'crm-lead-files', false)
+on conflict (id) do nothing;
+
+drop policy if exists "Equipe interna lê arquivos crm-lead-files" on storage.objects;
+create policy "Equipe interna lê arquivos crm-lead-files"
+  on storage.objects for select
+  using (bucket_id = 'crm-lead-files' and public.is_internal_staff());
+drop policy if exists "Equipe interna envia arquivos crm-lead-files" on storage.objects;
+create policy "Equipe interna envia arquivos crm-lead-files"
+  on storage.objects for insert
+  with check (bucket_id = 'crm-lead-files' and public.is_internal_staff());
+drop policy if exists "Equipe interna apaga arquivos crm-lead-files" on storage.objects;
+create policy "Equipe interna apaga arquivos crm-lead-files"
+  on storage.objects for delete
+  using (bucket_id = 'crm-lead-files' and public.is_internal_staff());

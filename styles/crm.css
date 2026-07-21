@@ -1011,3 +1011,514 @@
     animation: none;
   }
 }
+
+/* ============================================================
+   Fase 2 — Drawer lateral (Lead Detail)
+   ============================================================ */
+.crm-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 28, 58, 0.42);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.crm-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.crm-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(560px, 100vw);
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.crm-drawer.open {
+  transform: translateX(0);
+}
+.crm-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 22px 22px 0;
+  flex-shrink: 0;
+}
+.crm-drawer-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.crm-drawer-close:hover {
+  background: var(--surface);
+  color: var(--primary);
+}
+.crm-drawer-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 16px 22px 0;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.crm-drawer-tab {
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.crm-drawer-tab:hover {
+  color: var(--primary);
+}
+.crm-drawer-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--accent);
+}
+.crm-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 22px 28px;
+}
+.crm-drawer-section + .crm-drawer-section {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+.crm-drawer-section-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.crm-drawer-loading,
+.crm-drawer-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+@media (max-width: 640px) {
+  .crm-drawer {
+    width: 100vw;
+  }
+}
+
+/* Tags */
+.crm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.crm-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--secondary);
+  background: rgba(31, 94, 255, 0.08);
+  border: 1px solid rgba(31, 94, 255, 0.18);
+  border-radius: 99px;
+  padding: 3px 10px;
+}
+
+/* Composer (nova atividade / nota) */
+.crm-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 18px;
+}
+.crm-composer-row {
+  display: flex;
+  gap: 10px;
+}
+.crm-composer textarea {
+  min-height: 64px;
+}
+.crm-composer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Timeline task checkbox */
+.crm-task-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+.crm-task-check.done {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.crm-timeline-title.done {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* Arquivos */
+.crm-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-file-row:first-child {
+  border-top: none;
+}
+.crm-file-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: var(--secondary);
+  flex-shrink: 0;
+}
+.crm-file-info {
+  flex: 1;
+  min-width: 0;
+}
+.crm-file-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.crm-file-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.crm-file-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.crm-file-drop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ============================================================
+   Fase 2 — Toolbar / busca / filtros (Leads)
+   ============================================================ */
+.crm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.crm-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+.crm-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+}
+.crm-search input {
+  width: 100%;
+  font-size: 13.5px;
+  padding: 9px 12px 9px 34px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+.crm-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.crm-select {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+}
+.crm-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(31, 94, 255, 0.06);
+  border: 1px solid rgba(31, 94, 255, 0.18);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  flex-wrap: wrap;
+}
+.crm-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.crm-th-check {
+  width: 36px;
+}
+.crm-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.crm-sort-btn svg {
+  width: 11px;
+  height: 11px;
+  opacity: 0.5;
+}
+.crm-sort-btn.active svg {
+  opacity: 1;
+  color: var(--accent);
+}
+.crm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.crm-pagination-btns {
+  display: flex;
+  gap: 6px;
+}
+.crm-page-btn {
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+  background: #fff;
+  transition: all 0.2s ease;
+}
+.crm-page-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.crm-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   Fase 2 — Kanban drag & drop
+   ============================================================ */
+.crm-kanban-col.drag-over {
+  background: rgba(37, 208, 195, 0.08);
+  border-color: var(--accent);
+}
+.crm-kanban-card {
+  cursor: grab;
+}
+.crm-kanban-card.dragging {
+  opacity: 0.4;
+}
+.crm-kanban-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.crm-kanban-owner {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  font-size: 9px;
+}
+
+/* ============================================================
+   Fase 2 — Listas compactas do Dashboard (atividades, tarefas, downloads)
+   ============================================================ */
+.crm-mini-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+.crm-mini-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-mini-row:first-child {
+  border-top: none;
+}
+.crm-mini-ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--secondary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.crm-mini-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.crm-mini-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.crm-mini-trail {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.crm-funnel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+}
+.crm-funnel-label {
+  width: 96px;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.crm-funnel-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.crm-funnel-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+.crm-funnel-count {
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* ============================================================
+   Fase 2 — Modal (Novo Lead / Novo Cliente)
+   ============================================================ */
+.crm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 28, 58, 0.42);
+  backdrop-filter: blur(2px);
+  z-index: 70;
+  border: none;
+  cursor: default;
+}
+.crm-modal-center {
+  position: fixed;
+  inset: 0;
+  z-index: 71;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 6vh 20px;
+  overflow-y: auto;
+  pointer-events: none;
+}
+.crm-modal {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  pointer-events: auto;
+}
+.crm-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.crm-modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.crm-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.crm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}

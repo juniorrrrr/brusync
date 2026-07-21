@@ -1,30 +1,29 @@
 import type { Metadata } from "next";
+import { getOwnerOptions, getPipelineData } from "@/application/crm/leadsQueries";
+import { CreateLeadDialog } from "@/components/crm/leads/CreateLeadDialog";
 import { PipelineBoard } from "@/components/kanban/PipelineBoard";
-import { getPipelineColumns } from "@/lib/crm/mockData";
 
 export const metadata: Metadata = {
   title: "Pipeline — Brusync OS",
   robots: { index: false, follow: false },
 };
 
-export default function PipelinePage() {
-  const columns = getPipelineColumns();
+export default async function PipelinePage() {
+  const [{ columns }, owners] = await Promise.all([getPipelineData(), getOwnerOptions()]);
 
   return (
     <div>
       <div className="crm-page-head">
         <div>
           <h1 className="crm-page-title">Pipeline</h1>
-          <p className="crm-page-sub">Funil comercial por estágio</p>
+          <p className="crm-page-sub">Funil comercial por estágio — arraste para mover</p>
         </div>
         <div className="crm-page-actions">
-          <button type="button" className="btn btn-accent">
-            Novo Lead
-          </button>
+          <CreateLeadDialog owners={owners} />
         </div>
       </div>
 
-      <PipelineBoard columns={columns} />
+      <PipelineBoard initialColumns={columns} />
     </div>
   );
 }

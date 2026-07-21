@@ -25,7 +25,7 @@ export const CRM_NAV: NavSection[] = [
     items: [
       { label: "Leads", href: "/leads", icon: IconTarget },
       { label: "Pipeline", href: "/pipeline", icon: IconFunnel },
-      { label: "Clientes", icon: IconBuilding, soon: true },
+      { label: "Clientes", href: "/clientes", icon: IconBuilding },
     ],
   },
   {

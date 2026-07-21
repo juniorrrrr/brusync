@@ -4,14 +4,12 @@ import type { IconProps } from "@/components/ui/icons";
 export function KpiCard({
   label,
   value,
-  delta,
-  direction,
+  hint,
   icon: Icon,
 }: {
   label: string;
   value: string;
-  delta: string;
-  direction: "up" | "down";
+  hint?: string;
   icon: ComponentType<IconProps>;
 }) {
   return (
@@ -23,9 +21,7 @@ export function KpiCard({
         </span>
       </div>
       <div className="crm-kpi-val">{value}</div>
-      <div className={`crm-kpi-delta ${direction}`}>
-        {direction === "up" ? "↑" : "↓"} {delta}
-      </div>
+      {hint && <div className="crm-kpi-delta">{hint}</div>}
     </div>
   );
 }

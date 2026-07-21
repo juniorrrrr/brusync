@@ -1,20 +1,37 @@
 import { LineChart } from "@/components/dashboard-mock/primitives/charts";
+import { buildSparklinePath } from "@/domain/crm/sparkline";
 
-const PERFORMANCE_PATH =
-  "M0 78 L30 66 L60 70 L90 52 L120 58 L150 38 L180 44 L210 26 L240 32 L270 14 L300 20";
+export function PerformancePanel({
+  dailyCounts,
+}: {
+  dailyCounts: { date: string; count: number }[];
+}) {
+  const values = dailyCounts.map((d) => d.count);
+  const path = buildSparklinePath(values, 110);
+  const total = values.reduce((sum, v) => sum + v, 0);
 
-export function PerformancePanel() {
+  const half = Math.floor(values.length / 2);
+  const firstHalf = values.slice(0, half).reduce((sum, v) => sum + v, 0);
+  const secondHalf = values.slice(half).reduce((sum, v) => sum + v, 0);
+  const trend = firstHalf > 0 ? Math.round(((secondHalf - firstHalf) / firstHalf) * 100) : null;
+
   return (
     <div className="crm-card crm-card-pad reveal in">
       <div className="crm-card-head">
         <div>
           <div className="crm-card-title">Performance</div>
-          <div className="crm-card-sub">Leads gerados — últimos 30 dias</div>
+          <div className="crm-card-sub">
+            {total} lead{total === 1 ? "" : "s"} nos últimos {dailyCounts.length} dias
+          </div>
         </div>
-        <span className="crm-badge ok">↑ 18.4%</span>
+        {trend !== null && (
+          <span className={`crm-badge ${trend >= 0 ? "ok" : "danger"}`}>
+            {trend >= 0 ? "↑" : "↓"} {Math.abs(trend)}%
+          </span>
+        )}
       </div>
       <div className="crm-chart-wrap">
-        <LineChart d={PERFORMANCE_PATH} color="var(--secondary)" height={110} />
+        <LineChart d={path} color="var(--secondary)" height={110} />
       </div>
     </div>
   );

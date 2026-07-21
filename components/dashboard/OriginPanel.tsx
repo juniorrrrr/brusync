@@ -1,34 +1,51 @@
 import { DonutChart } from "@/components/dashboard-mock/primitives/charts";
+import type { OriginCount } from "@/repositories/crm/dashboardRepository";
 
-const ORIGINS = [
-  { label: "Google Ads", value: 38, color: "var(--secondary)" },
-  { label: "Instagram", value: 24, color: "var(--accent)" },
-  { label: "Indicação", value: 18, color: "#12a594" },
-  { label: "Orgânico", value: 12, color: "#b8722a" },
-  { label: "Outros", value: 8, color: "var(--border)" },
+const COLORS = [
+  "var(--secondary)",
+  "var(--accent)",
+  "#12a594",
+  "#b8722a",
+  "#7c5cff",
+  "var(--border)",
 ];
 
-export function OriginPanel() {
+export function OriginPanel({ originCounts }: { originCounts: OriginCount[] }) {
+  const total = originCounts.reduce((sum, o) => sum + o.count, 0);
+  const segments = originCounts.map((origin, index) => ({
+    label: origin.label,
+    value: origin.count,
+    color: COLORS[index % COLORS.length],
+  }));
+
   return (
     <div className="crm-card crm-card-pad reveal in">
       <div className="crm-card-head">
         <div>
           <div className="crm-card-title">Origem dos Leads</div>
-          <div className="crm-card-sub">Distribuição por canal — últimos 30 dias</div>
+          <div className="crm-card-sub">Distribuição por canal</div>
         </div>
       </div>
-      <div className="crm-origin-wrap">
-        <DonutChart segments={ORIGINS} size={104} />
-        <ul className="crm-origin-list">
-          {ORIGINS.map((origin) => (
-            <li key={origin.label} className="crm-origin-row">
-              <span className="crm-origin-dot" style={{ background: origin.color }} />
-              <span className="crm-origin-label">{origin.label}</span>
-              <span className="crm-origin-value">{origin.value}%</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {total === 0 ? (
+        <p className="crm-card-sub" style={{ marginTop: 12 }}>
+          Ainda não há leads registrados.
+        </p>
+      ) : (
+        <div className="crm-origin-wrap">
+          <DonutChart segments={segments} size={104} />
+          <ul className="crm-origin-list">
+            {segments.map((origin) => (
+              <li key={origin.label} className="crm-origin-row">
+                <span className="crm-origin-dot" style={{ background: origin.color }} />
+                <span className="crm-origin-label">{origin.label}</span>
+                <span className="crm-origin-value">
+                  {Math.round((origin.value / total) * 100)}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

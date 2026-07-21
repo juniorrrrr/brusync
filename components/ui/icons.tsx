@@ -155,3 +155,40 @@ export const IconLock = ({ size }: IconProps = {}) => (
     <path d="M8 10V7a4 4 0 0 1 8 0v3" />
   </Svg>
 );
+export const IconSearch = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.3-4.3" />
+  </Svg>
+);
+export const IconFilter = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M4 5h16M7 12h10M10 19h4" />
+  </Svg>
+);
+export const IconPaperclip = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M21 12.5 12.5 21a5 5 0 0 1-7-7L14 5.5a3.5 3.5 0 0 1 5 5L10.5 19a2 2 0 0 1-3-3l7-7" />
+  </Svg>
+);
+export const IconDownload = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+  </Svg>
+);
+export const IconTrash = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
+  </Svg>
+);
+export const IconPlus = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M12 5v14M5 12h14" />
+  </Svg>
+);
+export const IconSort = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M7 3v18M7 21l-3-3M7 21l3-3M17 21V3M17 3l-3 3M17 3l3 3" />
+  </Svg>
+);
