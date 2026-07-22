@@ -5,11 +5,15 @@ import {
   groupBy,
   type MarketingQueryFilters,
 } from "@/application/marketingAnalytics/dataset";
+import { getDemoLandingPageRows } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { LandingPageRow } from "@/types/marketing";
 
 export async function getLandingPageRows(
   filters: MarketingQueryFilters = {},
 ): Promise<LandingPageRow[]> {
+  if (await isDemoModeActive()) return getDemoLandingPageRows();
+
   const { leads } = await getMarketingDataset(filters);
   const withLanding = leads.filter((lead): lead is typeof lead & { landingPage: string } =>
     Boolean(lead.landingPage),

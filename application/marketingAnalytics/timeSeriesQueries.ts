@@ -4,6 +4,8 @@ import {
   getMarketingDataset,
   type MarketingQueryFilters,
 } from "@/application/marketingAnalytics/dataset";
+import { getDemoMarketingTimeSeries } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 
 export interface TimeSeriesPoint {
   date: string;
@@ -14,6 +16,8 @@ export interface TimeSeriesPoint {
 export async function getMarketingTimeSeries(
   filters: MarketingQueryFilters = {},
 ): Promise<TimeSeriesPoint[]> {
+  if (await isDemoModeActive()) return getDemoMarketingTimeSeries();
+
   const { leads } = await getMarketingDataset(filters);
 
   const buckets = new Map<string, { leads: number; revenue: number }>();

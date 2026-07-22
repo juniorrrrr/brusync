@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getDemoDashboardData } from "@/lib/demo/mockCrm";
 import { listRecentActivities } from "@/repositories/crm/activitiesRepository";
 import { countClients, countClientsSince } from "@/repositories/crm/clientsRepository";
 import {
@@ -29,6 +30,7 @@ import {
   listRecentMaterialDownloads,
 } from "@/repositories/crm/marketingRepository";
 import { listUpcomingTasksAcrossLeads } from "@/repositories/crm/tasksRepository";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CrmLeadWithRelations } from "@/types/crm";
 
@@ -71,6 +73,8 @@ export interface DashboardData {
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
+  if (await isDemoModeActive()) return getDemoDashboardData();
+
   const supabase = await getSupabaseAuthClient();
   const todayIso = startOfToday();
   const monthIso = startOfMonth();

@@ -42,6 +42,7 @@ import {
   moveLeadStageSchema,
   updateLeadSchema,
 } from "@/schemas/crm/lead.schema";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { LeadFile } from "@/types/crm";
 
@@ -54,8 +55,13 @@ function firstIssueMessage(error: { issues: { message: string }[] }) {
   return error.issues[0]?.message ?? "Dados inválidos.";
 }
 
+const DEMO_WRITE_BLOCKED_MESSAGE =
+  "Ação indisponível em Modo Demonstração — nenhuma escrita é enviada ao banco.";
+
 export async function fetchLeadDetail(leadId: string): Promise<LeadDetailData | null> {
   await requireCrmProfile();
+  if (await isDemoModeActive()) return getLeadDetailData(leadId);
+
   const supabase = await getSupabaseAuthClient();
   // Refresh score for whichever lead someone is actually opening — keeps the
   // purely time-based penalties (days stuck, no interaction) accurate for
@@ -83,6 +89,7 @@ export async function createLeadAction(
   formData: FormData,
 ): Promise<ActionState> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = createLeadSchema.safeParse({
     name: formData.get("name"),
@@ -149,6 +156,7 @@ export async function updateLeadAction(
   formData: FormData,
 ): Promise<ActionState> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = updateLeadSchema.safeParse({
     leadId: formData.get("leadId"),
@@ -210,6 +218,8 @@ export async function moveLeadStageAction(
   stageId: string,
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = moveLeadStageSchema.safeParse({ leadId, stageId });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -252,6 +262,8 @@ export async function markLeadLostAction(
   reason: string,
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = markLeadLostSchema.safeParse({ leadId, reason });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -273,6 +285,8 @@ export async function markLeadLostAction(
 
 export async function reopenLeadAction(leadId: string): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const supabase = await getSupabaseAuthClient();
   await reopenLead(supabase, leadId);
   await createActivity(supabase, {
@@ -291,6 +305,8 @@ export async function reopenLeadAction(leadId: string): Promise<{ ok: boolean; e
 
 export async function deleteLeadAction(leadId: string): Promise<{ ok: boolean; error?: string }> {
   await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const supabase = await getSupabaseAuthClient();
   await deleteLead(supabase, leadId);
 
@@ -306,6 +322,8 @@ export async function bulkUpdateLeadsAction(
   patch: { stageId?: string; ownerId?: string },
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = bulkUpdateLeadsSchema.safeParse({ leadIds, ...patch });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -360,6 +378,7 @@ export async function uploadLeadFileAction(
   formData: FormData,
 ): Promise<ActionState> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const crmLeadId = String(formData.get("crmLeadId") ?? "");
   const file = formData.get("file");
@@ -396,6 +415,8 @@ export async function deleteLeadFileAction(
   fileName: string,
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const supabase = await getSupabaseAuthClient();
   await deleteLeadFile(supabase, fileId, storagePath);
   await createActivity(supabase, {

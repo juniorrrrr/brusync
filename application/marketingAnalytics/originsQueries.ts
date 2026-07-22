@@ -11,13 +11,17 @@ import {
   MARKETING_ORIGIN_LABEL,
   MARKETING_ORIGINS,
 } from "@/domain/marketing/originRules";
+import { getDemoOriginMetrics } from "@/lib/demo/mockMarketing";
 import { listCampaignSpend } from "@/repositories/marketing/campaignSpendRepository";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { MarketingOrigin, OriginMetrics } from "@/types/marketing";
 
 export async function getOriginMetrics(
   filters: MarketingQueryFilters = {},
 ): Promise<OriginMetrics[]> {
+  if (await isDemoModeActive()) return getDemoOriginMetrics();
+
   const supabase = await getSupabaseAuthClient();
   const [{ leads }, spendEntries] = await Promise.all([
     getMarketingDataset(filters),

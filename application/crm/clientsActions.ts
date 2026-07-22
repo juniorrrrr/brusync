@@ -7,11 +7,15 @@ import type { ActionState } from "@/application/crm/leadsActions";
 import { getOwnerOptions } from "@/application/crm/leadsQueries";
 import { createClient, updateClient } from "@/repositories/crm/clientsRepository";
 import { createClientSchema, updateClientSchema } from "@/schemas/crm/client.schema";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 
 function firstIssueMessage(error: { issues: { message: string }[] }) {
   return error.issues[0]?.message ?? "Dados inválidos.";
 }
+
+const DEMO_WRITE_BLOCKED_MESSAGE =
+  "Ação indisponível em Modo Demonstração — nenhuma escrita é enviada ao banco.";
 
 export async function fetchClientDetail(clientId: string) {
   await requireCrmProfile();
@@ -24,6 +28,7 @@ export async function createClientAction(
   formData: FormData,
 ): Promise<ActionState> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = createClientSchema.safeParse({
     company: formData.get("company"),
@@ -59,6 +64,7 @@ export async function updateClientAction(
   formData: FormData,
 ): Promise<ActionState> {
   await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = updateClientSchema.safeParse({
     clientId: formData.get("clientId"),

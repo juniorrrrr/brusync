@@ -2,6 +2,8 @@ import "server-only";
 
 import { getExecutiveMetrics } from "@/application/marketingAnalytics/executiveQueries";
 import { percentChange, previousPeriod, resolvePeriodPreset } from "@/domain/marketing/period";
+import { getDemoExecutiveComparison } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { ExecutiveMetrics, MarketingPeriodPreset } from "@/types/marketing";
 
 export interface ExecutiveComparison {
@@ -21,6 +23,8 @@ export interface ExecutiveComparison {
 export async function getExecutiveComparison(
   preset: MarketingPeriodPreset,
 ): Promise<ExecutiveComparison> {
+  if (await isDemoModeActive()) return getDemoExecutiveComparison(preset);
+
   const current = resolvePeriodPreset(preset);
   const previous = previousPeriod(current);
 

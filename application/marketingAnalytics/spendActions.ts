@@ -8,6 +8,7 @@ import {
   upsertCampaignSpend,
 } from "@/repositories/marketing/campaignSpendRepository";
 import { upsertCampaignSpendSchema } from "@/schemas/marketing/spend.schema";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CampaignSpendEntry } from "@/types/marketing";
 
@@ -20,8 +21,12 @@ function firstIssueMessage(error: { issues: { message: string }[] }) {
   return error.issues[0]?.message ?? "Dados inválidos.";
 }
 
+const DEMO_WRITE_BLOCKED_MESSAGE =
+  "Ação indisponível em Modo Demonstração — nenhuma escrita é enviada ao banco.";
+
 export async function fetchCampaignSpendAction(): Promise<CampaignSpendEntry[]> {
   await requireCrmProfile();
+  if (await isDemoModeActive()) return [];
   const supabase = await getSupabaseAuthClient();
   return listCampaignSpend(supabase);
 }
@@ -31,6 +36,7 @@ export async function upsertCampaignSpendAction(
   formData: FormData,
 ): Promise<SpendActionState> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = upsertCampaignSpendSchema.safeParse({
     utmSource: formData.get("utmSource"),
@@ -65,6 +71,8 @@ export async function deleteCampaignSpendAction(
   id: string,
 ): Promise<{ ok: boolean; error?: string }> {
   await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const supabase = await getSupabaseAuthClient();
   await deleteCampaignSpend(supabase, id);
 

@@ -13,12 +13,16 @@ import {
   updateNote,
 } from "@/repositories/crm/notesRepository";
 import { createNoteSchema, deleteNoteSchema, updateNoteSchema } from "@/schemas/crm/note.schema";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { LeadNote } from "@/types/crm";
 
 function firstIssueMessage(error: { issues: { message: string }[] }) {
   return error.issues[0]?.message ?? "Dados inválidos.";
 }
+
+const DEMO_WRITE_BLOCKED_MESSAGE =
+  "Ação indisponível em Modo Demonstração — nenhuma escrita é enviada ao banco.";
 
 /** Fetched lazily, the first time the Notas tab is opened. */
 export async function fetchNotes(crmLeadId: string): Promise<LeadNote[]> {
@@ -32,6 +36,8 @@ export async function createNoteAction(
   body: string,
 ): Promise<{ ok: boolean; note?: LeadNote; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = createNoteSchema.safeParse({ crmLeadId, body });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -55,6 +61,8 @@ export async function updateNoteAction(
   body: string,
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = updateNoteSchema.safeParse({ noteId, body });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -75,6 +83,8 @@ export async function updateNoteAction(
 
 export async function deleteNoteAction(noteId: string): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = deleteNoteSchema.safeParse({ noteId });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 

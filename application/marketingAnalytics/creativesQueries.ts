@@ -5,6 +5,8 @@ import {
   groupBy,
   type MarketingQueryFilters,
 } from "@/application/marketingAnalytics/dataset";
+import { getDemoCreativeRows } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { CreativeRow } from "@/types/marketing";
 
 /** "Criativos" — only leads carrying a click ID (gclid/fbclid/msclkid/ttclid)
@@ -12,6 +14,8 @@ import type { CreativeRow } from "@/types/marketing";
  * ("Conjunto"). This is a UTM-based proxy, not real ad-platform creative
  * data — there's no Meta/Google Ads API integration yet (Fase 5 notes). */
 export async function getCreativeRows(filters: MarketingQueryFilters = {}): Promise<CreativeRow[]> {
+  if (await isDemoModeActive()) return getDemoCreativeRows();
+
   const { leads } = await getMarketingDataset(filters);
   const withClickId = leads.filter(
     (lead) => lead.gclid || lead.fbclid || lead.msclkid || lead.ttclid,

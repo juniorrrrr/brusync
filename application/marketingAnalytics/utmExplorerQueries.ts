@@ -5,6 +5,8 @@ import {
   getMarketingDataset,
   type MarketingQueryFilters,
 } from "@/application/marketingAnalytics/dataset";
+import { getDemoUtmFacets, getDemoUtmLeads } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { UtmFacetCount, UtmFacets, UtmLeadRow } from "@/types/marketing";
 
 function facet(
@@ -23,6 +25,8 @@ function facet(
 }
 
 export async function getUtmFacets(filters: MarketingQueryFilters = {}): Promise<UtmFacets> {
+  if (await isDemoModeActive()) return getDemoUtmFacets();
+
   const { leads } = await getMarketingDataset(filters);
   return {
     utmSource: facet(leads, (lead) => lead.utmSource),
@@ -42,6 +46,8 @@ export interface UtmExplorerFilters extends MarketingQueryFilters {
 }
 
 export async function getUtmLeads(filters: UtmExplorerFilters = {}): Promise<UtmLeadRow[]> {
+  if (await isDemoModeActive()) return getDemoUtmLeads(filters);
+
   const { utmSource, utmMedium, utmCampaign, utmContent, utmTerm, ...datasetFilters } = filters;
   const { leads } = await getMarketingDataset(datasetFilters);
 

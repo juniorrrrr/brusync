@@ -4,6 +4,8 @@ import {
   getMarketingDataset,
   type MarketingQueryFilters,
 } from "@/application/marketingAnalytics/dataset";
+import { getDemoMarketingFunnel } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { FunnelStageCount, MarketingFunnel } from "@/types/marketing";
 
 /** "Funil de Marketing" starts at Leads, not Visitantes — there's no
@@ -14,6 +16,8 @@ import type { FunnelStageCount, MarketingFunnel } from "@/types/marketing";
 export async function getMarketingFunnel(
   filters: MarketingQueryFilters = {},
 ): Promise<MarketingFunnel> {
+  if (await isDemoModeActive()) return getDemoMarketingFunnel();
+
   const { leads } = await getMarketingDataset(filters);
 
   const qualified = leads.filter((lead) => lead.isQualifiedOrBeyond).length;

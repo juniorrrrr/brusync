@@ -1954,3 +1954,45 @@
   border-radius: 5px;
   padding: 1px 6px;
 }
+
+/* ============================================================
+   Modo Demonstração — botão discreto no header.
+   ============================================================ */
+.crm-demo-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.crm-demo-toggle:hover {
+  border-color: var(--accent);
+  color: var(--primary);
+}
+.crm-demo-toggle-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.2s ease;
+}
+.crm-demo-toggle.active {
+  color: var(--warn);
+  background: var(--warn-bg);
+  border-color: transparent;
+}
+.crm-demo-toggle.active .crm-demo-toggle-dot {
+  background: var(--warn);
+}
+.crm-demo-toggle-placeholder {
+  display: inline-block;
+  width: 118px;
+  height: 30px;
+}

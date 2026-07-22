@@ -12,7 +12,9 @@ import {
   knownMetric,
   UNAVAILABLE_METRIC,
 } from "@/domain/marketing/metrics";
+import { getDemoCampaignRows } from "@/lib/demo/mockMarketing";
 import { listCampaignSpend } from "@/repositories/marketing/campaignSpendRepository";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CampaignRow } from "@/types/marketing";
 
@@ -60,6 +62,8 @@ function sortValue(row: CampaignRow, sortBy: CampaignSortKey): number {
 export async function getCampaignRows(
   options: CampaignQueryOptions = {},
 ): Promise<CampaignQueryResult> {
+  if (await isDemoModeActive()) return getDemoCampaignRows(options);
+
   const {
     search,
     sortBy = "leads",

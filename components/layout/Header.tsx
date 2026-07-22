@@ -1,5 +1,6 @@
 "use client";
 
+import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
 import { IconBell, IconLogout, IconMenu, IconSearch } from "@/components/ui/icons";
 import { signOut } from "@/services/auth/logout";
 import type { Profile } from "@/services/auth/session";
@@ -48,6 +49,8 @@ export function Header({
       </div>
 
       <div className="crm-header-right">
+        <DemoModeToggle />
+
         <button
           type="button"
           className="crm-cmdk-trigger"

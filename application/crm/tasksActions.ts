@@ -18,12 +18,16 @@ import {
   updateTaskSchema,
   updateTaskStatusSchema,
 } from "@/schemas/crm/task.schema";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { LeadTask } from "@/types/crm";
 
 function firstIssueMessage(error: { issues: { message: string }[] }) {
   return error.issues[0]?.message ?? "Dados inválidos.";
 }
+
+const DEMO_WRITE_BLOCKED_MESSAGE =
+  "Ação indisponível em Modo Demonstração — nenhuma escrita é enviada ao banco.";
 
 /** Fetched lazily, the first time the Tarefas tab is opened. */
 export async function fetchTasks(crmLeadId: string): Promise<LeadTask[]> {
@@ -41,6 +45,8 @@ export async function createTaskAction(input: {
   assigneeId?: string;
 }): Promise<{ ok: boolean; task?: LeadTask; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = createTaskSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -66,6 +72,8 @@ export async function updateTaskAction(input: {
   assigneeId?: string;
 }): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = updateTaskSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -91,6 +99,8 @@ export async function updateTaskStatusAction(
   status: "pending" | "in_progress" | "done",
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = updateTaskStatusSchema.safeParse({ taskId, status });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -117,6 +127,8 @@ export async function updateTaskStatusAction(
 
 export async function deleteTaskAction(taskId: string): Promise<{ ok: boolean; error?: string }> {
   const profile = await requireCrmProfile();
+  if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
+
   const parsed = deleteTaskSchema.safeParse({ taskId });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 

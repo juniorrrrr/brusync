@@ -6,6 +6,8 @@ import {
 } from "@/application/marketingAnalytics/dataset";
 import { getTotalInvestment } from "@/application/marketingAnalytics/spend";
 import { computeCac, computeRoas, computeRoi } from "@/domain/marketing/metrics";
+import { getDemoExecutiveMetrics } from "@/lib/demo/mockMarketing";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import type { ExecutiveMetrics } from "@/types/marketing";
 
 function daysBetween(a: string, b: string): number {
@@ -15,6 +17,8 @@ function daysBetween(a: string, b: string): number {
 export async function getExecutiveMetrics(
   filters: MarketingQueryFilters = {},
 ): Promise<ExecutiveMetrics> {
+  if (await isDemoModeActive()) return getDemoExecutiveMetrics();
+
   const [{ leads }, totalInvestment] = await Promise.all([
     getMarketingDataset(filters),
     getTotalInvestment(

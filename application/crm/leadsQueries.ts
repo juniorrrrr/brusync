@@ -1,6 +1,12 @@
 import "server-only";
 
 import {
+  getDemoLeadDetailData,
+  getDemoLeadsPageData,
+  getDemoOwnerOptions,
+  getDemoPipelineData,
+} from "@/lib/demo/mockCrm";
+import {
   getLeadById,
   type ListLeadsOptions,
   listAllLeadsForPipeline,
@@ -14,6 +20,7 @@ import {
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
 import { getOpenStageEntriesForLeads } from "@/repositories/crm/stageHistoryRepository";
 import { getNextTasksForLeads } from "@/repositories/crm/tasksRepository";
+import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CrmLeadWithRelations, PipelineColumn, PipelineStage } from "@/types/crm";
 
@@ -25,6 +32,8 @@ export interface LeadsPageData {
 }
 
 export async function getLeadsPageData(options: ListLeadsOptions = {}): Promise<LeadsPageData> {
+  if (await isDemoModeActive()) return getDemoLeadsPageData(options);
+
   const supabase = await getSupabaseAuthClient();
   const [{ leads, total }, stages, owners] = await Promise.all([
     listLeads(supabase, options),
@@ -36,11 +45,14 @@ export async function getLeadsPageData(options: ListLeadsOptions = {}): Promise<
 }
 
 export async function getOwnerOptions() {
+  if (await isDemoModeActive()) return getDemoOwnerOptions();
   const supabase = await getSupabaseAuthClient();
   return listOwnerOptions(supabase);
 }
 
 export async function getPipelineData(): Promise<{ columns: PipelineColumn[] }> {
+  if (await isDemoModeActive()) return getDemoPipelineData();
+
   const supabase = await getSupabaseAuthClient();
   const [stages, leads] = await Promise.all([
     listPipelineStages(supabase),
@@ -81,6 +93,8 @@ export interface LeadDetailData {
 }
 
 export async function getLeadDetailData(leadId: string): Promise<LeadDetailData | null> {
+  if (await isDemoModeActive()) return getDemoLeadDetailData(leadId);
+
   const supabase = await getSupabaseAuthClient();
   const lead = await getLeadById(supabase, leadId);
   if (!lead) return null;
