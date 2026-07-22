@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { toggleTaskDoneAction } from "@/application/crm/leadsActions";
+import { updateTaskStatusAction } from "@/application/crm/tasksActions";
 import { useLeadDrawer } from "@/contexts/crm/LeadDrawerContext";
 import { formatDateTime } from "@/domain/crm/format";
-import type { UpcomingTask } from "@/repositories/crm/activitiesRepository";
+import { isTaskOverdue } from "@/domain/crm/taskRules";
+import type { UpcomingTask } from "@/repositories/crm/tasksRepository";
 
 export function UpcomingTasksPanel({ tasks }: { tasks: UpcomingTask[] }) {
   const { openLead } = useLeadDrawer();
@@ -14,7 +15,7 @@ export function UpcomingTasksPanel({ tasks }: { tasks: UpcomingTask[] }) {
   function handleToggle(taskId: string) {
     setDone((prev) => new Set(prev).add(taskId));
     startTransition(async () => {
-      await toggleTaskDoneAction(taskId, true);
+      await updateTaskStatusAction(taskId, "done");
     });
   }
 
@@ -50,7 +51,7 @@ export function UpcomingTasksPanel({ tasks }: { tasks: UpcomingTask[] }) {
                 <div className="crm-mini-title">{task.title}</div>
                 <div className="crm-mini-meta">{task.leadName}</div>
               </button>
-              <span className="crm-mini-trail">
+              <span className={`crm-mini-trail${isTaskOverdue(task) ? " danger" : ""}`}>
                 {task.dueAt ? formatDateTime(task.dueAt) : "Sem prazo"}
               </span>
             </div>

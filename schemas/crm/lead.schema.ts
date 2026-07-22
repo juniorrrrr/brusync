@@ -3,6 +3,8 @@ import { z } from "zod";
 export const createLeadSchema = z.object({
   name: z.string().trim().min(1, "Informe o nome"),
   company: z.string().trim().optional(),
+  jobTitle: z.string().trim().optional(),
+  city: z.string().trim().optional(),
   email: z.string().trim().email("E-mail inválido").optional().or(z.literal("")),
   phone: z.string().trim().optional(),
   origin: z.string().trim().optional(),
@@ -18,6 +20,8 @@ export const updateLeadSchema = z.object({
   leadId: z.string().uuid(),
   name: z.string().trim().min(1).optional(),
   company: z.string().trim().optional(),
+  jobTitle: z.string().trim().optional(),
+  city: z.string().trim().optional(),
   email: z.string().trim().email("E-mail inválido").optional().or(z.literal("")),
   phone: z.string().trim().optional(),
   origin: z.string().trim().optional(),

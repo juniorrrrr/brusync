@@ -9,7 +9,7 @@ import {
 import type { CrmLead, CrmLeadWithRelations } from "@/types/crm";
 
 const LEAD_WITH_RELATIONS_SELECT = `
-  id, created_at, updated_at, source_lead_id, name, company, email, phone, origin,
+  id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin,
   stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by,
   stage:pipeline_stages!crm_leads_stage_id_fkey (id, key, label, color, position, is_won),
   owner:profiles!crm_leads_owner_id_fkey (id, name, email)
@@ -99,6 +99,8 @@ export async function getLeadById(
 export interface CreateLeadPayload {
   name: string;
   company?: string | null;
+  jobTitle?: string | null;
+  city?: string | null;
   email?: string | null;
   phone?: string | null;
   origin?: string | null;
@@ -119,6 +121,8 @@ export async function createLead(
     .insert({
       name: payload.name,
       company: payload.company ?? null,
+      job_title: payload.jobTitle ?? null,
+      city: payload.city ?? null,
       email: payload.email ?? null,
       phone: payload.phone ?? null,
       origin: payload.origin ?? null,
@@ -130,7 +134,7 @@ export async function createLead(
       created_by: payload.createdBy,
     })
     .select(
-      "id, created_at, updated_at, source_lead_id, name, company, email, phone, origin, stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by",
+      "id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin, stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by",
     )
     .single();
 
@@ -142,6 +146,8 @@ export async function createLead(
 export interface UpdateLeadPayload {
   name?: string;
   company?: string | null;
+  jobTitle?: string | null;
+  city?: string | null;
   email?: string | null;
   phone?: string | null;
   origin?: string | null;
@@ -159,6 +165,8 @@ export async function updateLead(
   const payload: Record<string, unknown> = {};
   if (patch.name !== undefined) payload.name = patch.name;
   if (patch.company !== undefined) payload.company = patch.company;
+  if (patch.jobTitle !== undefined) payload.job_title = patch.jobTitle;
+  if (patch.city !== undefined) payload.city = patch.city;
   if (patch.email !== undefined) payload.email = patch.email;
   if (patch.phone !== undefined) payload.phone = patch.phone;
   if (patch.origin !== undefined) payload.origin = patch.origin;
@@ -217,6 +225,11 @@ export async function bulkUpdateLeads(
 
   const { error } = await supabase.from("crm_leads").update(payload).in("id", leadIds);
   if (error) throw new Error(`Falha ao atualizar leads em lote: ${error.message}`);
+}
+
+export async function deleteLead(supabase: SupabaseClient, leadId: string): Promise<void> {
+  const { error } = await supabase.from("crm_leads").delete().eq("id", leadId);
+  if (error) throw new Error(`Falha ao excluir lead: ${error.message}`);
 }
 
 export async function listOwnerOptions(

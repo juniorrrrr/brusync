@@ -1434,6 +1434,9 @@
   color: var(--muted);
   font-weight: 600;
 }
+.crm-mini-trail.danger {
+  color: var(--danger);
+}
 .crm-funnel-row {
   display: flex;
   align-items: center;
@@ -1521,4 +1524,383 @@
   justify-content: flex-end;
   gap: 10px;
   margin-top: 4px;
+}
+
+/* ============================================================
+   Fase 3 — Lead Workspace (Drawer grande, 21st.dev primitives)
+   ============================================================ */
+.crm-workspace-content {
+  width: 78vw;
+  max-width: 1280px;
+}
+@media (max-width: 1180px) {
+  .crm-workspace-content {
+    width: 92vw;
+  }
+}
+@media (max-width: 720px) {
+  .crm-workspace-content {
+    width: 100vw;
+  }
+}
+
+.crm-ws-header {
+  flex-shrink: 0;
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.crm-ws-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.crm-ws-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.crm-ws-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.crm-ws-name {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.crm-ws-subline {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.crm-ws-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.crm-ws-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin-top: 16px;
+}
+.crm-ws-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 5px 10px;
+}
+.crm-ws-meta-item strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+.crm-ws-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.crm-ws-close:hover {
+  background: var(--surface);
+  color: var(--primary);
+}
+
+.crm-ws-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0;
+}
+.crm-ws-main {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 28px 32px;
+}
+.crm-ws-side {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  border-left: 1px solid var(--border);
+  padding: 18px 20px 32px;
+  background: var(--surface);
+}
+@media (max-width: 900px) {
+  .crm-ws-body {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .crm-ws-main,
+  .crm-ws-side {
+    overflow-y: visible;
+  }
+  .crm-ws-side {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* Right panel cards (Accordion) */
+.crm-ws-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px 14px;
+  margin-bottom: 12px;
+}
+.crm-ws-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.crm-ws-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.crm-ws-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.crm-ws-row:first-child {
+  border-top: none;
+}
+.crm-ws-row-label {
+  color: var(--muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.crm-ws-row-value {
+  color: var(--text);
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* Timeline entries with icons */
+.crm-tl-item {
+  display: flex;
+  gap: 12px;
+  padding: 0 0 22px;
+  position: relative;
+}
+.crm-tl-item::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -6px;
+  width: 1px;
+  background: var(--border);
+}
+.crm-tl-item:last-child::before {
+  display: none;
+}
+.crm-tl-ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--secondary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.crm-tl-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.crm-tl-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.crm-tl-body {
+  font-size: 13px;
+  color: var(--text);
+  margin-top: 5px;
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+/* Notes */
+.crm-note-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.crm-note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.crm-note-body {
+  font-size: 13.5px;
+  color: var(--text);
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.crm-note-body textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: var(--text);
+  resize: vertical;
+  min-height: 60px;
+}
+.crm-note-body textarea:focus {
+  outline: none;
+}
+.crm-note-actions {
+  display: flex;
+  gap: 6px;
+}
+.crm-note-actions button {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.crm-note-actions button:hover {
+  color: var(--accent);
+}
+
+/* Tasks */
+.crm-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-task-row:first-child {
+  border-top: none;
+}
+.crm-task-row.done .crm-task-title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.crm-task-body {
+  flex: 1;
+  min-width: 0;
+}
+.crm-task-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.crm-task-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.crm-task-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.crm-task-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Composer shared by Notes/Tasks tabs */
+.crm-ws-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+.crm-ws-composer-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.crm-ws-composer-row > * {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Skeleton rows for lazy tabs */
+.crm-ws-skeleton-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+/* Dropdown menu (Mais ações) */
+.crm-dropdown {
+  position: relative;
+}
+.crm-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  z-index: 80;
+  padding: 6px;
+}
+.crm-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 7px;
+  text-align: left;
+}
+.crm-dropdown-item:hover {
+  background: var(--surface);
+}
+.crm-dropdown-item.danger {
+  color: var(--danger);
+}
+.crm-dropdown-item.danger:hover {
+  background: var(--danger-bg);
 }

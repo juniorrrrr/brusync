@@ -1,6 +1,6 @@
 import "server-only";
 
-import { listRecentActivities, listUpcomingTasks } from "@/repositories/crm/activitiesRepository";
+import { listRecentActivities } from "@/repositories/crm/activitiesRepository";
 import { countClients, countClientsSince } from "@/repositories/crm/clientsRepository";
 import {
   countLeadsSince,
@@ -17,6 +17,7 @@ import {
   countMaterialDownloadsSince,
   listRecentMaterialDownloads,
 } from "@/repositories/crm/marketingRepository";
+import { listUpcomingTasksAcrossLeads } from "@/repositories/crm/tasksRepository";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CrmLeadWithRelations } from "@/types/crm";
 
@@ -45,7 +46,7 @@ export interface DashboardData {
   dailyLeadCounts: { date: string; count: number }[];
   awaitingContact: CrmLeadWithRelations[];
   recentActivities: Awaited<ReturnType<typeof listRecentActivities>>;
-  upcomingTasks: Awaited<ReturnType<typeof listUpcomingTasks>>;
+  upcomingTasks: Awaited<ReturnType<typeof listUpcomingTasksAcrossLeads>>;
   recentDownloads: Awaited<ReturnType<typeof listRecentMaterialDownloads>>;
 }
 
@@ -81,7 +82,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     getDailyLeadCounts(supabase, 14),
     listAwaitingContactLeads(supabase, 6),
     listRecentActivities(supabase, 8),
-    listUpcomingTasks(supabase, 6),
+    listUpcomingTasksAcrossLeads(supabase, 6),
     listRecentMaterialDownloads(supabase, 6),
     countMaterialDownloadsSince(supabase, monthIso),
   ]);

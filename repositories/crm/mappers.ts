@@ -8,9 +8,13 @@ import type {
   CrmLeadWithRelations,
   LeadActivity,
   LeadFile,
+  LeadNote,
+  LeadTask,
   MaterialDownload,
   OwnerRef,
   PipelineStage,
+  TaskPriority,
+  TaskStatus,
 } from "@/types/crm";
 
 export interface PipelineStageRow {
@@ -51,6 +55,8 @@ export interface CrmLeadRow {
   source_lead_id: string | null;
   name: string;
   company: string | null;
+  job_title: string | null;
+  city: string | null;
   email: string | null;
   phone: string | null;
   origin: string | null;
@@ -71,6 +77,8 @@ export function mapCrmLead(row: CrmLeadRow): CrmLead {
     sourceLeadId: row.source_lead_id,
     name: row.name,
     company: row.company,
+    jobTitle: row.job_title,
+    city: row.city,
     email: row.email,
     phone: row.phone,
     origin: row.origin,
@@ -124,6 +132,62 @@ export function mapLeadActivity(row: LeadActivityRow): LeadActivity {
     createdBy: row.created_by,
     createdByName: row.author?.name ?? row.author?.email ?? null,
     createdAt: row.created_at,
+  };
+}
+
+export interface LeadNoteRow {
+  id: string;
+  crm_lead_id: string;
+  body: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  author?: ProfileRow | null;
+}
+
+export function mapLeadNote(row: LeadNoteRow): LeadNote {
+  return {
+    id: row.id,
+    crmLeadId: row.crm_lead_id,
+    body: row.body,
+    createdBy: row.created_by,
+    createdByName: row.author?.name ?? row.author?.email ?? null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export interface LeadTaskRow {
+  id: string;
+  crm_lead_id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  priority: string;
+  due_at: string | null;
+  completed_at: string | null;
+  assignee_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  assignee?: ProfileRow | null;
+}
+
+export function mapLeadTask(row: LeadTaskRow): LeadTask {
+  return {
+    id: row.id,
+    crmLeadId: row.crm_lead_id,
+    title: row.title,
+    description: row.description,
+    status: row.status as TaskStatus,
+    priority: row.priority as TaskPriority,
+    dueAt: row.due_at,
+    completedAt: row.completed_at,
+    assigneeId: row.assignee_id,
+    assignee: mapOwner(row.assignee),
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 

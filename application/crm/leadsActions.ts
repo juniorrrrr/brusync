@@ -2,25 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
-import { getLeadDetailData, type LeadDetailData } from "@/application/crm/leadsQueries";
 import {
-  createActivity,
-  toggleTaskDone as toggleTaskDoneRepo,
-} from "@/repositories/crm/activitiesRepository";
+  getLeadDetailData,
+  getOwnerOptions,
+  type LeadDetailData,
+} from "@/application/crm/leadsQueries";
+import { createActivity } from "@/repositories/crm/activitiesRepository";
 import {
   deleteLeadFile,
   getFileSignedUrl,
+  listFilesForLead,
   uploadLeadFile,
 } from "@/repositories/crm/filesRepository";
 import {
   bulkUpdateLeads,
   createLead,
+  deleteLead,
+  getLeadById,
   touchLeadInteraction,
   updateLead,
   updateLeadStage,
 } from "@/repositories/crm/leadsRepository";
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
-import { createActivitySchema, toggleTaskDoneSchema } from "@/schemas/crm/activity.schema";
 import { validateLeadFile } from "@/schemas/crm/file.schema";
 import {
   bulkUpdateLeadsSchema,
@@ -29,6 +32,7 @@ import {
   updateLeadSchema,
 } from "@/schemas/crm/lead.schema";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
+import type { LeadFile } from "@/types/crm";
 
 export interface ActionState {
   status: "idle" | "success" | "error";
@@ -44,6 +48,11 @@ export async function fetchLeadDetail(leadId: string): Promise<LeadDetailData | 
   return getLeadDetailData(leadId);
 }
 
+export async function fetchOwnerOptions() {
+  await requireCrmProfile();
+  return getOwnerOptions();
+}
+
 export async function createLeadAction(
   _prevState: ActionState,
   formData: FormData,
@@ -53,6 +62,8 @@ export async function createLeadAction(
   const parsed = createLeadSchema.safeParse({
     name: formData.get("name"),
     company: formData.get("company") || undefined,
+    jobTitle: formData.get("jobTitle") || undefined,
+    city: formData.get("city") || undefined,
     email: formData.get("email") || undefined,
     phone: formData.get("phone") || undefined,
     origin: formData.get("origin") || undefined,
@@ -74,6 +85,8 @@ export async function createLeadAction(
   const lead = await createLead(supabase, {
     name: parsed.data.name,
     company: parsed.data.company || null,
+    jobTitle: parsed.data.jobTitle || null,
+    city: parsed.data.city || null,
     email: parsed.data.email || null,
     phone: parsed.data.phone || null,
     origin: parsed.data.origin || null,
@@ -101,12 +114,14 @@ export async function updateLeadAction(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await requireCrmProfile();
+  const profile = await requireCrmProfile();
 
   const parsed = updateLeadSchema.safeParse({
     leadId: formData.get("leadId"),
     name: formData.get("name") || undefined,
     company: formData.get("company") || undefined,
+    jobTitle: formData.get("jobTitle") || undefined,
+    city: formData.get("city") || undefined,
     email: formData.get("email") || undefined,
     phone: formData.get("phone") || undefined,
     origin: formData.get("origin") || undefined,
@@ -127,7 +142,27 @@ export async function updateLeadAction(
 
   const supabase = await getSupabaseAuthClient();
   const { leadId, ...patch } = parsed.data;
+
+  const before = await getLeadById(supabase, leadId);
+  if (!before) return { status: "error", message: "Lead não encontrado." };
+
   await updateLead(supabase, leadId, patch);
+
+  if (patch.ownerId !== undefined && patch.ownerId !== before.ownerId) {
+    await createActivity(supabase, {
+      crmLeadId: leadId,
+      type: "owner_change",
+      title: "Responsável alterado",
+      createdBy: profile.id,
+    });
+  } else {
+    await createActivity(supabase, {
+      crmLeadId: leadId,
+      type: "lead_updated",
+      title: "Lead editado",
+      createdBy: profile.id,
+    });
+  }
 
   revalidatePath("/leads");
   revalidatePath("/pipeline");
@@ -163,6 +198,18 @@ export async function moveLeadStageAction(
   return { ok: true };
 }
 
+export async function deleteLeadAction(leadId: string): Promise<{ ok: boolean; error?: string }> {
+  await requireCrmProfile();
+  const supabase = await getSupabaseAuthClient();
+  await deleteLead(supabase, leadId);
+
+  revalidatePath("/leads");
+  revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
+
+  return { ok: true };
+}
+
 export async function bulkUpdateLeadsAction(
   leadIds: string[],
   patch: { stageId?: string; ownerId?: string },
@@ -183,51 +230,11 @@ export async function bulkUpdateLeadsAction(
   return { ok: true };
 }
 
-export async function addActivityAction(
-  _prevState: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const profile = await requireCrmProfile();
-
-  const dueAtRaw = formData.get("dueAt");
-  const parsed = createActivitySchema.safeParse({
-    crmLeadId: formData.get("crmLeadId"),
-    type: formData.get("type"),
-    title: formData.get("title"),
-    body: formData.get("body") || undefined,
-    dueAt: dueAtRaw ? new Date(String(dueAtRaw)).toISOString() : undefined,
-  });
-
-  if (!parsed.success) {
-    return { status: "error", message: firstIssueMessage(parsed.error) };
-  }
-
-  const supabase = await getSupabaseAuthClient();
-  await createActivity(supabase, { ...parsed.data, createdBy: profile.id });
-
-  if (parsed.data.type !== "task") {
-    await touchLeadInteraction(supabase, parsed.data.crmLeadId);
-  }
-
-  revalidatePath("/leads");
-  revalidatePath("/dashboard");
-
-  return { status: "success", message: "Registrado." };
-}
-
-export async function toggleTaskDoneAction(
-  activityId: string,
-  done: boolean,
-): Promise<{ ok: boolean; error?: string }> {
+/** Fetched lazily, the first time the Arquivos tab is opened. */
+export async function fetchLeadFiles(crmLeadId: string): Promise<LeadFile[]> {
   await requireCrmProfile();
-  const parsed = toggleTaskDoneSchema.safeParse({ activityId, done });
-  if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
-
   const supabase = await getSupabaseAuthClient();
-  await toggleTaskDoneRepo(supabase, parsed.data.activityId, parsed.data.done);
-
-  revalidatePath("/dashboard");
-  return { ok: true };
+  return listFilesForLead(supabase, crmLeadId);
 }
 
 export async function uploadLeadFileAction(
@@ -250,6 +257,13 @@ export async function uploadLeadFileAction(
 
   const supabase = await getSupabaseAuthClient();
   await uploadLeadFile(supabase, { crmLeadId, file, uploadedBy: profile.id });
+  await createActivity(supabase, {
+    crmLeadId,
+    type: "file_upload",
+    title: `Arquivo enviado: ${file.name}`,
+    createdBy: profile.id,
+  });
+  await touchLeadInteraction(supabase, crmLeadId);
 
   revalidatePath("/leads");
 
@@ -259,10 +273,19 @@ export async function uploadLeadFileAction(
 export async function deleteLeadFileAction(
   fileId: string,
   storagePath: string,
+  crmLeadId: string,
+  fileName: string,
 ): Promise<{ ok: boolean; error?: string }> {
-  await requireCrmProfile();
+  const profile = await requireCrmProfile();
   const supabase = await getSupabaseAuthClient();
   await deleteLeadFile(supabase, fileId, storagePath);
+  await createActivity(supabase, {
+    crmLeadId,
+    type: "file_delete",
+    title: `Arquivo removido: ${fileName}`,
+    createdBy: profile.id,
+  });
+
   revalidatePath("/leads");
   return { ok: true };
 }

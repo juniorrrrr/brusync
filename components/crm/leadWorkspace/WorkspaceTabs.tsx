@@ -1,0 +1,42 @@
+"use client";
+
+import { useState } from "react";
+import { FilesTab } from "@/components/crm/leadWorkspace/FilesTab";
+import { NotesTab } from "@/components/crm/leadWorkspace/NotesTab";
+import { TasksTab } from "@/components/crm/leadWorkspace/TasksTab";
+import { TimelineTab } from "@/components/crm/leadWorkspace/TimelineTab";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const TAB_KEYS = ["timeline", "notes", "tasks", "files"] as const;
+
+export function WorkspaceTabs({ crmLeadId }: { crmLeadId: string }) {
+  const [visited, setVisited] = useState<Set<(typeof TAB_KEYS)[number]>>(new Set(["timeline"]));
+
+  function handleValueChange(value: string) {
+    setVisited((prev) => new Set(prev).add(value as (typeof TAB_KEYS)[number]));
+  }
+
+  return (
+    <Tabs defaultValue="timeline" onValueChange={handleValueChange}>
+      <TabsList>
+        <TabsTrigger value="timeline">Timeline</TabsTrigger>
+        <TabsTrigger value="notes">Notas</TabsTrigger>
+        <TabsTrigger value="tasks">Tarefas</TabsTrigger>
+        <TabsTrigger value="files">Arquivos</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="timeline">
+        {visited.has("timeline") && <TimelineTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="notes">
+        {visited.has("notes") && <NotesTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="tasks">
+        {visited.has("tasks") && <TasksTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="files">
+        {visited.has("files") && <FilesTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+    </Tabs>
+  );
+}

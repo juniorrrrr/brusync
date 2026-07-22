@@ -1,7 +1,5 @@
 import "server-only";
 
-import { listActivitiesForLead } from "@/repositories/crm/activitiesRepository";
-import { listFilesForLead } from "@/repositories/crm/filesRepository";
 import {
   getLeadById,
   type ListLeadsOptions,
@@ -55,13 +53,17 @@ export async function getPipelineData(): Promise<{ columns: PipelineColumn[] }> 
   return { columns };
 }
 
+/** Header-level data for the Lead Workspace: the lead itself plus the two
+ * small, always-visible right-panel cards (attribution, downloads). Notes,
+ * tasks, files and the timeline are each fetched lazily by their own tab the
+ * first time it's opened — never eagerly here — so opening the Drawer stays
+ * cheap regardless of how much history a lead has accumulated. */
 export interface LeadDetailData {
   lead: CrmLeadWithRelations;
-  activities: Awaited<ReturnType<typeof listActivitiesForLead>>;
-  files: Awaited<ReturnType<typeof listFilesForLead>>;
   sourceAttribution: Awaited<ReturnType<typeof getSourceLeadAttribution>>;
   materialDownloads: Awaited<ReturnType<typeof listMaterialDownloadsByEmail>>;
   owners: { id: string; name: string | null; email: string | null }[];
+  stages: PipelineStage[];
 }
 
 export async function getLeadDetailData(leadId: string): Promise<LeadDetailData | null> {
@@ -69,15 +71,14 @@ export async function getLeadDetailData(leadId: string): Promise<LeadDetailData 
   const lead = await getLeadById(supabase, leadId);
   if (!lead) return null;
 
-  const [activities, files, sourceAttribution, materialDownloads, owners] = await Promise.all([
-    listActivitiesForLead(supabase, leadId),
-    listFilesForLead(supabase, leadId),
+  const [sourceAttribution, materialDownloads, owners, stages] = await Promise.all([
     lead.sourceLeadId
       ? getSourceLeadAttribution(supabase, lead.sourceLeadId)
       : Promise.resolve(null),
     lead.email ? listMaterialDownloadsByEmail(supabase, lead.email) : Promise.resolve([]),
     listOwnerOptions(supabase),
+    listPipelineStages(supabase),
   ]);
 
-  return { lead, activities, files, sourceAttribution, materialDownloads, owners };
+  return { lead, sourceAttribution, materialDownloads, owners, stages };
 }

@@ -16,7 +16,7 @@ export async function getSourceLeadAttribution(
   const { data, error } = await supabase
     .from("leads")
     .select(
-      "id, created_at, message, utm_source, utm_medium, utm_campaign, utm_term, utm_content, gclid, fbclid, landing_page, referer, device, os, browser",
+      "id, created_at, message, utm_source, utm_medium, utm_campaign, utm_term, utm_content, gclid, fbclid, msclkid, ttclid, landing_page, referer, device, os, browser, language, first_visit, last_visit",
     )
     .eq("id", sourceLeadId)
     .maybeSingle();
@@ -35,11 +35,16 @@ export async function getSourceLeadAttribution(
     utmContent: data.utm_content,
     gclid: data.gclid,
     fbclid: data.fbclid,
+    msclkid: data.msclkid,
+    ttclid: data.ttclid,
     landingPage: data.landing_page,
     referer: data.referer,
     device: data.device,
     os: data.os,
     browser: data.browser,
+    language: data.language,
+    firstVisit: data.first_visit,
+    lastVisit: data.last_visit,
   };
 }
 

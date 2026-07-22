@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ClientDrawer } from "@/components/crm/ClientDrawer";
-import { LeadDrawer } from "@/components/crm/LeadDrawer";
+import { LeadWorkspaceDrawer } from "@/components/crm/LeadWorkspaceDrawer";
 import { CrmShell } from "@/components/layout/CrmShell";
 import { ClientDrawerProvider } from "@/contexts/crm/ClientDrawerContext";
 import { LeadDrawerProvider } from "@/contexts/crm/LeadDrawerContext";
@@ -15,7 +15,7 @@ export default async function CrmAppLayout({ children }: { children: ReactNode }
     <LeadDrawerProvider>
       <ClientDrawerProvider>
         <CrmShell profile={profile}>{children}</CrmShell>
-        <LeadDrawer />
+        <LeadWorkspaceDrawer />
         <ClientDrawer />
       </ClientDrawerProvider>
     </LeadDrawerProvider>

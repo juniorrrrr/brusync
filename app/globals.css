@@ -1,2 +1,59 @@
 @import "tailwindcss";
 @import "../styles/globals.css";
+
+/* ======================================================================
+   Bridge: maps shadcn/21st.dev's semantic Tailwind tokens to the design
+   tokens already defined in styles/globals.css (--primary, --accent,
+   --surface, --border, --muted, --radius, etc). Additive only — no
+   existing token changes meaning or value. Lets components pulled from
+   the 21st.dev catalog (Tabs, Accordion, Drawer, ...) render in Brusync's
+   actual palette via their own `bg-muted`, `text-foreground`,
+   `border-input`-style utility classes, instead of shadcn's defaults.
+   ====================================================================== */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--text);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--primary);
+  --color-secondary: var(--surface);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--surface);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 8px);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@utility animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+@utility animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}

@@ -53,12 +53,26 @@ export function LeadDrawerProvider({ children }: { children: React.ReactNode }) 
     setState({ leadId: null, data: null, loading: false, error: null });
   }, []);
 
+  /** Re-fetches the header in the background without blanking the Drawer —
+   * used after a stage move / lead edit / owner change. Keeps whatever data
+   * is currently shown until the new data arrives, so the open tab (and its
+   * own already-fetched Notes/Tasks/Timeline state) never gets remounted. */
   const refresh = useCallback(() => {
     setState((current) => {
-      if (current.leadId) void load(current.leadId);
+      if (!current.leadId) return current;
+      const leadId = current.leadId;
+      fetchLeadDetail(leadId)
+        .then((data) => {
+          setState((latest) =>
+            latest.leadId === leadId ? { ...latest, data: data ?? latest.data } : latest,
+          );
+        })
+        .catch(() => {
+          /* keep showing the last known good data on a failed background refresh */
+        });
       return current;
     });
-  }, [load]);
+  }, []);
 
   const value = useMemo(
     () => ({ ...state, openLead, close, refresh }),

@@ -37,6 +37,8 @@ export interface CrmLead {
   sourceLeadId: string | null;
   name: string;
   company: string | null;
+  jobTitle: string | null;
+  city: string | null;
   email: string | null;
   phone: string | null;
   origin: string | null;
@@ -66,7 +68,18 @@ export type ActivityType =
   | "email"
   | "meeting"
   | "task"
-  | "system";
+  | "system"
+  | "lead_updated"
+  | "owner_change"
+  | "note_created"
+  | "note_updated"
+  | "note_deleted"
+  | "task_created"
+  | "task_updated"
+  | "task_completed"
+  | "task_deleted"
+  | "file_upload"
+  | "file_delete";
 
 export interface LeadActivity {
   id: string;
@@ -80,6 +93,42 @@ export interface LeadActivity {
   createdBy: string | null;
   createdByName: string | null;
   createdAt: string;
+}
+
+/** A single row in the read-only Timeline — either a crm_lead_activities
+ * entry, or a material download (from public.material_leads, matched by
+ * email) folded in so the two sources render as one chronological feed. */
+export type TimelineEntry =
+  | { source: "activity"; activity: LeadActivity }
+  | { source: "download"; download: MaterialDownload };
+
+export type TaskStatus = "pending" | "in_progress" | "done";
+export type TaskPriority = "low" | "medium" | "high";
+
+export interface LeadNote {
+  id: string;
+  crmLeadId: string;
+  body: string;
+  createdBy: string | null;
+  createdByName: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LeadTask {
+  id: string;
+  crmLeadId: string;
+  title: string;
+  description: string | null;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueAt: string | null;
+  completedAt: string | null;
+  assigneeId: string | null;
+  assignee: OwnerRef | null;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LeadFile {
@@ -114,11 +163,16 @@ export interface SourceLeadAttribution {
   utmContent: string | null;
   gclid: string | null;
   fbclid: string | null;
+  msclkid: string | null;
+  ttclid: string | null;
   landingPage: string | null;
   referer: string | null;
   device: string | null;
   os: string | null;
   browser: string | null;
+  language: string | null;
+  firstVisit: string | null;
+  lastVisit: string | null;
 }
 
 export type ClientStatus = "ativo" | "inativo" | "em_risco";

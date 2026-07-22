@@ -192,3 +192,32 @@ export const IconSort = ({ size }: IconProps = {}) => (
     <path d="M7 3v18M7 21l-3-3M7 21l3-3M17 21V3M17 3l-3 3M17 3l3 3" />
   </Svg>
 );
+export const IconPencil = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+  </Svg>
+);
+export const IconDotsHorizontal = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+  </Svg>
+);
+export const IconMessage = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </Svg>
+);
+export const IconCheckCircle = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m8.5 12.5 2.5 2.5 5-5" />
+  </Svg>
+);
+export const IconClock = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3.5 2" />
+  </Svg>
+);

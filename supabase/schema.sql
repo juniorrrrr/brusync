@@ -442,3 +442,116 @@ drop policy if exists "Equipe interna apaga arquivos crm-lead-files" on storage.
 create policy "Equipe interna apaga arquivos crm-lead-files"
   on storage.objects for delete
   using (bucket_id = 'crm-lead-files' and public.is_internal_staff());
+
+-- ============================================================================
+-- Brusync OS — CRM (Fase 3): Lead Workspace.
+-- Aditivo apenas. crm_leads ganha duas colunas novas (job_title, city).
+-- Notas e tarefas passam a ser entidades próprias — mutáveis (editar/excluir),
+-- diferente de crm_lead_activities, que continua sendo só o log cronológico
+-- e imutável ("Nota criada", "Tarefa concluída", etc. são gerados a partir
+-- delas, nunca editados/apagados diretamente).
+-- ============================================================================
+
+alter table public.crm_leads add column if not exists job_title text;
+alter table public.crm_leads add column if not exists city text;
+
+-- Amplia o conjunto de tipos de atividade aceitos no log (superset do que já
+-- existia — nenhuma linha existente deixa de satisfazer o check).
+alter table public.crm_lead_activities drop constraint if exists crm_lead_activities_type_check;
+alter table public.crm_lead_activities add constraint crm_lead_activities_type_check
+  check (type in (
+    'note', 'stage_change', 'call', 'email', 'meeting', 'task', 'system',
+    'lead_updated', 'owner_change',
+    'note_created', 'note_updated', 'note_deleted',
+    'task_created', 'task_updated', 'task_completed', 'task_deleted',
+    'file_upload', 'file_delete'
+  ));
+
+-- ----------------------------------------------------------------------------
+-- Notas do lead: editor com autosave, autor, editar e excluir.
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_lead_notes (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  crm_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  body text not null,
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.crm_lead_notes enable row level security;
+
+create index if not exists crm_lead_notes_lead_idx on public.crm_lead_notes (crm_lead_id, created_at desc);
+
+drop trigger if exists set_crm_lead_notes_updated_at on public.crm_lead_notes;
+create trigger set_crm_lead_notes_updated_at
+  before update on public.crm_lead_notes
+  for each row execute function public.set_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- Tarefas do lead: checklist com status, prioridade, prazo e responsável.
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_lead_tasks (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  crm_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  title text not null,
+  description text,
+  status text not null default 'pending' check (status in ('pending', 'in_progress', 'done')),
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high')),
+  due_at timestamptz,
+  completed_at timestamptz,
+  assignee_id uuid references public.profiles (id) on delete set null,
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.crm_lead_tasks enable row level security;
+
+create index if not exists crm_lead_tasks_lead_idx on public.crm_lead_tasks (crm_lead_id, created_at desc);
+create index if not exists crm_lead_tasks_assignee_idx on public.crm_lead_tasks (assignee_id);
+create index if not exists crm_lead_tasks_pending_idx on public.crm_lead_tasks (due_at) where status != 'done';
+
+drop trigger if exists set_crm_lead_tasks_updated_at on public.crm_lead_tasks;
+create trigger set_crm_lead_tasks_updated_at
+  before update on public.crm_lead_tasks
+  for each row execute function public.set_updated_at();
+
+-- ----------------------------------------------------------------------------
+-- RLS: mesmo padrão de acesso interno das demais tabelas do CRM.
+-- ----------------------------------------------------------------------------
+drop policy if exists "Equipe interna lê crm_lead_notes" on public.crm_lead_notes;
+create policy "Equipe interna lê crm_lead_notes"
+  on public.crm_lead_notes for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_lead_notes" on public.crm_lead_notes;
+create policy "Equipe interna cria crm_lead_notes"
+  on public.crm_lead_notes for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza crm_lead_notes" on public.crm_lead_notes;
+create policy "Equipe interna atualiza crm_lead_notes"
+  on public.crm_lead_notes for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga crm_lead_notes" on public.crm_lead_notes;
+create policy "Equipe interna apaga crm_lead_notes"
+  on public.crm_lead_notes for delete
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê crm_lead_tasks" on public.crm_lead_tasks;
+create policy "Equipe interna lê crm_lead_tasks"
+  on public.crm_lead_tasks for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_lead_tasks" on public.crm_lead_tasks;
+create policy "Equipe interna cria crm_lead_tasks"
+  on public.crm_lead_tasks for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza crm_lead_tasks" on public.crm_lead_tasks;
+create policy "Equipe interna atualiza crm_lead_tasks"
+  on public.crm_lead_tasks for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga crm_lead_tasks" on public.crm_lead_tasks;
+create policy "Equipe interna apaga crm_lead_tasks"
+  on public.crm_lead_tasks for delete
+  using (public.is_internal_staff());

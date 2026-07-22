@@ -50,6 +50,16 @@ export function CreateLeadDialog({
                   <label htmlFor="new-company">Empresa</label>
                   <input id="new-company" name="company" />
                 </div>
+                <div className="crm-ws-composer-row">
+                  <div className="crm-field">
+                    <label htmlFor="new-jobtitle">Cargo</label>
+                    <input id="new-jobtitle" name="jobTitle" />
+                  </div>
+                  <div className="crm-field">
+                    <label htmlFor="new-city">Cidade</label>
+                    <input id="new-city" name="city" />
+                  </div>
+                </div>
                 <div className="crm-field">
                   <label htmlFor="new-email">E-mail</label>
                   <input id="new-email" name="email" type="email" />
