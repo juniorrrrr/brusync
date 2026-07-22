@@ -10,6 +10,7 @@ import {
 } from "@/application/crm/leadsQueries";
 import { recalculateLeadScore } from "@/application/crm/scoreService";
 import { LOST_REASON_LABEL } from "@/domain/crm/lostRules";
+import { JOURNEY_STAGE_SCORE, journeyStageForPipelineStage } from "@/domain/journey/stages";
 import { createActivity } from "@/repositories/crm/activitiesRepository";
 import {
   deleteLeadFile,
@@ -17,6 +18,7 @@ import {
   listFilesForLead,
   uploadLeadFile,
 } from "@/repositories/crm/filesRepository";
+import { createJourneyEvent } from "@/repositories/crm/journeyRepository";
 import {
   bulkUpdateLeads,
   createLead,
@@ -145,6 +147,14 @@ export async function createLeadAction(
   });
   await recalculateLeadScore(supabase, lead.id);
 
+  await createJourneyEvent(supabase, {
+    crmLeadId: lead.id,
+    stage: "novo_lead",
+    score: JOURNEY_STAGE_SCORE.novo_lead,
+    actorId: profile.id,
+    origin: "automatico",
+  });
+
   await publishEvent(
     supabase,
     "LeadCreated",
@@ -271,6 +281,17 @@ export async function moveLeadStageAction(
   });
   await recalculateLeadScore(supabase, leadId);
 
+  const journeyStage = journeyStageForPipelineStage(targetStage.key, targetStage.isWon);
+  if (journeyStage) {
+    await createJourneyEvent(supabase, {
+      crmLeadId: leadId,
+      stage: journeyStage,
+      score: JOURNEY_STAGE_SCORE[journeyStage],
+      actorId: profile.id,
+      origin: "automatico",
+    });
+  }
+
   if (targetStage.key === "qualificado") {
     await publishEvent(
       supabase,
@@ -319,6 +340,15 @@ export async function markLeadLostAction(
     type: "lead_lost",
     title: `Lead marcado como perdido: ${LOST_REASON_LABEL[parsed.data.reason]}`,
     createdBy: profile.id,
+  });
+
+  await createJourneyEvent(supabase, {
+    crmLeadId: parsed.data.leadId,
+    stage: "venda_perdida",
+    score: JOURNEY_STAGE_SCORE.venda_perdida,
+    actorId: profile.id,
+    origin: "automatico",
+    note: LOST_REASON_LABEL[parsed.data.reason],
   });
 
   await publishEvent(

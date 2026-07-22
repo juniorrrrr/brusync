@@ -18,7 +18,10 @@ export type EventType =
   | "CampaignCreated"
   | "CampaignUpdated"
   | "CampaignPaused"
-  | "RevenueRegistered";
+  | "RevenueRegistered"
+  | "ProposalSent"
+  | "MeetingScheduled"
+  | "ClientActivated";
 
 export interface EventPayloadMap {
   LeadCreated: {
@@ -86,6 +89,15 @@ export interface EventPayloadMap {
     leadId: string;
     amount: number;
   };
+  ProposalSent: {
+    leadId: string;
+  };
+  MeetingScheduled: {
+    leadId: string;
+  };
+  ClientActivated: {
+    leadId: string;
+  };
 }
 
 /** entity_type stored alongside each event row, one per event family — lets
@@ -106,4 +118,7 @@ export const EVENT_ENTITY_TYPE: Record<EventType, string> = {
   CampaignUpdated: "campaign",
   CampaignPaused: "campaign",
   RevenueRegistered: "lead",
+  ProposalSent: "lead",
+  MeetingScheduled: "lead",
+  ClientActivated: "lead",
 };

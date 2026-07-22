@@ -30,6 +30,20 @@ export async function listRecentActivities(
   );
 }
 
+/** Powers the Jornada Comercial summary's "quantidade de atividades". */
+export async function countActivitiesForLead(
+  supabase: SupabaseClient,
+  crmLeadId: string,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("crm_lead_activities")
+    .select("*", { count: "exact", head: true })
+    .eq("crm_lead_id", crmLeadId);
+
+  if (error) throw new Error(`Falha ao contar atividades do lead: ${error.message}`);
+  return count ?? 0;
+}
+
 export interface CreateActivityPayload {
   crmLeadId: string;
   type: ActivityType;
