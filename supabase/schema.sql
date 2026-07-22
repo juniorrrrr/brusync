@@ -620,3 +620,83 @@ create policy "Equipe interna atualiza crm_lead_stage_history"
   on public.crm_lead_stage_history for update
   using (public.is_internal_staff())
   with check (public.is_internal_staff());
+
+-- ============================================================================
+-- Brusync OS — Marketing Intelligence (Fase 5).
+-- Aditivo apenas. Nova tabela marketing_campaign_spend para lançamento manual
+-- de investimento por campanha (utm_source + utm_campaign) e mês — ainda não
+-- há integração real com Meta Ads/Google Ads API, então ROAS/ROI/CAC só
+-- existem para campanhas com investimento lançado manualmente aqui (sem
+-- lançamento, a métrica aparece como "—", nunca como zero inventado).
+-- "Receita" em todo o módulo é a soma de potential_value dos crm_leads que
+-- chegaram ao estágio is_won=true — não existe (e esta fase não cria) um
+-- campo de valor fechado separado do valor potencial.
+-- ============================================================================
+
+create index if not exists leads_utm_campaign_idx on public.leads (utm_source, utm_campaign);
+
+create table if not exists public.marketing_campaign_spend (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  utm_source text not null,
+  utm_campaign text not null,
+  period_month date not null,
+  amount numeric(14, 2) not null check (amount >= 0),
+  currency text not null default 'BRL',
+  notes text,
+  created_by uuid references public.profiles (id) on delete set null
+);
+
+alter table public.marketing_campaign_spend enable row level security;
+
+create unique index if not exists marketing_campaign_spend_unique_idx
+  on public.marketing_campaign_spend (utm_source, utm_campaign, period_month);
+create index if not exists marketing_campaign_spend_period_idx
+  on public.marketing_campaign_spend (period_month desc);
+
+drop trigger if exists set_marketing_campaign_spend_updated_at on public.marketing_campaign_spend;
+create trigger set_marketing_campaign_spend_updated_at
+  before update on public.marketing_campaign_spend
+  for each row execute function public.set_updated_at();
+
+drop policy if exists "Equipe interna lê marketing_campaign_spend" on public.marketing_campaign_spend;
+create policy "Equipe interna lê marketing_campaign_spend"
+  on public.marketing_campaign_spend for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria marketing_campaign_spend" on public.marketing_campaign_spend;
+create policy "Equipe interna cria marketing_campaign_spend"
+  on public.marketing_campaign_spend for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza marketing_campaign_spend" on public.marketing_campaign_spend;
+create policy "Equipe interna atualiza marketing_campaign_spend"
+  on public.marketing_campaign_spend for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna apaga marketing_campaign_spend" on public.marketing_campaign_spend;
+create policy "Equipe interna apaga marketing_campaign_spend"
+  on public.marketing_campaign_spend for delete
+  using (public.is_internal_staff());
+
+-- ----------------------------------------------------------------------------
+-- public.leads e public.material_leads tinham RLS habilitado desde a Fase 1
+-- mas nunca ganharam nenhuma policy de select — só a service role (usada só
+-- no insert do formulário público) conseguia ler essas tabelas. Isso não
+-- afetava o site público (que só insere), mas silenciosamente zerava tudo
+-- que o CRM tenta ler dessas tabelas pelo client autenticado por cookie:
+-- a atribuição de marketing em crm_leads.source_lead_id (WorkspaceSidebar,
+-- o novo módulo Marketing Intelligence) e os downloads de materiais
+-- (Dashboard "Materiais Baixados", "Últimos downloads", aba Downloads do
+-- Lead Workspace) — todos ficavam sempre vazios/nulos em produção. Corrige
+-- adicionando as mesmas policies de leitura interna já usadas em todas as
+-- outras tabelas do CRM; o insert continua exclusivo da service role.
+-- ----------------------------------------------------------------------------
+drop policy if exists "Equipe interna lê leads" on public.leads;
+create policy "Equipe interna lê leads"
+  on public.leads for select
+  using (public.is_internal_staff());
+
+drop policy if exists "Equipe interna lê material_leads" on public.material_leads;
+create policy "Equipe interna lê material_leads"
+  on public.material_leads for select
+  using (public.is_internal_staff());

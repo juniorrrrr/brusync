@@ -1,0 +1,57 @@
+/* ============================================================
+   Marketing Intelligence (Fase 5) — estilos específicos do módulo.
+   Reaproveita tokens e classes já existentes em crm.css (crm-card,
+   crm-badge, crm-table, crm-funnel-*, crm-kpi-grid, crm-toolbar, etc.);
+   este arquivo só cobre o que é novo neste módulo.
+   ============================================================ */
+
+.crm-mkt-origin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.crm-mkt-origin-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.crm-mkt-origin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.crm-mkt-origin-stat strong {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.crm-mkt-compare-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.crm-mkt-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.crm-mkt-compare-row:first-child {
+  border-top: none;
+}
+.crm-mkt-compare-row span:first-child {
+  color: var(--muted);
+  font-weight: 600;
+  flex: 1;
+}
+.crm-mkt-compare-row strong {
+  color: var(--text);
+}

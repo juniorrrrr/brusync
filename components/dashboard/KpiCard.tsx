@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import type { IconProps } from "@/components/ui/icons";
 
 export function KpiCard({
@@ -8,8 +8,8 @@ export function KpiCard({
   icon: Icon,
 }: {
   label: string;
-  value: string;
-  hint?: string;
+  value: ReactNode;
+  hint?: ReactNode;
   icon: ComponentType<IconProps>;
 }) {
   return (

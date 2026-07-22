@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { FilesTab } from "@/components/crm/leadWorkspace/FilesTab";
+import { MarketingTab } from "@/components/crm/leadWorkspace/MarketingTab";
 import { NotesTab } from "@/components/crm/leadWorkspace/NotesTab";
 import { TasksTab } from "@/components/crm/leadWorkspace/TasksTab";
 import { TimelineTab } from "@/components/crm/leadWorkspace/TimelineTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const TAB_KEYS = ["timeline", "notes", "tasks", "files"] as const;
+const TAB_KEYS = ["timeline", "notes", "tasks", "files", "marketing"] as const;
 
 export function WorkspaceTabs({
   crmLeadId,
@@ -29,6 +30,7 @@ export function WorkspaceTabs({
         <TabsTrigger value="notes">Notas</TabsTrigger>
         <TabsTrigger value="tasks">Tarefas</TabsTrigger>
         <TabsTrigger value="files">Arquivos</TabsTrigger>
+        <TabsTrigger value="marketing">Marketing</TabsTrigger>
       </TabsList>
 
       <TabsContent value="timeline">
@@ -44,6 +46,9 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="files">
         {visited.has("files") && <FilesTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="marketing">
+        {visited.has("marketing") && <MarketingTab crmLeadId={crmLeadId} />}
       </TabsContent>
     </Tabs>
   );
