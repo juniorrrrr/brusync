@@ -6,6 +6,7 @@ import {
   fetchIntegrationDetail,
   type IntegrationDetail,
 } from "@/application/integrations/integrationsActions";
+import { MetaConfigForm } from "@/components/integrations/MetaConfigForm";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { Switch } from "@/components/ui/switch";
 import { formatDateTime } from "@/domain/crm/format";
@@ -135,10 +136,22 @@ export function IntegrationDrawer({
                     </div>
                   ))}
                 </div>
+
+                {detail.integration.provider === "meta_ads" && (
+                  <a
+                    href="/integracoes/meta"
+                    className="crm-ig-action-btn"
+                    style={{ textAlign: "center" }}
+                  >
+                    Ver painel completo da Meta →
+                  </a>
+                )}
               </div>
             )}
 
-            {mode === "config" && (
+            {mode === "config" && detail.integration.provider === "meta_ads" && <MetaConfigForm />}
+
+            {mode === "config" && detail.integration.provider !== "meta_ads" && (
               <form action={formAction} className="crm-ig-drawer-body">
                 <input type="hidden" name="provider" value={detail.integration.provider} />
 

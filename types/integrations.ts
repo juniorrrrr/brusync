@@ -47,6 +47,9 @@ export interface Integration {
   healthScore: number | null;
   createdAt: string;
   updatedAt: string;
+  /** Whether an Access Token is currently saved — never the token itself
+   * (see services/metaConversionsApi/tokenCrypto.ts). */
+  hasAccessToken: boolean;
 }
 
 export type IntegrationLogStatus = "success" | "error" | "pending";

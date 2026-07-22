@@ -46,14 +46,18 @@ export const CONVERSION_DESTINATION_LABEL: Record<ConversionDestination, string>
 
 export const CONVERSION_DELIVERY_STATUS_LABEL: Record<ConversionDeliveryStatus, string> = {
   pendente: "Pendente",
+  enviando: "Enviando",
   enviado: "Enviado",
   falhou: "Falhou",
+  reprocessando: "Reprocessando",
 };
 
 export const CONVERSION_DELIVERY_STATUS_BADGE: Record<ConversionDeliveryStatus, BadgeTone> = {
   pendente: "info",
+  enviando: "warn",
   enviado: "ok",
   falhou: "danger",
+  reprocessando: "warn",
 };
 
 /** Which of the Event Bus's types (domain/events/types.ts, Fase 6) the

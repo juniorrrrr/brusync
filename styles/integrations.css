@@ -128,7 +128,8 @@
   flex-direction: column;
   gap: 6px;
 }
-.crm-ig-field label {
+.crm-ig-field label,
+.crm-ig-field-label {
   font-size: 12px;
   font-weight: 700;
   color: var(--muted);

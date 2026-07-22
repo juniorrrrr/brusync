@@ -15,7 +15,12 @@ export type ConversionDestination =
   | "linkedin_ads"
   | "webhook";
 
-export type ConversionDeliveryStatus = "pendente" | "enviado" | "falhou";
+export type ConversionDeliveryStatus =
+  | "pendente"
+  | "enviando"
+  | "enviado"
+  | "falhou"
+  | "reprocessando";
 
 export interface ConversionDelivery {
   id: string;
@@ -35,6 +40,9 @@ export interface ConversionDeliveryAttempt {
   status: "sucesso" | "erro";
   message: string | null;
   durationMs: number | null;
+  requestPayload: Record<string, unknown> | null;
+  responseBody: Record<string, unknown> | null;
+  httpStatus: number | null;
   createdAt: string;
 }
 

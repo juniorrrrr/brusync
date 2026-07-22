@@ -5,6 +5,7 @@ import { ConversionsTab } from "@/components/crm/leadWorkspace/ConversionsTab";
 import { FilesTab } from "@/components/crm/leadWorkspace/FilesTab";
 import { JourneyTab } from "@/components/crm/leadWorkspace/JourneyTab";
 import { MarketingTab } from "@/components/crm/leadWorkspace/MarketingTab";
+import { MetaTab } from "@/components/crm/leadWorkspace/MetaTab";
 import { NotesTab } from "@/components/crm/leadWorkspace/NotesTab";
 import { TasksTab } from "@/components/crm/leadWorkspace/TasksTab";
 import { TimelineTab } from "@/components/crm/leadWorkspace/TimelineTab";
@@ -18,6 +19,7 @@ const TAB_KEYS = [
   "tasks",
   "files",
   "marketing",
+  "meta",
 ] as const;
 
 export function WorkspaceTabs({
@@ -43,6 +45,7 @@ export function WorkspaceTabs({
         <TabsTrigger value="tasks">Tarefas</TabsTrigger>
         <TabsTrigger value="files">Arquivos</TabsTrigger>
         <TabsTrigger value="marketing">Marketing</TabsTrigger>
+        <TabsTrigger value="meta">Meta</TabsTrigger>
       </TabsList>
 
       <TabsContent value="timeline">
@@ -67,6 +70,9 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="marketing">
         {visited.has("marketing") && <MarketingTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="meta">
+        {visited.has("meta") && <MetaTab crmLeadId={crmLeadId} />}
       </TabsContent>
     </Tabs>
   );

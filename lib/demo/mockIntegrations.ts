@@ -60,6 +60,7 @@ export const DEMO_INTEGRATIONS: Integration[] = INTEGRATION_PROVIDERS.map((meta)
     healthScore: connected?.healthScore ?? (DEMO_ERROR[meta.provider] ? 20 : null),
     createdAt: daysAgoIso(60),
     updatedAt: daysAgoIso(connected?.lastSyncDaysAgo ?? 10),
+    hasAccessToken: meta.provider === "meta_ads",
   };
 });
 

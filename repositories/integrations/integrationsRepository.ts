@@ -19,10 +19,11 @@ interface IntegrationRow {
   health_score: number | null;
   created_at: string;
   updated_at: string;
+  access_token_ciphertext: string | null;
 }
 
 const INTEGRATION_SELECT =
-  "id, provider, category, name, description, status, enabled, connected_at, last_sync, next_sync, config, error, health_score, created_at, updated_at";
+  "id, provider, category, name, description, status, enabled, connected_at, last_sync, next_sync, config, error, health_score, created_at, updated_at, access_token_ciphertext";
 
 function mapIntegration(row: IntegrationRow): Integration {
   return {
@@ -41,6 +42,7 @@ function mapIntegration(row: IntegrationRow): Integration {
     healthScore: row.health_score,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    hasAccessToken: Boolean(row.access_token_ciphertext),
   };
 }
 
@@ -86,6 +88,9 @@ export interface UpdateIntegrationPayload {
   status?: IntegrationStatus;
   config?: Record<string, unknown>;
   error?: string | null;
+  connectedAt?: string | null;
+  lastSync?: string | null;
+  healthScore?: number | null;
 }
 
 export async function updateIntegration(
@@ -93,6 +98,54 @@ export async function updateIntegration(
   provider: string,
   patch: UpdateIntegrationPayload,
 ): Promise<void> {
-  const { error } = await supabase.from("integrations").update(patch).eq("provider", provider);
+  const row: Record<string, unknown> = {};
+  if (patch.enabled !== undefined) row.enabled = patch.enabled;
+  if (patch.status !== undefined) row.status = patch.status;
+  if (patch.config !== undefined) row.config = patch.config;
+  if (patch.error !== undefined) row.error = patch.error;
+  if (patch.connectedAt !== undefined) row.connected_at = patch.connectedAt;
+  if (patch.lastSync !== undefined) row.last_sync = patch.lastSync;
+  if (patch.healthScore !== undefined) row.health_score = patch.healthScore;
+
+  const { error } = await supabase.from("integrations").update(row).eq("provider", provider);
   if (error) throw new Error(`Falha ao atualizar integração: ${error.message}`);
+}
+
+/** Saves the Meta Access Token already encrypted (services/
+ * metaConversionsApi/tokenCrypto.ts) — this repository never sees or logs
+ * the plaintext token. Passing `null` clears it (used when the user removes
+ * the credential from the settings screen). */
+export async function setEncryptedAccessToken(
+  supabase: SupabaseClient,
+  provider: string,
+  encrypted: { ciphertext: string; iv: string } | null,
+): Promise<void> {
+  const { error } = await supabase
+    .from("integrations")
+    .update({
+      access_token_ciphertext: encrypted?.ciphertext ?? null,
+      access_token_iv: encrypted?.iv ?? null,
+    })
+    .eq("provider", provider);
+
+  if (error) throw new Error(`Falha ao salvar credencial da integração: ${error.message}`);
+}
+
+/** The only function in the app that reads the encrypted token back out —
+ * called exclusively from services/conversionsHub/dispatchMetaDelivery.ts,
+ * immediately before decrypting it to call the Meta API. Never exposed
+ * through the generic Integration type/mapIntegration above. */
+export async function getEncryptedAccessToken(
+  supabase: SupabaseClient,
+  provider: string,
+): Promise<{ ciphertext: string; iv: string } | null> {
+  const { data, error } = await supabase
+    .from("integrations")
+    .select("access_token_ciphertext, access_token_iv")
+    .eq("provider", provider)
+    .maybeSingle();
+
+  if (error) throw new Error(`Falha ao carregar credencial da integração: ${error.message}`);
+  if (!data?.access_token_ciphertext || !data?.access_token_iv) return null;
+  return { ciphertext: data.access_token_ciphertext, iv: data.access_token_iv };
 }

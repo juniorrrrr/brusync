@@ -13,6 +13,7 @@ import { createConversionEvent } from "@/repositories/conversions/conversionEven
 import { getClientBySourceLeadId } from "@/repositories/crm/clientsRepository";
 import { getLeadById } from "@/repositories/crm/leadsRepository";
 import { getSourceLeadAttribution } from "@/repositories/crm/marketingRepository";
+import { dispatchMetaDelivery } from "@/services/conversionsHub/dispatchMetaDelivery";
 
 export interface PrepareConversionOptions {
   integrationEventId: string;
@@ -75,7 +76,17 @@ export async function prepareConversionEvent(
       integrationEventId: options.integrationEventId,
     });
 
-    await createDeliveriesForEvent(supabase, event.id, CONVERSION_DESTINATIONS);
+    const deliveries = await createDeliveriesForEvent(supabase, event.id, CONVERSION_DESTINATIONS);
+
+    // Fase 9: the Meta Conversions API is the only destination with a real
+    // dispatcher so far — sending happens right here, synchronously, so
+    // "enviar automaticamente conforme a evolução do Lead" doesn't depend on
+    // a separate cron running in time. Every other destination's delivery
+    // stays "pendente" until it gets its own dispatcher, same as before.
+    const metaDelivery = deliveries.find((d) => d.destination === "meta_ads");
+    if (metaDelivery) {
+      await dispatchMetaDelivery(supabase, metaDelivery.id);
+    }
   } catch (err) {
     console.error(`conversionsHub: falha ao preparar conversão para ${eventType}`, err);
   }
