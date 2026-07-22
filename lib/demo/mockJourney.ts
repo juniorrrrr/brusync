@@ -11,7 +11,7 @@ function daysAgoIso(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString();
 }
 
-function ownerName(seed: DemoLeadSeed): string | null {
+export function ownerName(seed: DemoLeadSeed): string | null {
   if (seed.ownerIndex === null) return null;
   return DEMO_OWNERS[seed.ownerIndex]?.name ?? null;
 }
@@ -35,7 +35,7 @@ function stepsFor(seed: DemoLeadSeed): JourneyStage[] {
   return steps;
 }
 
-function buildEvents(seed: DemoLeadSeed): JourneyEvent[] {
+export function buildJourneyEvents(seed: DemoLeadSeed): JourneyEvent[] {
   const steps = stepsFor(seed);
   const endDaysAgo = seed.lost
     ? seed.lost.daysAgo
@@ -69,7 +69,7 @@ export function getDemoJourneySummary(leadId: string): JourneySummary | null {
   const seed = DEMO_LEADS.find((lead) => lead.id === leadId);
   if (!seed) return null;
 
-  const events = buildEvents(seed);
+  const events = buildJourneyEvents(seed);
   const lastEvent = events[events.length - 1] ?? null;
   const firstEvent = events[0] ?? null;
 

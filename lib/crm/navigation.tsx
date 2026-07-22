@@ -3,6 +3,7 @@ import {
   IconBuilding,
   IconChart,
   IconCheck,
+  IconCheckCircle,
   IconDoc,
   IconFunnel,
   IconGrid,
@@ -42,6 +43,7 @@ export const CRM_NAV: NavSection[] = [
     items: [
       { label: "Marketing Intelligence", href: "/marketing", icon: IconReport },
       { label: "Analytics", icon: IconChart, soon: true },
+      { label: "Conversões", href: "/conversoes", icon: IconCheckCircle },
       { label: "Integrações", href: "/integracoes", icon: IconArrowSwap },
       { label: "IA", icon: IconRobot, soon: true },
     ],

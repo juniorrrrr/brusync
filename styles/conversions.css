@@ -1,0 +1,48 @@
+/* ============================================================
+   Conversões (Fase 8) — estilos específicos do módulo. Reaproveita tokens e
+   classes já existentes em crm.css (crm-card, crm-badge, crm-toolbar,
+   crm-kpi-grid, crm-origin-*, etc.); este arquivo só cobre o que é novo.
+   ============================================================ */
+
+.crm-cv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.crm-cv-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.crm-cv-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.crm-cv-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.crm-cv-card-lead {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.crm-cv-destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}

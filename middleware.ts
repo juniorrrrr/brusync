@@ -48,6 +48,7 @@ export const config = {
     "/leads/:path*",
     "/pipeline/:path*",
     "/clientes/:path*",
+    "/conversoes/:path*",
     "/integracoes/:path*",
     "/configuracoes/:path*",
     "/usuarios/:path*",
