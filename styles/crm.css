@@ -1867,40 +1867,90 @@
   padding: 10px 0;
 }
 
-/* Dropdown menu (Mais ações) */
-.crm-dropdown {
-  position: relative;
+/* Mais ações agora usa components/ui/dropdown-menu.tsx (Radix real) em vez
+   de classes próprias — ver WorkspaceHeader.tsx. */
+
+/* ============================================================
+   Fase 4 — Pipeline card rico
+   ============================================================ */
+.crm-kanban-card {
+  border-left-width: 3px;
+  border-left-style: solid;
 }
-.crm-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: var(--shadow-md);
-  min-width: 180px;
-  z-index: 80;
-  padding: 6px;
+.crm-kanban-card.tone-ok {
+  border-left-color: var(--ok);
 }
-.crm-dropdown-item {
+.crm-kanban-card.tone-warn {
+  border-left-color: var(--warn);
+}
+.crm-kanban-card.tone-danger {
+  border-left-color: var(--danger);
+}
+.crm-kanban-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.crm-kanban-card-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.crm-kanban-card-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.crm-kanban-card-foot2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.crm-kanban-card-foot2 .stuck {
+  font-weight: 700;
+}
+.crm-kanban-card-foot2 .stuck.overdue {
+  color: var(--danger);
+}
+
+/* Pipeline toolbar (busca global + filtros de estágio ganho/perdido) */
+.crm-pipeline-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.crm-cmdk-trigger {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  padding: 8px 10px;
-  border-radius: 7px;
-  text-align: left;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 8px 12px;
+  min-width: 220px;
 }
-.crm-dropdown-item:hover {
+.crm-cmdk-trigger kbd {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
   background: var(--surface);
-}
-.crm-dropdown-item.danger {
-  color: var(--danger);
-}
-.crm-dropdown-item.danger:hover {
-  background: var(--danger-bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
 }

@@ -1,11 +1,25 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { deleteLeadAction, moveLeadStageAction } from "@/application/crm/leadsActions";
+import { useState, useTransition } from "react";
+import {
+  deleteLeadAction,
+  moveLeadStageAction,
+  reopenLeadAction,
+} from "@/application/crm/leadsActions";
 import { EditLeadModal } from "@/components/crm/leadWorkspace/EditLeadModal";
+import { LostReasonModal } from "@/components/crm/leadWorkspace/LostReasonModal";
+import { ProgressRing } from "@/components/crm/ProgressRing";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { IconDotsHorizontal, IconTrash, IconX } from "@/components/ui/icons";
 import { formatCurrencyBRL, initials } from "@/domain/crm/format";
+import { LOST_REASON_LABEL } from "@/domain/crm/lostRules";
 import type { CrmLeadWithRelations, PipelineStage } from "@/types/crm";
 
 export function WorkspaceHeader({
@@ -23,18 +37,8 @@ export function WorkspaceHeader({
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [markingLost, setMarkingLost] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
 
   function handleStageChange(stageId: string) {
     if (!stageId || stageId === lead.stageId) return;
@@ -45,7 +49,6 @@ export function WorkspaceHeader({
   }
 
   function handleDelete() {
-    setMenuOpen(false);
     if (
       !window.confirm(`Excluir "${lead.name}" definitivamente? Essa ação não pode ser desfeita.`)
     ) {
@@ -58,6 +61,13 @@ export function WorkspaceHeader({
     });
   }
 
+  function handleReopen() {
+    startTransition(async () => {
+      await reopenLeadAction(lead.id);
+      onChanged();
+    });
+  }
+
   return (
     <div className="crm-ws-header">
       <div className="crm-ws-header-top">
@@ -67,6 +77,11 @@ export function WorkspaceHeader({
             <div className="crm-ws-name-row">
               <span className="crm-ws-name">{lead.name}</span>
               <span className={`crm-badge ${lead.stage.color}`}>{lead.stage.label}</span>
+              {lead.lostReason && (
+                <span className="crm-badge danger">
+                  Perdido · {LOST_REASON_LABEL[lead.lostReason]}
+                </span>
+              )}
             </div>
             <div className="crm-ws-subline">
               {lead.company && <span>{lead.company}</span>}
@@ -77,6 +92,8 @@ export function WorkspaceHeader({
         </div>
 
         <div className="crm-ws-actions">
+          <ProgressRing value={lead.score} size={36} />
+
           <button type="button" className="btn btn-outline" onClick={() => setEditing(true)}>
             Editar
           </button>
@@ -96,29 +113,36 @@ export function WorkspaceHeader({
             ))}
           </select>
 
-          <div className="crm-dropdown" ref={menuRef}>
-            <button
-              type="button"
-              className="crm-icon-btn"
-              aria-label="Mais ações"
-              onClick={() => setMenuOpen((v) => !v)}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="crm-icon-btn" aria-label="Mais ações">
+                <IconDotsHorizontal size={17} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              style={{ background: "#fff", borderColor: "var(--border)" }}
             >
-              <IconDotsHorizontal size={17} />
-            </button>
-            {menuOpen && (
-              <div className="crm-dropdown-menu">
-                <button
-                  type="button"
-                  className="crm-dropdown-item danger"
-                  onClick={handleDelete}
-                  disabled={isPending}
-                >
-                  <IconTrash size={14} />
-                  Excluir lead
-                </button>
-              </div>
-            )}
-          </div>
+              {lead.lostReason ? (
+                <DropdownMenuItem onClick={handleReopen} disabled={isPending}>
+                  Reabrir lead
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={() => setMarkingLost(true)}>
+                  Marcar como perdido
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                disabled={isPending}
+                style={{ color: "var(--danger)" }}
+              >
+                <IconTrash size={14} />
+                Excluir lead
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <button type="button" className="crm-ws-close" onClick={onClose} aria-label="Fechar">
             <IconX size={18} />
@@ -152,6 +176,17 @@ export function WorkspaceHeader({
           onClose={() => setEditing(false)}
           onSaved={() => {
             setEditing(false);
+            onChanged();
+          }}
+        />
+      )}
+
+      {markingLost && (
+        <LostReasonModal
+          leadId={lead.id}
+          onClose={() => setMarkingLost(false)}
+          onDone={() => {
+            setMarkingLost(false);
             onChanged();
           }}
         />

@@ -49,6 +49,23 @@ export async function getClientById(
   return mapClientWithOwner(data as unknown as ClientWithOwnerRow);
 }
 
+export async function getClientBySourceLeadId(
+  supabase: SupabaseClient,
+  crmLeadId: string,
+): Promise<ClientRecord | null> {
+  const { data, error } = await supabase
+    .from("clients")
+    .select(
+      "id, created_at, updated_at, source_crm_lead_id, company, name, email, phone, owner_id, status, created_by",
+    )
+    .eq("source_crm_lead_id", crmLeadId)
+    .maybeSingle();
+
+  if (error) throw new Error(`Falha ao verificar cliente do lead: ${error.message}`);
+  if (!data) return null;
+  return mapClient(data);
+}
+
 export async function countClients(
   supabase: SupabaseClient,
   status?: ClientStatus,

@@ -30,6 +30,15 @@ export interface OwnerRef {
   email: string | null;
 }
 
+export type LostReason =
+  | "preco"
+  | "sem_interesse"
+  | "concorrente"
+  | "sem_orcamento"
+  | "nao_respondeu"
+  | "sem_perfil"
+  | "outro";
+
 export interface CrmLead {
   id: string;
   createdAt: string;
@@ -49,6 +58,8 @@ export interface CrmLead {
   tags: string[];
   lastInteractionAt: string | null;
   createdBy: string | null;
+  lostReason: LostReason | null;
+  lostAt: string | null;
 }
 
 export interface CrmLeadWithRelations extends CrmLead {
@@ -56,9 +67,38 @@ export interface CrmLeadWithRelations extends CrmLead {
   owner: OwnerRef | null;
 }
 
+/** The lead's current stage-history entry (the open row — exitedAt null).
+ * Gives "data de entrada" and "tempo parado nesta etapa" for the Pipeline
+ * card without a per-card extra query. */
+export interface StageEntry {
+  stageId: string;
+  enteredAt: string;
+}
+
+export interface CrmLeadWithPipelineInfo extends CrmLeadWithRelations {
+  stageEnteredAt: string | null;
+  nextTask: LeadTaskSummary | null;
+}
+
+export interface StageHistoryRow {
+  id: string;
+  crmLeadId: string;
+  stageId: string;
+  enteredAt: string;
+  exitedAt: string | null;
+}
+
+export interface LeadTaskSummary {
+  id: string;
+  title: string;
+  dueAt: string | null;
+  priority: TaskPriority;
+  assignee: OwnerRef | null;
+}
+
 export interface PipelineColumn {
   stage: PipelineStage;
-  leads: CrmLeadWithRelations[];
+  leads: CrmLeadWithPipelineInfo[];
 }
 
 export type ActivityType =
@@ -79,7 +119,11 @@ export type ActivityType =
   | "task_completed"
   | "task_deleted"
   | "file_upload"
-  | "file_delete";
+  | "file_delete"
+  | "automation"
+  | "lead_lost"
+  | "lead_reopened"
+  | "client_created";
 
 export interface LeadActivity {
   id: string;

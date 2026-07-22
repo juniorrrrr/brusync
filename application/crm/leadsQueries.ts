@@ -12,6 +12,8 @@ import {
   listMaterialDownloadsByEmail,
 } from "@/repositories/crm/marketingRepository";
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
+import { getOpenStageEntriesForLeads } from "@/repositories/crm/stageHistoryRepository";
+import { getNextTasksForLeads } from "@/repositories/crm/tasksRepository";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CrmLeadWithRelations, PipelineColumn, PipelineStage } from "@/types/crm";
 
@@ -45,9 +47,21 @@ export async function getPipelineData(): Promise<{ columns: PipelineColumn[] }> 
     listAllLeadsForPipeline(supabase),
   ]);
 
+  const leadIds = leads.map((lead) => lead.id);
+  const [stageEntries, nextTasks] = await Promise.all([
+    getOpenStageEntriesForLeads(supabase, leadIds),
+    getNextTasksForLeads(supabase, leadIds),
+  ]);
+
+  const leadsWithPipelineInfo = leads.map((lead) => ({
+    ...lead,
+    stageEnteredAt: stageEntries.get(lead.id)?.enteredAt ?? null,
+    nextTask: nextTasks.get(lead.id) ?? null,
+  }));
+
   const columns: PipelineColumn[] = stages.map((stage) => ({
     stage,
-    leads: leads.filter((lead) => lead.stageId === stage.id),
+    leads: leadsWithPipelineInfo.filter((lead) => lead.stageId === stage.id),
   }));
 
   return { columns };

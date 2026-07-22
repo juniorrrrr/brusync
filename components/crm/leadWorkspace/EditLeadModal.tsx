@@ -86,34 +86,24 @@ export function EditLeadModal({
                 </select>
               </div>
             </div>
-            <div className="crm-ws-composer-row">
-              <div className="crm-field">
-                <label htmlFor="edit-value">Valor potencial (R$)</label>
-                <input
-                  id="edit-value"
-                  name="potentialValue"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  defaultValue={lead.potentialValue ?? ""}
-                />
-              </div>
-              <div className="crm-field">
-                <label htmlFor="edit-score">Score (0-100)</label>
-                <input
-                  id="edit-score"
-                  name="score"
-                  type="number"
-                  min="0"
-                  max="100"
-                  defaultValue={lead.score}
-                />
-              </div>
+            <div className="crm-field">
+              <label htmlFor="edit-value">Valor potencial (R$)</label>
+              <input
+                id="edit-value"
+                name="potentialValue"
+                type="number"
+                step="0.01"
+                min="0"
+                defaultValue={lead.potentialValue ?? ""}
+              />
             </div>
             <div className="crm-field">
               <label htmlFor="edit-tags">Tags (separadas por vírgula)</label>
               <input id="edit-tags" name="tags" defaultValue={lead.tags.join(", ")} />
             </div>
+            <p className="crm-card-sub" style={{ margin: 0 }}>
+              Score calculado automaticamente ({lead.score}/100) — não é editável manualmente.
+            </p>
             {state.status === "error" && <div className="crm-field-error">{state.message}</div>}
             <div className="crm-modal-actions">
               <button type="button" className="btn btn-outline" onClick={onClose}>

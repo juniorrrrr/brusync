@@ -9,7 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TAB_KEYS = ["timeline", "notes", "tasks", "files"] as const;
 
-export function WorkspaceTabs({ crmLeadId }: { crmLeadId: string }) {
+export function WorkspaceTabs({
+  crmLeadId,
+  refreshToken,
+}: {
+  crmLeadId: string;
+  refreshToken: string;
+}) {
   const [visited, setVisited] = useState<Set<(typeof TAB_KEYS)[number]>>(new Set(["timeline"]));
 
   function handleValueChange(value: string) {
@@ -26,7 +32,9 @@ export function WorkspaceTabs({ crmLeadId }: { crmLeadId: string }) {
       </TabsList>
 
       <TabsContent value="timeline">
-        {visited.has("timeline") && <TimelineTab crmLeadId={crmLeadId} />}
+        {visited.has("timeline") && (
+          <TimelineTab crmLeadId={crmLeadId} refreshToken={refreshToken} />
+        )}
       </TabsContent>
       <TabsContent value="notes">
         {visited.has("notes") && <NotesTab crmLeadId={crmLeadId} />}

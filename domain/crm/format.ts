@@ -12,6 +12,17 @@ export function formatDateTime(iso: string) {
   });
 }
 
+export function daysSince(iso: string) {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000));
+}
+
+export function formatDaysStuck(iso: string) {
+  const days = daysSince(iso);
+  if (days <= 0) return "hoje";
+  if (days === 1) return "1 dia";
+  return `${days} dias`;
+}
+
 export function formatRelativeToNow(iso: string) {
   const diffMs = Date.now() - new Date(iso).getTime();
   const diffMin = Math.round(diffMs / 60_000);

@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { type LeadTaskRow, mapLeadTask } from "@/repositories/crm/mappers";
-import type { LeadTask, TaskPriority, TaskStatus } from "@/types/crm";
+import type { LeadTask, LeadTaskSummary, TaskPriority, TaskStatus } from "@/types/crm";
 
 const TASK_SELECT = `
   id, crm_lead_id, title, description, status, priority, due_at, completed_at, assignee_id, created_by, created_at, updated_at,
@@ -23,6 +23,39 @@ export async function listTasksForLead(
 
   if (error) throw new Error(`Falha ao carregar tarefas: ${error.message}`);
   return ((data ?? []) as unknown as LeadTaskRow[]).map(mapLeadTask);
+}
+
+/** "Próxima ação" per lead, batched for list views (Pipeline board) — the
+ * earliest non-done task for each lead, one query for the whole list
+ * instead of one query per card. */
+export async function getNextTasksForLeads(
+  supabase: SupabaseClient,
+  crmLeadIds: string[],
+): Promise<Map<string, LeadTaskSummary>> {
+  if (crmLeadIds.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from("crm_lead_tasks")
+    .select(TASK_SELECT)
+    .in("crm_lead_id", crmLeadIds)
+    .neq("status", "done")
+    .order("due_at", { ascending: true, nullsFirst: false });
+
+  if (error) throw new Error(`Falha ao carregar próximas ações: ${error.message}`);
+
+  const map = new Map<string, LeadTaskSummary>();
+  for (const row of (data ?? []) as unknown as LeadTaskRow[]) {
+    if (map.has(row.crm_lead_id)) continue;
+    const task = mapLeadTask(row);
+    map.set(row.crm_lead_id, {
+      id: task.id,
+      title: task.title,
+      dueAt: task.dueAt,
+      priority: task.priority,
+      assignee: task.assignee,
+    });
+  }
+  return map;
 }
 
 export interface CreateTaskPayload {

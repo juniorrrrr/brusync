@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
+import { recalculateLeadScore } from "@/application/crm/scoreService";
 import { createActivity } from "@/repositories/crm/activitiesRepository";
 import { touchLeadInteraction } from "@/repositories/crm/leadsRepository";
 import {
@@ -107,6 +108,7 @@ export async function updateTaskStatusAction(
       createdBy: profile.id,
     });
     await touchLeadInteraction(supabase, existing.crmLeadId);
+    await recalculateLeadScore(supabase, existing.crmLeadId);
   }
 
   revalidatePath("/dashboard");

@@ -2,11 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
+import { runStageEntryAutomation } from "@/application/crm/automationService";
 import {
   getLeadDetailData,
   getOwnerOptions,
   type LeadDetailData,
 } from "@/application/crm/leadsQueries";
+import { recalculateLeadScore } from "@/application/crm/scoreService";
+import { LOST_REASON_LABEL } from "@/domain/crm/lostRules";
 import { createActivity } from "@/repositories/crm/activitiesRepository";
 import {
   deleteLeadFile,
@@ -19,15 +22,23 @@ import {
   createLead,
   deleteLead,
   getLeadById,
+  markLeadLost,
+  reopenLead,
+  searchLeadsGlobal,
   touchLeadInteraction,
   updateLead,
   updateLeadStage,
 } from "@/repositories/crm/leadsRepository";
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
+import {
+  openStageHistory,
+  transitionStageHistory,
+} from "@/repositories/crm/stageHistoryRepository";
 import { validateLeadFile } from "@/schemas/crm/file.schema";
 import {
   bulkUpdateLeadsSchema,
   createLeadSchema,
+  markLeadLostSchema,
   moveLeadStageSchema,
   updateLeadSchema,
 } from "@/schemas/crm/lead.schema";
@@ -45,12 +56,26 @@ function firstIssueMessage(error: { issues: { message: string }[] }) {
 
 export async function fetchLeadDetail(leadId: string): Promise<LeadDetailData | null> {
   await requireCrmProfile();
+  const supabase = await getSupabaseAuthClient();
+  // Refresh score for whichever lead someone is actually opening — keeps the
+  // purely time-based penalties (days stuck, no interaction) accurate for
+  // this lead without needing a background recompute job for every lead.
+  await recalculateLeadScore(supabase, leadId);
   return getLeadDetailData(leadId);
 }
 
 export async function fetchOwnerOptions() {
   await requireCrmProfile();
   return getOwnerOptions();
+}
+
+/** Global search (Cmd/Ctrl+K Command Palette) — nome, empresa, telefone,
+ * e-mail, cidade, tags. */
+export async function searchLeadsAction(query: string) {
+  await requireCrmProfile();
+  if (!query.trim()) return [];
+  const supabase = await getSupabaseAuthClient();
+  return searchLeadsGlobal(supabase, query);
 }
 
 export async function createLeadAction(
@@ -103,6 +128,15 @@ export async function createLeadAction(
     createdBy: profile.id,
   });
 
+  await openStageHistory(supabase, lead.id, firstStage.id);
+  await runStageEntryAutomation(supabase, {
+    crmLeadId: lead.id,
+    stage: firstStage,
+    lead,
+    actorProfileId: profile.id,
+  });
+  await recalculateLeadScore(supabase, lead.id);
+
   revalidatePath("/leads");
   revalidatePath("/pipeline");
   revalidatePath("/dashboard");
@@ -127,7 +161,6 @@ export async function updateLeadAction(
     origin: formData.get("origin") || undefined,
     ownerId: formData.get("ownerId") || undefined,
     potentialValue: formData.get("potentialValue") || undefined,
-    score: formData.get("score") || undefined,
     tags: formData.get("tags")
       ? String(formData.get("tags"))
           .split(",")
@@ -164,6 +197,8 @@ export async function updateLeadAction(
     });
   }
 
+  await recalculateLeadScore(supabase, leadId);
+
   revalidatePath("/leads");
   revalidatePath("/pipeline");
 
@@ -179,9 +214,13 @@ export async function moveLeadStageAction(
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
   const supabase = await getSupabaseAuthClient();
-  const stages = await listPipelineStages(supabase);
+  const [stages, lead] = await Promise.all([
+    listPipelineStages(supabase),
+    getLeadById(supabase, leadId),
+  ]);
   const targetStage = stages.find((stage) => stage.id === stageId);
   if (!targetStage) return { ok: false, error: "Estágio inválido." };
+  if (!lead) return { ok: false, error: "Lead não encontrado." };
 
   await updateLeadStage(supabase, leadId, stageId);
   await createActivity(supabase, {
@@ -191,8 +230,60 @@ export async function moveLeadStageAction(
     createdBy: profile.id,
   });
 
+  await transitionStageHistory(supabase, leadId, stageId);
+  await runStageEntryAutomation(supabase, {
+    crmLeadId: leadId,
+    stage: targetStage,
+    lead,
+    actorProfileId: profile.id,
+  });
+  await recalculateLeadScore(supabase, leadId);
+
   revalidatePath("/pipeline");
   revalidatePath("/leads");
+  revalidatePath("/dashboard");
+  revalidatePath("/clientes");
+
+  return { ok: true };
+}
+
+export async function markLeadLostAction(
+  leadId: string,
+  reason: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const profile = await requireCrmProfile();
+  const parsed = markLeadLostSchema.safeParse({ leadId, reason });
+  if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
+
+  const supabase = await getSupabaseAuthClient();
+  await markLeadLost(supabase, parsed.data.leadId, parsed.data.reason);
+  await createActivity(supabase, {
+    crmLeadId: parsed.data.leadId,
+    type: "lead_lost",
+    title: `Lead marcado como perdido: ${LOST_REASON_LABEL[parsed.data.reason]}`,
+    createdBy: profile.id,
+  });
+
+  revalidatePath("/leads");
+  revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
+
+  return { ok: true };
+}
+
+export async function reopenLeadAction(leadId: string): Promise<{ ok: boolean; error?: string }> {
+  const profile = await requireCrmProfile();
+  const supabase = await getSupabaseAuthClient();
+  await reopenLead(supabase, leadId);
+  await createActivity(supabase, {
+    crmLeadId: leadId,
+    type: "lead_reopened",
+    title: "Lead reaberto",
+    createdBy: profile.id,
+  });
+
+  revalidatePath("/leads");
+  revalidatePath("/pipeline");
   revalidatePath("/dashboard");
 
   return { ok: true };
@@ -214,7 +305,7 @@ export async function bulkUpdateLeadsAction(
   leadIds: string[],
   patch: { stageId?: string; ownerId?: string },
 ): Promise<{ ok: boolean; error?: string }> {
-  await requireCrmProfile();
+  const profile = await requireCrmProfile();
   const parsed = bulkUpdateLeadsSchema.safeParse({ leadIds, ...patch });
   if (!parsed.success) return { ok: false, error: firstIssueMessage(parsed.error) };
 
@@ -224,8 +315,35 @@ export async function bulkUpdateLeadsAction(
     ownerId: parsed.data.ownerId,
   });
 
+  if (parsed.data.stageId) {
+    const stages = await listPipelineStages(supabase);
+    const targetStage = stages.find((s) => s.id === parsed.data.stageId);
+    if (targetStage) {
+      for (const leadId of parsed.data.leadIds) {
+        const lead = await getLeadById(supabase, leadId);
+        if (!lead) continue;
+        await createActivity(supabase, {
+          crmLeadId: leadId,
+          type: "stage_change",
+          title: `Movido para ${targetStage.label}`,
+          createdBy: profile.id,
+        });
+        await transitionStageHistory(supabase, leadId, parsed.data.stageId);
+        await runStageEntryAutomation(supabase, {
+          crmLeadId: leadId,
+          stage: targetStage,
+          lead,
+          actorProfileId: profile.id,
+        });
+        await recalculateLeadScore(supabase, leadId);
+      }
+    }
+  }
+
   revalidatePath("/leads");
   revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
+  revalidatePath("/clientes");
 
   return { ok: true };
 }
@@ -264,6 +382,7 @@ export async function uploadLeadFileAction(
     createdBy: profile.id,
   });
   await touchLeadInteraction(supabase, crmLeadId);
+  await recalculateLeadScore(supabase, crmLeadId);
 
   revalidatePath("/leads");
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { IconBell, IconLogout, IconMenu } from "@/components/ui/icons";
+import { IconBell, IconLogout, IconMenu, IconSearch } from "@/components/ui/icons";
 import { signOut } from "@/services/auth/logout";
 import type { Profile } from "@/services/auth/session";
 
@@ -22,9 +22,11 @@ function initials(name: string | null, email: string | null) {
 export function Header({
   profile,
   onMenuClick,
+  onSearchClick,
 }: {
   profile: Profile | null;
   onMenuClick: () => void;
+  onSearchClick: () => void;
 }) {
   const displayName = profile?.name || profile?.email || "Usuário";
   const roleLabel = profile ? ROLE_LABEL[profile.role] : "";
@@ -46,6 +48,17 @@ export function Header({
       </div>
 
       <div className="crm-header-right">
+        <button
+          type="button"
+          className="crm-cmdk-trigger"
+          onClick={onSearchClick}
+          aria-label="Busca global"
+        >
+          <IconSearch size={14} />
+          Buscar leads...
+          <kbd>⌘K</kbd>
+        </button>
+
         <button type="button" className="crm-icon-btn" aria-label="Notificações">
           <IconBell />
         </button>

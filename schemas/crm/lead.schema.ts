@@ -27,11 +27,13 @@ export const updateLeadSchema = z.object({
   origin: z.string().trim().optional(),
   ownerId: z.string().uuid().optional().or(z.literal("")),
   potentialValue: z.coerce.number().nonnegative().optional(),
-  score: z.coerce.number().min(0).max(100).optional(),
   tags: z.array(z.string().trim().min(1)).optional(),
 });
 
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
+
+/** Score is intentionally not part of this schema — it's a system-computed
+ * field (application/crm/scoreService.ts), never user-editable. */
 
 export const moveLeadStageSchema = z.object({
   leadId: z.string().uuid(),
@@ -47,3 +49,20 @@ export const bulkUpdateLeadsSchema = z.object({
 });
 
 export type BulkUpdateLeadsInput = z.infer<typeof bulkUpdateLeadsSchema>;
+
+export const lostReasonSchema = z.enum([
+  "preco",
+  "sem_interesse",
+  "concorrente",
+  "sem_orcamento",
+  "nao_respondeu",
+  "sem_perfil",
+  "outro",
+]);
+
+export const markLeadLostSchema = z.object({
+  leadId: z.string().uuid(),
+  reason: lostReasonSchema,
+});
+
+export type MarkLeadLostInput = z.infer<typeof markLeadLostSchema>;

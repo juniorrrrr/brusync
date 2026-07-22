@@ -32,7 +32,7 @@ export function LeadWorkspaceDrawer() {
             />
             <div className="crm-ws-body">
               <div className="crm-ws-main">
-                <WorkspaceTabs crmLeadId={data.lead.id} />
+                <WorkspaceTabs crmLeadId={data.lead.id} refreshToken={data.lead.updatedAt} />
               </div>
               <div className="crm-ws-side">
                 <WorkspaceSidebar

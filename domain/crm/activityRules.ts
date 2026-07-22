@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
 import {
+  IconBolt,
+  IconBuilding,
+  IconCheck,
   IconCheckCircle,
   IconDoc,
   IconFunnel,
@@ -10,6 +13,7 @@ import {
   IconTarget,
   IconTrash,
   IconUsers,
+  IconX,
 } from "@/components/ui/icons";
 import type { ActivityType } from "@/types/crm";
 
@@ -32,6 +36,10 @@ export const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
   task_deleted: "Tarefa excluída",
   file_upload: "Arquivo enviado",
   file_delete: "Arquivo removido",
+  automation: "Automação",
+  lead_lost: "Lead perdido",
+  lead_reopened: "Lead reaberto",
+  client_created: "Cliente criado",
 };
 
 export const ACTIVITY_TYPE_ICON: Record<ActivityType, ComponentType<IconProps>> = {
@@ -53,6 +61,10 @@ export const ACTIVITY_TYPE_ICON: Record<ActivityType, ComponentType<IconProps>> 
   task_deleted: IconTrash,
   file_upload: IconPaperclip,
   file_delete: IconTrash,
+  automation: IconBolt,
+  lead_lost: IconX,
+  lead_reopened: IconCheck,
+  client_created: IconBuilding,
 };
 
 /** Fallback icon for a marketing-download timeline entry — not an

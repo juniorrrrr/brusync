@@ -49,7 +49,13 @@ function EntryRow({ entry }: { entry: TimelineEntry }) {
   );
 }
 
-export function TimelineTab({ crmLeadId }: { crmLeadId: string }) {
+export function TimelineTab({
+  crmLeadId,
+  refreshToken,
+}: {
+  crmLeadId: string;
+  refreshToken: string;
+}) {
   const [entries, setEntries] = useState<TimelineEntry[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +63,12 @@ export function TimelineTab({ crmLeadId }: { crmLeadId: string }) {
   const [hasMore, setHasMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  // refreshToken is the lead's updated_at — bumped by every mutation that can
+  // register a new timeline event (stage move, mark lost/reopen, edit). Since
+  // this tab only mounts once per Drawer open (see WorkspaceTabs' `visited`
+  // set), it otherwise has no way to notice activities created while it's
+  // already showing.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: refreshToken is an intentional cache-busting dependency, not read inside the effect body — it exists solely to force a refetch when the lead is mutated elsewhere.
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -70,7 +82,7 @@ export function TimelineTab({ crmLeadId }: { crmLeadId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [crmLeadId]);
+  }, [crmLeadId, refreshToken]);
 
   const loadMore = useCallback(async () => {
     if (!cursor || loadingMore) return;

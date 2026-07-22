@@ -29,6 +29,13 @@ export default async function LeadsPage({
     search: params.q,
     stageId: params.stage,
     ownerId: params.owner,
+    city: params.city,
+    tag: params.tag,
+    status: params.status as ListLeadsOptions["status"],
+    scoreMin: params.scoreMin ? Number(params.scoreMin) : undefined,
+    scoreMax: params.scoreMax ? Number(params.scoreMax) : undefined,
+    createdFrom: params.createdFrom,
+    createdTo: params.createdTo,
     sortBy,
     sortDir,
     limit: PAGE_SIZE,
@@ -55,6 +62,13 @@ export default async function LeadsPage({
         initialSearch={params.q ?? ""}
         initialStageId={params.stage ?? ""}
         initialOwnerId={params.owner ?? ""}
+        initialCity={params.city ?? ""}
+        initialStatus={params.status ?? ""}
+        initialTag={params.tag ?? ""}
+        initialScoreMin={params.scoreMin ?? ""}
+        initialScoreMax={params.scoreMax ?? ""}
+        initialCreatedFrom={params.createdFrom ?? ""}
+        initialCreatedTo={params.createdTo ?? ""}
       />
 
       <div className="crm-card">

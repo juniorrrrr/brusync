@@ -10,9 +10,11 @@ import type {
   LeadFile,
   LeadNote,
   LeadTask,
+  LostReason,
   MaterialDownload,
   OwnerRef,
   PipelineStage,
+  StageHistoryRow,
   TaskPriority,
   TaskStatus,
 } from "@/types/crm";
@@ -67,6 +69,8 @@ export interface CrmLeadRow {
   tags: string[] | null;
   last_interaction_at: string | null;
   created_by: string | null;
+  lost_reason: string | null;
+  lost_at: string | null;
 }
 
 export function mapCrmLead(row: CrmLeadRow): CrmLead {
@@ -89,6 +93,8 @@ export function mapCrmLead(row: CrmLeadRow): CrmLead {
     tags: row.tags ?? [],
     lastInteractionAt: row.last_interaction_at,
     createdBy: row.created_by,
+    lostReason: row.lost_reason as LostReason | null,
+    lostAt: row.lost_at,
   };
 }
 
@@ -267,4 +273,22 @@ export interface ClientWithOwnerRow extends ClientRow {
 
 export function mapClientWithOwner(row: ClientWithOwnerRow): ClientWithOwner {
   return { ...mapClient(row), owner: mapOwner(row.owner) };
+}
+
+export interface StageHistoryDbRow {
+  id: string;
+  crm_lead_id: string;
+  stage_id: string;
+  entered_at: string;
+  exited_at: string | null;
+}
+
+export function mapStageHistory(row: StageHistoryDbRow): StageHistoryRow {
+  return {
+    id: row.id,
+    crmLeadId: row.crm_lead_id,
+    stageId: row.stage_id,
+    enteredAt: row.entered_at,
+    exitedAt: row.exited_at,
+  };
 }

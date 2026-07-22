@@ -6,12 +6,26 @@ import {
   mapCrmLead,
   mapCrmLeadWithRelations,
 } from "@/repositories/crm/mappers";
-import type { CrmLead, CrmLeadWithRelations } from "@/types/crm";
+import type { CrmLead, CrmLeadWithRelations, LostReason } from "@/types/crm";
+
+const LEAD_FIELDS = `
+  id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin,
+  stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by, lost_reason, lost_at
+`;
 
 const LEAD_WITH_RELATIONS_SELECT = `
-  id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin,
-  stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by,
+  ${LEAD_FIELDS},
   stage:pipeline_stages!crm_leads_stage_id_fkey (id, key, label, color, position, is_won),
+  owner:profiles!crm_leads_owner_id_fkey (id, name, email)
+`;
+
+/** Same shape, but the stage embed uses `!inner` so `.eq("stage.is_won", ...)`
+ * actually filters the parent rows instead of just filtering which embedded
+ * object comes back (PostgREST only turns a nested filter into a real join
+ * condition when the embed is hinted `!inner`). */
+const LEAD_WITH_RELATIONS_SELECT_STAGE_INNER = `
+  ${LEAD_FIELDS},
+  stage:pipeline_stages!crm_leads_stage_id_fkey!inner (id, key, label, color, position, is_won),
   owner:profiles!crm_leads_owner_id_fkey (id, name, email)
 `;
 
@@ -21,10 +35,19 @@ function sanitizeSearchTerm(term: string) {
   return term.replace(/[,()%]/g, " ").trim();
 }
 
+export type LeadStatusFilter = "aberto" | "ganho" | "perdido";
+
 export interface ListLeadsOptions {
   search?: string;
   stageId?: string;
   ownerId?: string;
+  city?: string;
+  tag?: string;
+  status?: LeadStatusFilter;
+  scoreMin?: number;
+  scoreMax?: number;
+  createdFrom?: string;
+  createdTo?: string;
   sortBy?: "created_at" | "name" | "potential_value" | "score" | "last_interaction_at";
   sortDir?: "asc" | "desc";
   limit?: number;
@@ -39,20 +62,43 @@ export async function listLeads(
     search,
     stageId,
     ownerId,
+    city,
+    tag,
+    status,
+    scoreMin,
+    scoreMax,
+    createdFrom,
+    createdTo,
     sortBy = "created_at",
     sortDir = "desc",
     limit = 50,
     offset = 0,
   } = options;
 
-  let query = supabase.from("crm_leads").select(LEAD_WITH_RELATIONS_SELECT, { count: "exact" });
+  let query = supabase
+    .from("crm_leads")
+    .select(
+      status === "ganho" ? LEAD_WITH_RELATIONS_SELECT_STAGE_INNER : LEAD_WITH_RELATIONS_SELECT,
+      { count: "exact" },
+    );
 
   if (stageId) query = query.eq("stage_id", stageId);
   if (ownerId) query = query.eq("owner_id", ownerId);
+  if (city) query = query.ilike("city", `%${sanitizeSearchTerm(city)}%`);
+  if (tag) query = query.contains("tags", [tag]);
+  if (scoreMin !== undefined) query = query.gte("score", scoreMin);
+  if (scoreMax !== undefined) query = query.lte("score", scoreMax);
+  if (createdFrom) query = query.gte("created_at", createdFrom);
+  if (createdTo) query = query.lte("created_at", createdTo);
+  if (status === "perdido") query = query.not("lost_reason", "is", null);
+  if (status === "aberto") query = query.is("lost_reason", null);
+  if (status === "ganho") query = query.is("lost_reason", null).eq("stage.is_won", true);
   if (search) {
     const term = sanitizeSearchTerm(search);
     if (term) {
-      query = query.or(`name.ilike.%${term}%,company.ilike.%${term}%,email.ilike.%${term}%`);
+      query = query.or(
+        `name.ilike.%${term}%,company.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`,
+      );
     }
   }
 
@@ -67,12 +113,37 @@ export async function listLeads(
   };
 }
 
+/** Global search across the fields the brief asks for (name, empresa,
+ * telefone, email, cidade, tags) — used by the Command Palette. Lightweight,
+ * capped result set, no pagination. */
+export async function searchLeadsGlobal(
+  supabase: SupabaseClient,
+  query: string,
+  limit = 8,
+): Promise<CrmLeadWithRelations[]> {
+  const term = sanitizeSearchTerm(query);
+  if (!term) return [];
+
+  const { data, error } = await supabase
+    .from("crm_leads")
+    .select(LEAD_WITH_RELATIONS_SELECT)
+    .or(
+      `name.ilike.%${term}%,company.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%,city.ilike.%${term}%,tags.cs.{${term}}`,
+    )
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(`Falha na busca global: ${error.message}`);
+  return ((data ?? []) as unknown as CrmLeadWithRelationsRow[]).map(mapCrmLeadWithRelations);
+}
+
 export async function listAllLeadsForPipeline(
   supabase: SupabaseClient,
 ): Promise<CrmLeadWithRelations[]> {
   const { data, error } = await supabase
     .from("crm_leads")
     .select(LEAD_WITH_RELATIONS_SELECT)
+    .is("lost_reason", null)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(`Falha ao carregar pipeline: ${error.message}`);
@@ -134,7 +205,7 @@ export async function createLead(
       created_by: payload.createdBy,
     })
     .select(
-      "id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin, stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by",
+      "id, created_at, updated_at, source_lead_id, name, company, job_title, city, email, phone, origin, stage_id, owner_id, potential_value, score, tags, last_interaction_at, created_by, lost_reason, lost_at",
     )
     .single();
 
@@ -153,7 +224,6 @@ export interface UpdateLeadPayload {
   origin?: string | null;
   ownerId?: string | null;
   potentialValue?: number | null;
-  score?: number;
   tags?: string[];
 }
 
@@ -172,11 +242,21 @@ export async function updateLead(
   if (patch.origin !== undefined) payload.origin = patch.origin;
   if (patch.ownerId !== undefined) payload.owner_id = patch.ownerId;
   if (patch.potentialValue !== undefined) payload.potential_value = patch.potentialValue;
-  if (patch.score !== undefined) payload.score = patch.score;
   if (patch.tags !== undefined) payload.tags = patch.tags;
 
   const { error } = await supabase.from("crm_leads").update(payload).eq("id", leadId);
   if (error) throw new Error(`Falha ao atualizar lead: ${error.message}`);
+}
+
+/** The only writer of `score` — everywhere else in the app, score is a
+ * read-only, system-computed field (see application/crm/scoreService.ts). */
+export async function setLeadScore(
+  supabase: SupabaseClient,
+  leadId: string,
+  score: number,
+): Promise<void> {
+  const { error } = await supabase.from("crm_leads").update({ score }).eq("id", leadId);
+  if (error) throw new Error(`Falha ao atualizar score do lead: ${error.message}`);
 }
 
 export async function touchLeadInteraction(
@@ -225,6 +305,28 @@ export async function bulkUpdateLeads(
 
   const { error } = await supabase.from("crm_leads").update(payload).in("id", leadIds);
   if (error) throw new Error(`Falha ao atualizar leads em lote: ${error.message}`);
+}
+
+export async function markLeadLost(
+  supabase: SupabaseClient,
+  leadId: string,
+  reason: LostReason,
+): Promise<void> {
+  const { error } = await supabase
+    .from("crm_leads")
+    .update({ lost_reason: reason, lost_at: new Date().toISOString() })
+    .eq("id", leadId);
+
+  if (error) throw new Error(`Falha ao marcar lead como perdido: ${error.message}`);
+}
+
+export async function reopenLead(supabase: SupabaseClient, leadId: string): Promise<void> {
+  const { error } = await supabase
+    .from("crm_leads")
+    .update({ lost_reason: null, lost_at: null })
+    .eq("id", leadId);
+
+  if (error) throw new Error(`Falha ao reabrir lead: ${error.message}`);
 }
 
 export async function deleteLead(supabase: SupabaseClient, leadId: string): Promise<void> {

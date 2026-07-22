@@ -1,11 +1,24 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { moveLeadStageAction } from "@/application/crm/leadsActions";
+import { ProgressRing } from "@/components/crm/ProgressRing";
+import { IconClock } from "@/components/ui/icons";
 import { useLeadDrawer } from "@/contexts/crm/LeadDrawerContext";
-import { formatCurrencyBRL, formatDate, initials } from "@/domain/crm/format";
-import type { CrmLeadWithRelations, PipelineColumn } from "@/types/crm";
+import {
+  formatCurrencyBRL,
+  formatDate,
+  formatDaysStuck,
+  formatRelativeToNow,
+  initials,
+} from "@/domain/crm/format";
+import { LEAD_PRIORITY_LABEL, leadPriorityTone, priorityFromScore } from "@/domain/crm/scoreRules";
+import type { CrmLeadWithPipelineInfo, PipelineColumn } from "@/types/crm";
+
+function isOverdue(dueAt: string | null) {
+  return !!dueAt && new Date(dueAt).getTime() < Date.now();
+}
 
 export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColumn[] }) {
   const [columns, setColumns] = useState(initialColumns);
@@ -14,6 +27,14 @@ export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColu
   const { openLead } = useLeadDrawer();
   const router = useRouter();
   const [, startTransition] = useTransition();
+
+  // Re-sync with the server-fetched columns whenever the parent Server
+  // Component re-renders with fresh data (router.refresh() after creating a
+  // lead, moving a stage, etc.) — a plain useState(initialColumns) only reads
+  // the prop on mount and would otherwise leave the board stale.
+  useEffect(() => {
+    setColumns(initialColumns);
+  }, [initialColumns]);
 
   function handleDrop(stageId: string) {
     setDragOverStage(null);
@@ -29,7 +50,11 @@ export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColu
     if (!currentLead || currentLead.stageId === stageId) return;
 
     setColumns((prev) => {
-      const updatedLead: CrmLeadWithRelations = { ...currentLead, stageId };
+      const updatedLead: CrmLeadWithPipelineInfo = {
+        ...currentLead,
+        stageId,
+        stageEnteredAt: new Date().toISOString(),
+      };
       const withoutLead = prev.map((col) => ({
         ...col,
         leads: col.leads.filter((l) => l.id !== leadId),
@@ -40,8 +65,11 @@ export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColu
     });
 
     startTransition(async () => {
-      const result = await moveLeadStageAction(leadId, stageId);
-      if (!result.ok) router.refresh();
+      // Always refresh: moving a stage triggers server-side automation (task
+      // creation, score recalculation, client auto-creation on Venda) whose
+      // effects the optimistic local update above can't reflect.
+      await moveLeadStageAction(leadId, stageId);
+      router.refresh();
     });
   }
 
@@ -65,39 +93,106 @@ export function PipelineBoard({ initialColumns }: { initialColumns: PipelineColu
             <span className="crm-kanban-col-title">{column.stage.label}</span>
             <span className="crm-kanban-count">{column.leads.length}</span>
           </div>
-          {column.leads.map((lead) => (
-            <div
-              key={lead.id}
-              className={`crm-kanban-card${draggingId === lead.id ? " dragging" : ""}`}
-              draggable
-              role="button"
-              tabIndex={0}
-              onDragStart={() => setDraggingId(lead.id)}
-              onDragEnd={() => setDraggingId(null)}
-              onClick={() => openLead(lead.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  openLead(lead.id);
-                }
-              }}
-            >
-              <div className="crm-kanban-card-title">{lead.name}</div>
-              <div className="crm-kanban-card-meta">
-                {lead.company || "Sem empresa"} · {formatDate(lead.createdAt)}
-              </div>
-              <div className="crm-kanban-card-foot">
-                <span className="cell-muted" style={{ fontSize: 11.5 }}>
-                  {formatCurrencyBRL(lead.potentialValue)}
-                </span>
-                {lead.owner && (
-                  <span className="crm-avatar crm-kanban-owner">
-                    {initials(lead.owner.name || lead.owner.email)}
+          {column.leads.map((lead) => {
+            const priority = priorityFromScore(lead.score);
+            const tone = leadPriorityTone(lead.score);
+            const stuckSince = lead.stageEnteredAt ?? lead.createdAt;
+            const stuckDays = formatDaysStuck(stuckSince);
+            const isStuckTooLong =
+              Math.floor((Date.now() - new Date(stuckSince).getTime()) / 86_400_000) > 15;
+            const nextTaskOverdue = isOverdue(lead.nextTask?.dueAt ?? null);
+
+            return (
+              <div
+                key={lead.id}
+                className={`crm-kanban-card tone-${tone}${draggingId === lead.id ? " dragging" : ""}`}
+                draggable
+                role="button"
+                tabIndex={0}
+                onDragStart={() => setDraggingId(lead.id)}
+                onDragEnd={() => setDraggingId(null)}
+                onClick={() => openLead(lead.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openLead(lead.id);
+                  }
+                }}
+              >
+                <div className="crm-kanban-card-top">
+                  <div>
+                    <div className="crm-kanban-card-title">{lead.name}</div>
+                    <div className="crm-kanban-card-meta">
+                      {lead.company || "Sem empresa"}
+                      {lead.jobTitle ? ` · ${lead.jobTitle}` : ""}
+                    </div>
+                  </div>
+                  <ProgressRing value={lead.score} size={30} />
+                </div>
+
+                <div className="crm-kanban-card-row">
+                  <span className="cell-muted" style={{ fontSize: 11.5 }}>
+                    {lead.city || "Sem cidade"}
                   </span>
+                  {lead.origin && (
+                    <span className="crm-badge neutral" style={{ fontSize: 10 }}>
+                      {lead.origin}
+                    </span>
+                  )}
+                  <span className={`crm-badge ${tone}`} style={{ fontSize: 10 }}>
+                    Prioridade {LEAD_PRIORITY_LABEL[priority]}
+                  </span>
+                </div>
+
+                {lead.tags.length > 0 && (
+                  <div className="crm-kanban-card-tags">
+                    {lead.tags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="crm-tag">
+                        {tag}
+                      </span>
+                    ))}
+                    {lead.tags.length > 3 && (
+                      <span className="crm-tag">+{lead.tags.length - 3}</span>
+                    )}
+                  </div>
                 )}
+
+                {lead.nextTask && (
+                  <div
+                    className={`crm-badge ${nextTaskOverdue ? "danger" : "info"}`}
+                    style={{ marginTop: 8, width: "100%", justifyContent: "flex-start" }}
+                  >
+                    <IconClock size={12} />
+                    {lead.nextTask.title}
+                    {lead.nextTask.dueAt ? ` · ${formatDate(lead.nextTask.dueAt)}` : ""}
+                    {nextTaskOverdue ? " · Atrasado" : ""}
+                  </div>
+                )}
+
+                <div className="crm-kanban-card-foot">
+                  <span className="cell-muted" style={{ fontSize: 11.5 }}>
+                    {formatCurrencyBRL(lead.potentialValue)}
+                  </span>
+                  {lead.owner && (
+                    <span className="crm-avatar crm-kanban-owner">
+                      {initials(lead.owner.name || lead.owner.email)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="crm-kanban-card-foot2">
+                  <span className={`stuck${isStuckTooLong ? " overdue" : ""}`}>
+                    Parado há {stuckDays}
+                  </span>
+                  <span>
+                    {lead.lastInteractionAt
+                      ? `Última atividade ${formatRelativeToNow(lead.lastInteractionAt)}`
+                      : "Sem atividade"}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ))}
     </div>

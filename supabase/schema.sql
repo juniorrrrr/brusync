@@ -555,3 +555,68 @@ drop policy if exists "Equipe interna apaga crm_lead_tasks" on public.crm_lead_t
 create policy "Equipe interna apaga crm_lead_tasks"
   on public.crm_lead_tasks for delete
   using (public.is_internal_staff());
+
+-- ============================================================================
+-- Brusync OS — CRM (Fase 4): Pipeline Comercial Inteligente.
+-- Aditivo apenas. crm_leads ganha lost_reason/lost_at (perda é um desfecho
+-- ortogonal ao estágio — um lead pode ser perdido estando em qualquer etapa,
+-- não é mais um estágio do funil). Nova tabela crm_lead_stage_history
+-- registra estruturadamente quando cada lead entrou/saiu de cada etapa,
+-- necessária para calcular conversão entre etapas, tempo médio por etapa e
+-- tempo médio até venda com dado real (a Timeline em texto livre não serve
+-- para agregação). Ampliação da activities: novos tipos automation/perda/
+-- cliente automático.
+-- ============================================================================
+
+alter table public.crm_leads add column if not exists lost_reason text
+  check (lost_reason in ('preco', 'sem_interesse', 'concorrente', 'sem_orcamento', 'nao_respondeu', 'sem_perfil', 'outro'));
+alter table public.crm_leads add column if not exists lost_at timestamptz;
+
+create index if not exists crm_leads_lost_idx on public.crm_leads (lost_reason) where lost_reason is not null;
+
+alter table public.crm_lead_activities drop constraint if exists crm_lead_activities_type_check;
+alter table public.crm_lead_activities add constraint crm_lead_activities_type_check
+  check (type in (
+    'note', 'stage_change', 'call', 'email', 'meeting', 'task', 'system',
+    'lead_updated', 'owner_change',
+    'note_created', 'note_updated', 'note_deleted',
+    'task_created', 'task_updated', 'task_completed', 'task_deleted',
+    'file_upload', 'file_delete',
+    'automation', 'lead_lost', 'lead_reopened', 'client_created'
+  ));
+
+-- ----------------------------------------------------------------------------
+-- Histórico de estágio: uma linha por permanência de um lead em um estágio.
+-- exited_at fica null enquanto o lead está atualmente nesse estágio — nunca
+-- deve haver mais de uma linha aberta (exited_at is null) por lead; isso é
+-- garantido pela aplicação (fecha a linha atual antes de abrir a próxima),
+-- não por uma constraint de banco, para manter a migration simples.
+-- ----------------------------------------------------------------------------
+create table if not exists public.crm_lead_stage_history (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  crm_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  stage_id uuid not null references public.pipeline_stages (id),
+  entered_at timestamptz not null default now(),
+  exited_at timestamptz
+);
+
+alter table public.crm_lead_stage_history enable row level security;
+
+create index if not exists crm_lead_stage_history_lead_idx on public.crm_lead_stage_history (crm_lead_id, entered_at desc);
+create index if not exists crm_lead_stage_history_open_idx on public.crm_lead_stage_history (crm_lead_id) where exited_at is null;
+create index if not exists crm_lead_stage_history_stage_idx on public.crm_lead_stage_history (stage_id);
+
+drop policy if exists "Equipe interna lê crm_lead_stage_history" on public.crm_lead_stage_history;
+create policy "Equipe interna lê crm_lead_stage_history"
+  on public.crm_lead_stage_history for select
+  using (public.is_internal_staff());
+drop policy if exists "Equipe interna cria crm_lead_stage_history" on public.crm_lead_stage_history;
+create policy "Equipe interna cria crm_lead_stage_history"
+  on public.crm_lead_stage_history for insert
+  with check (public.is_internal_staff());
+drop policy if exists "Equipe interna atualiza crm_lead_stage_history" on public.crm_lead_stage_history;
+create policy "Equipe interna atualiza crm_lead_stage_history"
+  on public.crm_lead_stage_history for update
+  using (public.is_internal_staff())
+  with check (public.is_internal_staff());

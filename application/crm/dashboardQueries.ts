@@ -4,14 +4,25 @@ import { listRecentActivities } from "@/repositories/crm/activitiesRepository";
 import { countClients, countClientsSince } from "@/repositories/crm/clientsRepository";
 import {
   countLeadsSince,
+  countLeadsWithoutActivity,
+  countOverdueLeads,
   countWonLeadsSince,
   getAveragePotentialValue,
+  getAverageTimeInStage,
+  getAverageTimeToWinDays,
   getDailyLeadCounts,
   getLeadsGroupedByOrigin,
   getLeadsGroupedByStage,
+  getLossReasonBreakdown,
+  getStageConversion,
+  getWinLossSummary,
+  type LossReasonCount,
   listAwaitingContactLeads,
   type OriginCount,
+  type StageAvgDuration,
+  type StageConversion,
   type StageCount,
+  type WinLossSummary,
 } from "@/repositories/crm/dashboardRepository";
 import {
   countMaterialDownloadsSince,
@@ -40,6 +51,11 @@ export interface DashboardData {
     activeClients: number;
     newClientsThisMonth: number;
     downloadsThisMonth: number;
+    winRate: number;
+    lossRate: number;
+    averageTimeToWinDays: number | null;
+    leadsWithoutActivity: number;
+    overdueLeads: number;
   };
   stageCounts: StageCount[];
   originCounts: OriginCount[];
@@ -48,6 +64,10 @@ export interface DashboardData {
   recentActivities: Awaited<ReturnType<typeof listRecentActivities>>;
   upcomingTasks: Awaited<ReturnType<typeof listUpcomingTasksAcrossLeads>>;
   recentDownloads: Awaited<ReturnType<typeof listRecentMaterialDownloads>>;
+  stageConversion: StageConversion[];
+  stageAvgDuration: StageAvgDuration[];
+  winLossSummary: WinLossSummary;
+  lossReasons: LossReasonCount[];
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
@@ -70,6 +90,13 @@ export async function getDashboardData(): Promise<DashboardData> {
     upcomingTasks,
     recentDownloads,
     downloadsThisMonth,
+    stageConversion,
+    stageAvgDuration,
+    winLossSummary,
+    lossReasons,
+    averageTimeToWinDays,
+    leadsWithoutActivity,
+    overdueLeads,
   ] = await Promise.all([
     countLeadsSince(supabase, todayIso),
     countLeadsSince(supabase, monthIso),
@@ -85,6 +112,13 @@ export async function getDashboardData(): Promise<DashboardData> {
     listUpcomingTasksAcrossLeads(supabase, 6),
     listRecentMaterialDownloads(supabase, 6),
     countMaterialDownloadsSince(supabase, monthIso),
+    getStageConversion(supabase),
+    getAverageTimeInStage(supabase),
+    getWinLossSummary(supabase),
+    getLossReasonBreakdown(supabase),
+    getAverageTimeToWinDays(supabase),
+    countLeadsWithoutActivity(supabase),
+    countOverdueLeads(supabase),
   ]);
 
   const conversionRate = leadsThisMonth > 0 ? (wonThisMonth / leadsThisMonth) * 100 : 0;
@@ -98,6 +132,11 @@ export async function getDashboardData(): Promise<DashboardData> {
       activeClients,
       newClientsThisMonth,
       downloadsThisMonth,
+      winRate: winLossSummary.winRate,
+      lossRate: winLossSummary.lossRate,
+      averageTimeToWinDays,
+      leadsWithoutActivity,
+      overdueLeads,
     },
     stageCounts,
     originCounts,
@@ -106,5 +145,9 @@ export async function getDashboardData(): Promise<DashboardData> {
     recentActivities,
     upcomingTasks,
     recentDownloads,
+    stageConversion,
+    stageAvgDuration,
+    winLossSummary,
+    lossReasons,
   };
 }
