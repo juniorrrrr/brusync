@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { antiBotConfig } from "@/config/antiBot.config";
 import { getMaterial } from "@/data/materials";
 import { buildAttributionInsertFields, parseTrackingContext } from "@/lib/tracking";
+import { publishEvent } from "@/services/eventBus/eventBus";
 import { getSupabaseServerClient } from "@/services/supabase/server";
 import { verifyTurnstileToken } from "@/services/turnstile";
 
@@ -149,6 +150,12 @@ export async function submitMaterialLead(
       console.error("submitMaterialLead: insert failed", error);
       return { status: "error", message: "Não foi possível processar seu pedido agora." };
     }
+
+    await publishEvent(supabase, "DownloadMaterial", {
+      email,
+      materialSlug: material.slug,
+      materialTitle: material.title,
+    });
 
     return {
       status: "success",

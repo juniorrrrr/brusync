@@ -43,6 +43,7 @@ import {
   updateLeadSchema,
 } from "@/schemas/crm/lead.schema";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { publishEvent } from "@/services/eventBus/eventBus";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { LeadFile } from "@/types/crm";
 
@@ -144,6 +145,20 @@ export async function createLeadAction(
   });
   await recalculateLeadScore(supabase, lead.id);
 
+  await publishEvent(
+    supabase,
+    "LeadCreated",
+    {
+      leadId: lead.id,
+      name: lead.name,
+      company: lead.company,
+      origin: lead.origin,
+      stageId: firstStage.id,
+      potentialValue: lead.potentialValue,
+    },
+    { entityId: lead.id, actorId: profile.id },
+  );
+
   revalidatePath("/leads");
   revalidatePath("/pipeline");
   revalidatePath("/dashboard");
@@ -207,6 +222,13 @@ export async function updateLeadAction(
 
   await recalculateLeadScore(supabase, leadId);
 
+  await publishEvent(
+    supabase,
+    "LeadUpdated",
+    { leadId, changedFields: Object.keys(patch) },
+    { entityId: leadId, actorId: profile.id },
+  );
+
   revalidatePath("/leads");
   revalidatePath("/pipeline");
 
@@ -249,6 +271,29 @@ export async function moveLeadStageAction(
   });
   await recalculateLeadScore(supabase, leadId);
 
+  if (targetStage.key === "qualificado") {
+    await publishEvent(
+      supabase,
+      "LeadQualified",
+      { leadId, stageId: targetStage.id, stageLabel: targetStage.label },
+      { entityId: leadId, actorId: profile.id },
+    );
+  }
+  if (targetStage.isWon) {
+    await publishEvent(
+      supabase,
+      "LeadWon",
+      { leadId, revenue: lead.potentialValue },
+      { entityId: leadId, actorId: profile.id },
+    );
+    await publishEvent(
+      supabase,
+      "RevenueRegistered",
+      { leadId, amount: lead.potentialValue ?? 0 },
+      { entityId: leadId, actorId: profile.id },
+    );
+  }
+
   revalidatePath("/pipeline");
   revalidatePath("/leads");
   revalidatePath("/dashboard");
@@ -275,6 +320,13 @@ export async function markLeadLostAction(
     title: `Lead marcado como perdido: ${LOST_REASON_LABEL[parsed.data.reason]}`,
     createdBy: profile.id,
   });
+
+  await publishEvent(
+    supabase,
+    "LeadLost",
+    { leadId: parsed.data.leadId, reason: parsed.data.reason },
+    { entityId: parsed.data.leadId, actorId: profile.id },
+  );
 
   revalidatePath("/leads");
   revalidatePath("/pipeline");

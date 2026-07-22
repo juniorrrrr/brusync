@@ -9,6 +9,7 @@ import {
 } from "@/repositories/marketing/campaignSpendRepository";
 import { upsertCampaignSpendSchema } from "@/schemas/marketing/spend.schema";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { publishEvent } from "@/services/eventBus/eventBus";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { CampaignSpendEntry } from "@/types/marketing";
 
@@ -59,6 +60,17 @@ export async function upsertCampaignSpendAction(
     notes: parsed.data.notes || null,
     createdBy: profile.id,
   });
+
+  await publishEvent(
+    supabase,
+    "CampaignUpdated",
+    {
+      utmSource: parsed.data.utmSource,
+      utmCampaign: parsed.data.utmCampaign,
+      amount: parsed.data.amount,
+    },
+    { actorId: profile.id },
+  );
 
   revalidatePath("/marketing/campanhas");
   revalidatePath("/marketing/executivo");

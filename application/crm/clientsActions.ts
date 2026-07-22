@@ -8,6 +8,7 @@ import { getOwnerOptions } from "@/application/crm/leadsQueries";
 import { createClient, updateClient } from "@/repositories/crm/clientsRepository";
 import { createClientSchema, updateClientSchema } from "@/schemas/crm/client.schema";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { publishEvent } from "@/services/eventBus/eventBus";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 
 function firstIssueMessage(error: { issues: { message: string }[] }) {
@@ -44,7 +45,7 @@ export async function createClientAction(
   }
 
   const supabase = await getSupabaseAuthClient();
-  await createClient(supabase, {
+  const client = await createClient(supabase, {
     company: parsed.data.company,
     name: parsed.data.name || null,
     email: parsed.data.email || null,
@@ -53,6 +54,13 @@ export async function createClientAction(
     status: parsed.data.status,
     createdBy: profile.id,
   });
+
+  await publishEvent(
+    supabase,
+    "ClientCreated",
+    { clientId: client.id, company: client.company },
+    { entityId: client.id, actorId: profile.id },
+  );
 
   revalidatePath("/clientes");
 
@@ -63,7 +71,7 @@ export async function updateClientAction(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await requireCrmProfile();
+  const profile = await requireCrmProfile();
   if (await isDemoModeActive()) return { status: "error", message: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const parsed = updateClientSchema.safeParse({
@@ -83,6 +91,13 @@ export async function updateClientAction(
   const supabase = await getSupabaseAuthClient();
   const { clientId, ...patch } = parsed.data;
   await updateClient(supabase, clientId, patch);
+
+  await publishEvent(
+    supabase,
+    "ClientUpdated",
+    { clientId, changedFields: Object.keys(patch) },
+    { entityId: clientId, actorId: profile.id },
+  );
 
   revalidatePath("/clientes");
 

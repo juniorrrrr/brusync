@@ -1,0 +1,162 @@
+/* ============================================================
+   Integrações (Fase 6) — estilos específicos do módulo. Reaproveita tokens e
+   classes já existentes em crm.css (crm-card, crm-badge, crm-toolbar,
+   crm-kpi-grid, etc.); este arquivo só cobre o que é novo neste módulo.
+   ============================================================ */
+
+.crm-ig-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.crm-ig-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.crm-ig-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.crm-ig-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.crm-ig-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-ig-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.crm-ig-name {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.crm-ig-category {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.crm-ig-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.crm-ig-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.crm-ig-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.crm-ig-action-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.crm-ig-action-btn:hover {
+  background: var(--surface);
+  border-color: var(--secondary);
+}
+
+.crm-ig-drawer {
+  width: min(480px, 100vw);
+}
+
+.crm-ig-drawer-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.crm-ig-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.crm-ig-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.crm-ig-field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.crm-ig-log-row {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.crm-ig-log-row:first-child {
+  border-top: none;
+}
+.crm-ig-log-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.crm-ig-log-dot.success {
+  background: #1fa971;
+}
+.crm-ig-log-dot.error {
+  background: var(--danger);
+}
+.crm-ig-log-dot.pending {
+  background: #c98a1c;
+}

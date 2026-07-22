@@ -19,6 +19,7 @@ import {
   updateTaskStatusSchema,
 } from "@/schemas/crm/task.schema";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { publishEvent } from "@/services/eventBus/eventBus";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { LeadTask } from "@/types/crm";
 
@@ -58,6 +59,13 @@ export async function createTaskAction(input: {
     title: `Tarefa criada: ${parsed.data.title}`,
     createdBy: profile.id,
   });
+
+  await publishEvent(
+    supabase,
+    "TaskCreated",
+    { taskId: task.id, crmLeadId: parsed.data.crmLeadId, title: parsed.data.title },
+    { entityId: task.id, actorId: profile.id },
+  );
 
   revalidatePath("/dashboard");
   return { ok: true, task };
@@ -119,6 +127,13 @@ export async function updateTaskStatusAction(
     });
     await touchLeadInteraction(supabase, existing.crmLeadId);
     await recalculateLeadScore(supabase, existing.crmLeadId);
+
+    await publishEvent(
+      supabase,
+      "TaskCompleted",
+      { taskId: parsed.data.taskId, crmLeadId: existing.crmLeadId, title: existing.title },
+      { entityId: parsed.data.taskId, actorId: profile.id },
+    );
   }
 
   revalidatePath("/dashboard");
