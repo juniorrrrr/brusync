@@ -2,6 +2,7 @@ import {
   IconArrowSwap,
   IconBolt,
   IconBuilding,
+  IconCalendar,
   IconChart,
   IconCheck,
   IconCheckCircle,
@@ -29,6 +30,7 @@ export const CRM_NAV: NavSection[] = [
       { label: "Leads", href: "/leads", icon: IconTarget },
       { label: "Pipeline", href: "/pipeline", icon: IconFunnel },
       { label: "Clientes", href: "/clientes", icon: IconBuilding },
+      { label: "Agenda", href: "/agenda", icon: IconCalendar },
     ],
   },
   {

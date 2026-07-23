@@ -1,0 +1,65 @@
+/* ============================================================
+   Agenda Comercial (Fase 11) — estilos específicos do módulo. Reaproveita
+   tokens e classes já existentes em crm.css (crm-card, crm-badge,
+   crm-toolbar, crm-kpi-grid, crm-modal, crm-field, crm-timeline, etc.);
+   este arquivo só cobre o que é novo neste módulo.
+   ============================================================ */
+
+.crm-ag-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-ag-row:first-child {
+  border-top: none;
+}
+
+.crm-ag-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.crm-ag-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.crm-ag-action-btn {
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.crm-ag-action-btn:hover {
+  background: var(--surface);
+  border-color: var(--secondary);
+}
+.crm-ag-action-btn.danger {
+  color: var(--danger);
+}
+.crm-ag-action-btn.danger:hover {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.crm-ag-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}

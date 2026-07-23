@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AgendaTab } from "@/components/crm/leadWorkspace/AgendaTab";
 import { ConversionsTab } from "@/components/crm/leadWorkspace/ConversionsTab";
 import { FilesTab } from "@/components/crm/leadWorkspace/FilesTab";
 import { JourneyTab } from "@/components/crm/leadWorkspace/JourneyTab";
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const TAB_KEYS = [
   "timeline",
   "journey",
+  "agenda",
   "conversions",
   "notes",
   "tasks",
@@ -40,6 +42,7 @@ export function WorkspaceTabs({
       <TabsList>
         <TabsTrigger value="timeline">Timeline</TabsTrigger>
         <TabsTrigger value="journey">Jornada Comercial</TabsTrigger>
+        <TabsTrigger value="agenda">Agenda</TabsTrigger>
         <TabsTrigger value="conversions">Conversões</TabsTrigger>
         <TabsTrigger value="notes">Notas</TabsTrigger>
         <TabsTrigger value="tasks">Tarefas</TabsTrigger>
@@ -55,6 +58,9 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="journey">
         {visited.has("journey") && <JourneyTab crmLeadId={crmLeadId} refreshToken={refreshToken} />}
+      </TabsContent>
+      <TabsContent value="agenda">
+        {visited.has("agenda") && <AgendaTab crmLeadId={crmLeadId} />}
       </TabsContent>
       <TabsContent value="conversions">
         {visited.has("conversions") && <ConversionsTab crmLeadId={crmLeadId} />}
