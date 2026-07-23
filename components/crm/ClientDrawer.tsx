@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { updateClientAction } from "@/application/crm/clientsActions";
 import type { ActionState } from "@/application/crm/leadsActions";
 import { ClientPortalAccessSection } from "@/components/clientPortal/ClientPortalAccessSection";
+import { ClientFinancialSummarySection } from "@/components/financial/ClientFinancialSummarySection";
 import { ClientProjectsSection } from "@/components/projects/ClientProjectsSection";
 import { IconX } from "@/components/ui/icons";
 import { useClientDrawer } from "@/contexts/crm/ClientDrawerContext";
@@ -193,6 +194,11 @@ export function ClientDrawer() {
               )}
 
               <ClientProjectsSection
+                clientId={data.client.id}
+                clientCompany={data.client.company}
+              />
+
+              <ClientFinancialSummarySection
                 clientId={data.client.id}
                 clientCompany={data.client.company}
               />

@@ -19,10 +19,15 @@ export function ClientPicker({
   name,
   defaultClientId,
   defaultClientCompany,
+  onSelectClient,
 }: {
   name: string;
   defaultClientId?: string | null;
   defaultClientCompany?: string | null;
+  /** Optional — lets a caller (e.g. the Fase 14 financial transaction form)
+   * react to which client was picked, without changing anything for the
+   * existing callers that don't pass it. */
+  onSelectClient?: (client: ClientWithOwner) => void;
 }) {
   const [selectedId, setSelectedId] = useState(defaultClientId ?? "");
   const [query, setQuery] = useState(defaultClientCompany ?? "");
@@ -57,6 +62,7 @@ export function ClientPicker({
     setQuery(client.company);
     setResults([]);
     setOpen(false);
+    onSelectClient?.(client);
   }
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { ProjectPortalMessagesTab } from "@/components/clientPortal/ProjectPortalMessagesTab";
+import { ProjectFinancialSummaryTab } from "@/components/financial/ProjectFinancialSummaryTab";
 import { ProjectChecklistTab } from "@/components/projects/ProjectChecklistTab";
 import { ProjectFilesTab } from "@/components/projects/ProjectFilesTab";
 import { ProjectPhasesTab } from "@/components/projects/ProjectPhasesTab";
@@ -65,6 +66,7 @@ export function ProjectDrawer({ owners }: { owners: OwnerRef[] }) {
                     <TabsTrigger value="cronograma">Cronograma</TabsTrigger>
                     <TabsTrigger value="arquivos">Arquivos</TabsTrigger>
                     <TabsTrigger value="mensagens">Mensagens</TabsTrigger>
+                    <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
                     <TabsTrigger value="timeline">Timeline</TabsTrigger>
                   </TabsList>
                   <TabsContent value="etapas">
@@ -81,6 +83,13 @@ export function ProjectDrawer({ owners }: { owners: OwnerRef[] }) {
                   </TabsContent>
                   <TabsContent value="mensagens">
                     <ProjectPortalMessagesTab projectId={data.id} />
+                  </TabsContent>
+                  <TabsContent value="financeiro">
+                    <ProjectFinancialSummaryTab
+                      projectId={data.id}
+                      clientId={data.clientId}
+                      clientCompany={data.clientCompany}
+                    />
                   </TabsContent>
                   <TabsContent value="timeline">
                     <ProjectTimelineTab project={data} />

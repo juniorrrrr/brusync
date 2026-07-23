@@ -1,0 +1,23 @@
+/* Financeiro (Fase 14) — reuses crm.css's tokens/generics (crm-kpi-grid,
+   crm-card, crm-badge, crm-pj-progress-*, crm-info-list, etc). Only a
+   couple of small, module-scoped rules live here. */
+
+.crm-fin-charts-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+
+.crm-fin-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .crm-fin-charts-row,
+  .crm-fin-breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+}

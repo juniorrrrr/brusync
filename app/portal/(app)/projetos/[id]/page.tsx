@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { fetchPortalProjectFinancialSummary } from "@/application/clientPortal/portalFinancialQueries";
 import { getPortalProjectDetailPageData } from "@/application/clientPortal/portalProjectsQueries";
+import { PortalProjectFinancialCard } from "@/components/clientPortal/PortalProjectFinancialCard";
 import { PortalProjectTabs } from "@/components/clientPortal/PortalProjectTabs";
 import { PortalSummaryCard } from "@/components/clientPortal/PortalSummaryCard";
 import { IconArrowLeft } from "@/components/ui/icons";
@@ -21,6 +23,8 @@ export default async function PortalProjectDetailPage({
 
   if (!project) notFound();
 
+  const financialSummary = await fetchPortalProjectFinancialSummary(id);
+
   return (
     <div>
       <Link
@@ -38,6 +42,7 @@ export default async function PortalProjectDetailPage({
       </p>
 
       <PortalSummaryCard project={project} />
+      <PortalProjectFinancialCard summary={financialSummary} />
 
       <div style={{ marginTop: 20 }}>
         <PortalProjectTabs project={project} canUploadFiles={access.canUploadFiles} />

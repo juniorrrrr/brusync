@@ -11,6 +11,7 @@ const TABS = [
   { href: "/marketing/landing-pages", label: "Landing Pages" },
   { href: "/marketing/utms", label: "UTMs" },
   { href: "/marketing/funil", label: "Funil" },
+  { href: "/marketing/financeiro", label: "Financeiro" },
 ];
 
 /** Navigation between distinct routes, styled like the Radix Tabs primitive
