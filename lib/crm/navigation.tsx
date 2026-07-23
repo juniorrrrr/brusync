@@ -1,5 +1,6 @@
 import {
   IconArrowSwap,
+  IconBolt,
   IconBuilding,
   IconChart,
   IconCheck,
@@ -45,6 +46,7 @@ export const CRM_NAV: NavSection[] = [
       { label: "Analytics", icon: IconChart, soon: true },
       { label: "Conversões", href: "/conversoes", icon: IconCheckCircle },
       { label: "Integrações", href: "/integracoes", icon: IconArrowSwap },
+      { label: "Automações", href: "/automacoes", icon: IconBolt },
       { label: "IA", icon: IconRobot, soon: true },
     ],
   },

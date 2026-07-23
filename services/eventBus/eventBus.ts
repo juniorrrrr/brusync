@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { EVENT_ENTITY_TYPE, type EventPayloadMap, type EventType } from "@/domain/events/types";
+import { runAutomationsForEvent } from "@/services/automation/automationEngine";
 import { prepareConversionEvent } from "@/services/conversionsHub/prepareConversion";
 
 export interface PublishEventOptions {
@@ -16,9 +17,12 @@ export interface PublishEventOptions {
  * each event right here to prepare a normalized conversion + queued
  * deliveries for the 7 conversion-relevant event types (Lead, Qualified
  * Lead, Meeting Scheduled, Proposal Sent, Purchase, Lost Lead, Client
- * Activated) — still never calling any external API. Every other consumer
- * (a future dispatcher for Meta Conversions API, GA4 Measurement Protocol,
- * Webhooks, Slack, N8N, ...) will poll `integration_events`/
+ * Activated) — still never calling any external API. Since Fase 10, the
+ * automation engine (services/automation) also reads each event here to
+ * evaluate any active workflow bound to that trigger and, if its condition
+ * passes, run its action — still entirely internal to the CRM. Every other
+ * consumer (a future dispatcher for Meta Conversions API, GA4 Measurement
+ * Protocol, Webhooks, Slack, N8N, ...) will poll `integration_events`/
  * `conversion_deliveries` independently; the CRM that publishes here never
  * needs to change for any of that.
  *
@@ -53,6 +57,8 @@ export async function publishEvent<T extends EventType>(
       integrationEventId: (data as { id: string }).id,
       actorId: options.actorId ?? null,
     });
+
+    await runAutomationsForEvent(supabase, eventType, payload as Record<string, unknown>);
   } catch (err) {
     console.error(`eventBus: falha inesperada ao publicar ${eventType}`, err);
   }
