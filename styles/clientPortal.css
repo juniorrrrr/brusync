@@ -1,0 +1,144 @@
+/* Portal do Cliente (Fase 13) — own shell, reusing crm.css's tokens/generics
+   (crm-kpi-grid, crm-badge, crm-pj-progress-*, crm-login-*, crm-ws-card,
+   crm-pj-comment, etc). Only the shell/layout and a couple of small variants
+   that don't exist yet live here — everything else is deliberate reuse. */
+
+.crm-pt-shell {
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.crm-pt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.crm-pt-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crm-pt-brand-word {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--primary);
+}
+.crm-pt-brand-word i {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.crm-pt-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.crm-pt-company {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.crm-pt-demo-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #b8722a;
+  background: rgba(233, 162, 59, 0.16);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.crm-pt-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.crm-pt-logout:hover {
+  background: var(--surface);
+  color: var(--primary);
+}
+
+.crm-pt-nav {
+  display: flex;
+  gap: 4px;
+  padding: 10px 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.crm-pt-nav-link {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.crm-pt-nav-link:hover {
+  color: var(--primary);
+  background: var(--surface);
+}
+
+.crm-pt-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.crm-pt-dashboard-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.crm-pt-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.crm-pt-project-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: all 0.2s ease;
+}
+.crm-pt-project-card:hover {
+  border-color: rgba(37, 208, 195, 0.45);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.crm-pj-comment.is-client {
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+}
+
+@media (max-width: 860px) {
+  .crm-pt-dashboard-row {
+    grid-template-columns: 1fr;
+  }
+  .crm-pt-header {
+    padding: 14px 16px;
+  }
+  .crm-pt-content {
+    padding: 20px 16px;
+  }
+}
