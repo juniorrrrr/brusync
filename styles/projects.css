@@ -1,0 +1,146 @@
+/* ============================================================
+   Gestão de Projetos (Fase 12) — estilos específicos do módulo. Reaproveita
+   tokens e classes já existentes em crm.css (crm-card, crm-badge,
+   crm-toolbar, crm-kpi-grid, crm-modal, crm-field, crm-drawer, crm-timeline,
+   crm-file-row, etc.); este arquivo só cobre o que é novo neste módulo.
+   ============================================================ */
+
+.crm-pj-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-pj-row:first-child {
+  border-top: none;
+}
+
+.crm-pj-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.crm-pj-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.crm-pj-action-btn {
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.crm-pj-action-btn:hover {
+  background: var(--surface);
+  border-color: var(--secondary);
+}
+.crm-pj-action-btn.danger {
+  color: var(--danger);
+}
+.crm-pj-action-btn.danger:hover {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.crm-pj-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.crm-pj-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.crm-pj-phase-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.crm-pj-phase-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.crm-pj-phase-dates {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.crm-pj-task-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-pj-task-row:first-child {
+  border-top: none;
+}
+
+.crm-pj-comment {
+  padding: 8px 10px;
+  background: var(--surface);
+  border-radius: 9px;
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+.crm-pj-comment-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.crm-pj-schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.crm-pj-schedule-item:first-child {
+  border-top: none;
+}
+.crm-pj-schedule-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.crm-pj-schedule-dot.concluido {
+  background: #1fa971;
+}
+.crm-pj-schedule-dot.em_andamento {
+  background: #c98a1c;
+}
+.crm-pj-schedule-dot.pendente {
+  background: var(--border);
+}

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { updateClientAction } from "@/application/crm/clientsActions";
 import type { ActionState } from "@/application/crm/leadsActions";
+import { ClientProjectsSection } from "@/components/projects/ClientProjectsSection";
 import { IconX } from "@/components/ui/icons";
 import { useClientDrawer } from "@/contexts/crm/ClientDrawerContext";
 import { CLIENT_STATUS_BADGE, CLIENT_STATUS_LABEL } from "@/domain/crm/clientRules";
@@ -189,6 +190,11 @@ export function ClientDrawer() {
                   </div>
                 </div>
               )}
+
+              <ClientProjectsSection
+                clientId={data.client.id}
+                clientCompany={data.client.company}
+              />
             </div>
           </>
         )}
