@@ -195,7 +195,11 @@ export async function dispatchMetaDelivery(
 }
 
 /** "Testar conexão" — validates the Pixel ID + Access Token pair without
- * sending any event, then reflects the result onto the integration row. */
+ * sending any event, then reflects the result onto the integration row.
+ * Called both from MetaConfigForm's own test button and from the Central de
+ * Integrações' generic quick-test action (services/integrationsCenter/
+ * connectionTestService.ts) — logging lives here so both callers get a
+ * "teste_executado" row in the integration's history exactly once. */
 export async function testMetaConnection(
   supabase: SupabaseClient,
   pixelId: string,
@@ -218,10 +222,19 @@ export async function testMetaConnection(
     healthScore: result.ok ? 100 : 0,
   });
 
-  return {
-    ok: result.ok,
-    message: result.ok
-      ? `Conectado ao Pixel${pixelName ? ` "${pixelName}"` : ""} com sucesso.`
-      : (metaError ?? `Falha ao conectar (HTTP ${result.httpStatus}).`),
-  };
+  const message = result.ok
+    ? `Conectado ao Pixel${pixelName ? ` "${pixelName}"` : ""} com sucesso.`
+    : (metaError ?? `Falha ao conectar (HTTP ${result.httpStatus}).`);
+
+  const integration = await getIntegrationByProvider(supabase, "meta_ads");
+  await createIntegrationLog(supabase, {
+    integrationId: integration?.id ?? null,
+    event: result.ok || !metaError ? "teste_executado" : "erro_autenticacao",
+    status: result.ok ? "success" : "error",
+    message,
+    origin: "crm",
+    destination: "meta_ads",
+  });
+
+  return { ok: result.ok, message };
 }

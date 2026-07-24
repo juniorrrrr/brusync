@@ -54,6 +54,7 @@ export default async function IntegracoesSaudePage() {
           value={String(health.eventsProcessed)}
           icon={IconReport}
         />
+        <KpiCard label="Fila de eventos" value={String(health.queuedEvents)} icon={IconTarget} />
         <KpiCard
           label="Tempo médio de execução"
           value={formatDuration(health.averageDurationMs)}

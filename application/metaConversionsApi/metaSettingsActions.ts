@@ -2,6 +2,7 @@
 
 import { requireCrmProfile } from "@/application/crm/authGuard";
 import { CONVERSION_TYPES_FOR_META } from "@/domain/metaConversionsApi/eventNames";
+import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
 import {
   getEncryptedAccessToken,
   getIntegrationByProvider,
@@ -124,6 +125,15 @@ export async function saveMetaSettingsAction(
     }
   }
 
+  await createIntegrationLog(supabase, {
+    integrationId: integration.id,
+    event: "conexao_editada",
+    status: "success",
+    message: "Configuração da Meta Ads atualizada.",
+    origin: "crm",
+    destination: "meta_ads",
+  });
+
   return { status: "success", message: "Configuração salva." };
 }
 
@@ -132,7 +142,18 @@ export async function removeMetaAccessTokenAction(): Promise<{ ok: boolean; erro
   if (await isDemoModeActive()) return { ok: false, error: DEMO_WRITE_BLOCKED_MESSAGE };
 
   const supabase = await getSupabaseAuthClient();
+  const integration = await getIntegrationByProvider(supabase, "meta_ads");
   await setEncryptedAccessToken(supabase, "meta_ads", null);
+
+  await createIntegrationLog(supabase, {
+    integrationId: integration?.id ?? null,
+    event: "conexao_removida",
+    status: "success",
+    message: "Access Token da Meta Ads removido.",
+    origin: "crm",
+    destination: "meta_ads",
+  });
+
   return { ok: true };
 }
 

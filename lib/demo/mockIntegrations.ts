@@ -183,6 +183,7 @@ export function getDemoIntegrationHealth(): IntegrationHealthSummary {
     lastSyncAt: logs[0]?.createdAt ?? null,
     eventsSent: logs.length,
     eventsProcessed: successLogs.length,
+    queuedEvents: logs.filter((log) => log.status === "pending").length,
     averageDurationMs:
       successLogs.length > 0
         ? Math.round(

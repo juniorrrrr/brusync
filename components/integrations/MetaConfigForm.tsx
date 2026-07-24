@@ -15,7 +15,7 @@ import type { MetaSettings } from "@/types/metaConversionsApi";
 
 const INITIAL_STATE: MetaSettingsActionState = { status: "idle" };
 
-export function MetaConfigForm() {
+export function MetaConfigForm({ onChanged }: { onChanged?: () => void } = {}) {
   const [settings, setSettings] = useState<MetaSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [pixelId, setPixelId] = useState("");
@@ -32,10 +32,16 @@ export function MetaConfigForm() {
     });
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only re-notify the parent (Drawer's Histórico list) when the save actually succeeds, not on every render.
+  useEffect(() => {
+    if (formState.status === "success") onChanged?.();
+  }, [formState]);
+
   async function handleTest() {
     setTesting(true);
     setTestResult(await testMetaConnectionAction(pixelId, accessToken));
     setTesting(false);
+    onChanged?.();
   }
 
   if (loading) return <p className="crm-ig-desc">Carregando…</p>;

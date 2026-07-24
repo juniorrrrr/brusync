@@ -1,6 +1,8 @@
 "use client";
 
 import { ProviderLogo } from "@/components/integrations/logos";
+import { ActivateToggleButton } from "@/components/integrationsCenter/ActivateToggleButton";
+import { TestConnectionButton } from "@/components/integrationsCenter/TestConnectionButton";
 import { formatDate } from "@/domain/crm/format";
 import {
   INTEGRATION_CATEGORY_LABEL,
@@ -12,11 +14,9 @@ import {
 export function IntegrationCard({
   integration,
   onConfigure,
-  onDetails,
 }: {
   integration: Integration;
   onConfigure: () => void;
-  onDetails: () => void;
 }) {
   return (
     <div className="crm-card crm-ig-card reveal in">
@@ -48,15 +48,17 @@ export function IntegrationCard({
         <button type="button" className="crm-ig-action-btn" onClick={onConfigure}>
           Configurar
         </button>
-        <button type="button" className="crm-ig-action-btn" onClick={onDetails}>
-          Detalhes
-        </button>
+        <ActivateToggleButton provider={integration.provider} enabled={integration.enabled} />
         <a
           href={`/integracoes/logs?provider=${integration.provider}`}
           className="crm-ig-action-btn"
         >
           Logs
         </a>
+      </div>
+
+      <div style={{ marginTop: 8 }}>
+        <TestConnectionButton provider={integration.provider} />
       </div>
     </div>
   );

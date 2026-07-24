@@ -1,32 +1,30 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import {
   configureIntegrationAction,
   fetchIntegrationDetail,
   type IntegrationDetail,
 } from "@/application/integrations/integrationsActions";
 import { MetaConfigForm } from "@/components/integrations/MetaConfigForm";
+import { ActivateToggleButton } from "@/components/integrationsCenter/ActivateToggleButton";
+import { TestConnectionButton } from "@/components/integrationsCenter/TestConnectionButton";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { Switch } from "@/components/ui/switch";
 import { formatDateTime } from "@/domain/crm/format";
+import { integrationLogEventLabel } from "@/domain/integrationsCenter/logEvents";
 import {
   INTEGRATION_CATEGORY_LABEL,
   INTEGRATION_STATUS_BADGE,
   INTEGRATION_STATUS_LABEL,
 } from "@/types/integrations";
 
-export type IntegrationDrawerMode = "config" | "details";
-
 const INITIAL_STATE = { status: "idle" as const };
 
 export function IntegrationDrawer({
   provider,
-  mode,
   onClose,
 }: {
   provider: string | null;
-  mode: IntegrationDrawerMode;
   onClose: () => void;
 }) {
   const [detail, setDetail] = useState<IntegrationDetail | null>(null);
@@ -50,6 +48,20 @@ export function IntegrationDrawer({
       cancelled = true;
     };
   }, [provider]);
+
+  // Re-fetches this same Drawer's own client-held detail (status, error,
+  // Histórico) after Testar conexão/Salvar/Ativar — router.refresh() (called
+  // by ActivateToggleButton) only re-renders the Server Component board
+  // behind the Drawer, never this local state.
+  const reload = useCallback(() => {
+    if (!provider) return;
+    fetchIntegrationDetail(provider).then(setDetail);
+  }, [provider]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reload is intentionally excluded — it depends on provider, which is already the effect that resets detail above; this only needs to fire once when the generic Salvar form succeeds.
+  useEffect(() => {
+    if (formState.status === "success") reload();
+  }, [formState]);
 
   const open = provider !== null;
 
@@ -80,127 +92,110 @@ export function IntegrationDrawer({
               </span>
             </div>
 
-            {mode === "details" && (
-              <div className="crm-ig-drawer-body">
-                <p className="crm-ig-desc">{detail.integration.description}</p>
+            <div className="crm-ig-drawer-body">
+              <p className="crm-ig-desc">{detail.integration.description}</p>
 
-                <div className="crm-ig-field">
-                  <label htmlFor="ig-connected-at">Conectado em</label>
-                  <span id="ig-connected-at">
-                    {detail.integration.connectedAt
-                      ? formatDateTime(detail.integration.connectedAt)
-                      : "—"}
-                  </span>
-                </div>
-                <div className="crm-ig-field">
-                  <label htmlFor="ig-last-sync">Última sincronização</label>
-                  <span id="ig-last-sync">
-                    {detail.integration.lastSync
-                      ? formatDateTime(detail.integration.lastSync)
-                      : "—"}
-                  </span>
-                </div>
-                <div className="crm-ig-field">
-                  <label htmlFor="ig-health">Health score</label>
-                  <span id="ig-health">
-                    {detail.integration.healthScore !== null
-                      ? `${detail.integration.healthScore}/100`
-                      : "Sem dados suficientes"}
-                  </span>
-                </div>
-                {detail.integration.error && (
-                  <div className="crm-ig-field">
-                    <label htmlFor="ig-error">Último erro</label>
-                    <span id="ig-error" style={{ color: "var(--danger)" }}>
-                      {detail.integration.error}
-                    </span>
-                  </div>
-                )}
-
-                <div>
-                  <div className="crm-card-title" style={{ marginBottom: 8 }}>
-                    Logs recentes
-                  </div>
-                  {detail.recentLogs.length === 0 && (
-                    <p className="crm-ig-desc">Nenhum log registrado ainda.</p>
-                  )}
-                  {detail.recentLogs.map((log) => (
-                    <div key={log.id} className="crm-ig-log-row">
-                      <span className={`crm-ig-log-dot ${log.status}`} />
-                      <div>
-                        <div>
-                          <strong>{log.event}</strong> — {formatDateTime(log.createdAt)}
-                        </div>
-                        {log.message && <div className="crm-card-sub">{log.message}</div>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {detail.integration.provider === "meta_ads" && (
-                  <a
-                    href="/integracoes/meta"
-                    className="crm-ig-action-btn"
-                    style={{ textAlign: "center" }}
-                  >
-                    Ver painel completo da Meta →
-                  </a>
-                )}
+              <div className="crm-ig-field">
+                <label htmlFor="ig-connected-at">Conectado em</label>
+                <span id="ig-connected-at">
+                  {detail.integration.connectedAt
+                    ? formatDateTime(detail.integration.connectedAt)
+                    : "—"}
+                </span>
               </div>
-            )}
-
-            {mode === "config" && detail.integration.provider === "meta_ads" && <MetaConfigForm />}
-
-            {mode === "config" && detail.integration.provider !== "meta_ads" && (
-              <form action={formAction} className="crm-ig-drawer-body">
-                <input type="hidden" name="provider" value={detail.integration.provider} />
-
+              <div className="crm-ig-field">
+                <label htmlFor="ig-last-sync">Última sincronização</label>
+                <span id="ig-last-sync">
+                  {detail.integration.lastSync ? formatDateTime(detail.integration.lastSync) : "—"}
+                </span>
+              </div>
+              {detail.integration.error && (
                 <div className="crm-ig-field">
-                  <label htmlFor="ig-enabled-toggle">Ativada</label>
-                  <label
-                    htmlFor="ig-enabled-toggle"
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <Switch
-                      id="ig-enabled-toggle"
-                      name="enabled"
-                      defaultChecked={detail.integration.enabled}
+                  <label htmlFor="ig-error">Último erro</label>
+                  <span id="ig-error" style={{ color: "var(--danger)" }}>
+                    {detail.integration.error}
+                  </span>
+                </div>
+              )}
+
+              {detail.integration.provider === "meta_ads" ? (
+                <MetaConfigForm onChanged={reload} />
+              ) : (
+                <form action={formAction}>
+                  <input type="hidden" name="provider" value={detail.integration.provider} />
+
+                  <div className="crm-ig-field">
+                    <label htmlFor="ig-notes">Credenciais / configuração</label>
+                    <textarea
+                      id="ig-notes"
+                      name="notes"
+                      className="crm-select"
+                      rows={4}
+                      style={{ width: "100%", resize: "vertical" }}
+                      defaultValue={
+                        typeof detail.integration.config.notes === "string"
+                          ? detail.integration.config.notes
+                          : ""
+                      }
+                      placeholder="Nenhuma credencial real é usada nesta fase — use este campo para anotações."
                     />
-                    <span className="crm-card-sub" style={{ margin: 0 }}>
-                      Habilitar esta integração quando ela estiver disponível
-                    </span>
-                  </label>
+                  </div>
+
+                  {formState.status === "error" && (
+                    <p style={{ color: "var(--danger)", fontSize: 13 }}>{formState.message}</p>
+                  )}
+                  {formState.status === "success" && (
+                    <p style={{ color: "#1fa971", fontSize: 13 }}>{formState.message}</p>
+                  )}
+
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+                    <TestConnectionButton
+                      provider={detail.integration.provider}
+                      onChanged={reload}
+                    />
+                    <button type="submit" className="crm-ig-action-btn">
+                      Salvar
+                    </button>
+                    <ActivateToggleButton
+                      provider={detail.integration.provider}
+                      enabled={detail.integration.enabled}
+                      onChanged={reload}
+                    />
+                  </div>
+                </form>
+              )}
+
+              <div style={{ marginTop: 16 }}>
+                <div className="crm-card-title" style={{ marginBottom: 8 }}>
+                  Histórico
                 </div>
-
-                <div className="crm-ig-field">
-                  <label htmlFor="ig-notes">Notas / configuração</label>
-                  <textarea
-                    id="ig-notes"
-                    name="notes"
-                    className="crm-select"
-                    rows={4}
-                    style={{ width: "100%", resize: "vertical" }}
-                    defaultValue={
-                      typeof detail.integration.config.notes === "string"
-                        ? detail.integration.config.notes
-                        : ""
-                    }
-                    placeholder="Nenhuma credencial real é usada nesta fase — use este campo para anotações."
-                  />
-                </div>
-
-                {formState.status === "error" && (
-                  <p style={{ color: "var(--danger)", fontSize: 13 }}>{formState.message}</p>
+                {detail.recentLogs.length === 0 && (
+                  <p className="crm-ig-desc">Nenhum evento registrado ainda.</p>
                 )}
-                {formState.status === "success" && (
-                  <p style={{ color: "#1fa971", fontSize: 13 }}>{formState.message}</p>
-                )}
+                {detail.recentLogs.map((log) => (
+                  <div key={log.id} className="crm-ig-log-row">
+                    <span className={`crm-ig-log-dot ${log.status}`} />
+                    <div>
+                      <div>
+                        <strong>{integrationLogEventLabel(log.event)}</strong> —{" "}
+                        {formatDateTime(log.createdAt)}
+                      </div>
+                      {log.message && <div className="crm-card-sub">{log.message}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                <button type="submit" className="crm-ig-action-btn">
-                  Salvar
-                </button>
-              </form>
-            )}
+              {detail.integration.provider === "meta_ads" && (
+                <a
+                  href="/integracoes/meta"
+                  className="crm-ig-action-btn"
+                  style={{ textAlign: "center", display: "block", marginTop: 12 }}
+                >
+                  Ver painel completo da Meta →
+                </a>
+              )}
+            </div>
           </>
         )}
       </DrawerContent>

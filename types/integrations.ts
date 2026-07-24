@@ -1,19 +1,23 @@
 import type { BadgeTone } from "@/types/crm";
 
 export type IntegrationCategory =
-  | "publicidade"
+  | "marketing"
   | "analytics"
   | "comunicacao"
   | "automacao"
+  | "ia"
+  | "infraestrutura"
   | "developer";
 
 export type IntegrationStatus = "conectado" | "desconectado" | "erro" | "em_desenvolvimento";
 
 export const INTEGRATION_CATEGORY_LABEL: Record<IntegrationCategory, string> = {
-  publicidade: "Publicidade",
+  marketing: "Marketing",
   analytics: "Analytics",
   comunicacao: "Comunicação",
   automacao: "Automação",
+  ia: "IA",
+  infraestrutura: "Infraestrutura",
   developer: "Developer",
 };
 
@@ -90,6 +94,9 @@ export interface IntegrationHealthSummary {
   lastSyncAt: string | null;
   eventsSent: number;
   eventsProcessed: number;
+  /** Event Bus rows still `status = 'pending'` — "fila de eventos" on the
+   * Central de Integrações dashboard. */
+  queuedEvents: number;
   averageDurationMs: number | null;
   successRate: number | null;
 }

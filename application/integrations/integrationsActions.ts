@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
 import { getIntegrationLogsPageData } from "@/application/integrations/integrationLogsQueries";
 import { getIntegrationsPageData } from "@/application/integrations/integrationsQueries";
+import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
 import {
   getIntegrationByProvider,
   updateIntegration,
@@ -63,6 +64,15 @@ export async function configureIntegrationAction(
   await updateIntegration(supabase, provider, {
     enabled,
     config: { ...existing.config, notes: notes || undefined },
+  });
+
+  await createIntegrationLog(supabase, {
+    integrationId: existing.id,
+    event: "conexao_editada",
+    status: "success",
+    message: "Preferências da integração atualizadas.",
+    origin: "crm",
+    destination: provider,
   });
 
   revalidatePath("/integracoes");

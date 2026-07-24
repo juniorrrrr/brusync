@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/domain/crm/format";
+import { integrationLogEventLabel } from "@/domain/integrationsCenter/logEvents";
 import type { IntegrationLog } from "@/types/integrations";
 
 const STATUS_LABEL: Record<IntegrationLog["status"], string> = {
@@ -27,7 +28,7 @@ export function LogsTimeline({ logs }: { logs: IntegrationLog[] }) {
           </span>
           <div>
             <div className="crm-tl-title">
-              {log.event}
+              {integrationLogEventLabel(log.event)}
               {log.integrationName ? ` · ${log.integrationName}` : ""}
             </div>
             <div className="crm-tl-meta">

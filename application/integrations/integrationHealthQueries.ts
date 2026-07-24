@@ -43,6 +43,7 @@ export async function getIntegrationHealthData(): Promise<IntegrationHealthSumma
     lastSyncAt: lastSyncAt ?? null,
     eventsSent: eventCounts.total,
     eventsProcessed: eventCounts.processed,
+    queuedEvents: eventCounts.pending,
     averageDurationMs:
       successLogs.length > 0
         ? Math.round(

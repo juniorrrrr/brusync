@@ -250,3 +250,10 @@ export const IconPhone = ({ size }: IconProps = {}) => (
     <path d="M15.5 18.5a15.9 15.9 0 0 1-10-10l2.4-2.4a1.5 1.5 0 0 0 .3-1.7L6.6 1.5a1.5 1.5 0 0 0-1.8-.8l-2.4.8C1.6 1.9 1 2.6 1 3.5 1 13.2 10.8 23 20.5 23c.9 0 1.6-.6 2-1.4l.8-2.4a1.5 1.5 0 0 0-.8-1.8l-2.9-1.6a1.5 1.5 0 0 0-1.7.3Z" />
   </Svg>
 );
+export const IconServer = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <rect x="3" y="4" width="18" height="7" rx="1.5" />
+    <rect x="3" y="13" width="18" height="7" rx="1.5" />
+    <path d="M7 7.5h.01M7 16.5h.01" />
+  </Svg>
+);
