@@ -1,6 +1,7 @@
 import {
   IconArrowSwap,
   IconBolt,
+  IconBook,
   IconBuilding,
   IconCalendar,
   IconChart,
@@ -40,6 +41,7 @@ export const CRM_NAV: NavSection[] = [
     items: [
       { label: "Projetos", href: "/projetos", icon: IconDoc },
       { label: "Financeiro", href: "/financeiro", icon: IconWallet },
+      { label: "Base de Conhecimento", href: "/base-conhecimento", icon: IconBook },
       { label: "Materiais", icon: IconPackage, soon: true },
     ],
   },
