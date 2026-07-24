@@ -1,0 +1,196 @@
+/* Central de Comunicação (Fase 15) — reuses crm.css's tokens/generics
+   (crm-card, crm-badge, crm-toolbar, crm-avatar, crm-pj-row, crm-modal, etc).
+   Only the 3-pane inbox layout and message bubbles are new. */
+
+.crm-comm-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr 300px;
+  gap: 16px;
+  height: calc(100vh - 230px);
+  min-height: 520px;
+}
+
+.crm-comm-pane {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.crm-comm-pane-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.crm-comm-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.crm-comm-row {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-align: left;
+  width: 100%;
+  background: none;
+}
+.crm-comm-row:hover {
+  background: var(--surface);
+}
+.crm-comm-row.active {
+  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.crm-comm-row-body {
+  flex: 1;
+  min-width: 0;
+}
+.crm-comm-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.crm-comm-row-name {
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crm-comm-row-time {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.crm-comm-row-time.stale {
+  color: var(--danger);
+  font-weight: 700;
+}
+.crm-comm-row-preview {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+.crm-comm-row-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.crm-comm-unread-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.crm-comm-star {
+  color: #d99a1b;
+  flex-shrink: 0;
+}
+
+.crm-comm-thread-head {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.crm-comm-thread-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.crm-comm-bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.crm-comm-bubble.inbound {
+  align-self: flex-start;
+  background: var(--surface);
+  border-bottom-left-radius: 4px;
+}
+.crm-comm-bubble.outbound {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.crm-comm-bubble-meta {
+  font-size: 10.5px;
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.crm-comm-composer {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.crm-comm-composer-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.crm-comm-composer textarea {
+  flex: 1;
+  resize: none;
+  min-height: 44px;
+  max-height: 140px;
+}
+
+.crm-comm-info-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.crm-comm-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1150px) {
+  .crm-comm-layout {
+    grid-template-columns: 280px 1fr;
+  }
+  .crm-comm-info-pane {
+    display: none;
+  }
+}

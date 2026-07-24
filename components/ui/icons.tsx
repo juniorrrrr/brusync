@@ -221,3 +221,32 @@ export const IconClock = ({ size }: IconProps = {}) => (
     <path d="M12 7v5l3.5 2" />
   </Svg>
 );
+export const IconSend = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="m22 2-20 7 8 3 3 8 9-18Z" />
+    <path d="M10 12 22 2" />
+  </Svg>
+);
+export const IconStar = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01Z" />
+  </Svg>
+);
+export const IconArchive = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <rect x="3" y="4" width="18" height="4" rx="1" />
+    <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" />
+    <path d="M10 13h4" />
+  </Svg>
+);
+export const IconMail = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </Svg>
+);
+export const IconPhone = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M15.5 18.5a15.9 15.9 0 0 1-10-10l2.4-2.4a1.5 1.5 0 0 0 .3-1.7L6.6 1.5a1.5 1.5 0 0 0-1.8-.8l-2.4.8C1.6 1.9 1 2.6 1 3.5 1 13.2 10.8 23 20.5 23c.9 0 1.6-.6 2-1.4l.8-2.4a1.5 1.5 0 0 0-.8-1.8l-2.9-1.6a1.5 1.5 0 0 0-1.7.3Z" />
+  </Svg>
+);

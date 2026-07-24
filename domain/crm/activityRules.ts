@@ -10,6 +10,7 @@ import {
   IconPaperclip,
   IconPencil,
   type IconProps,
+  IconSend,
   IconTarget,
   IconTrash,
   IconUsers,
@@ -40,6 +41,11 @@ export const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
   lead_lost: "Lead perdido",
   lead_reopened: "Lead reaberto",
   client_created: "Cliente criado",
+  conversation_started: "Conversa iniciada",
+  conversation_closed: "Conversa encerrada",
+  message_sent: "Mensagem enviada",
+  message_received: "Mensagem recebida",
+  conversation_owner_changed: "Responsável da conversa alterado",
 };
 
 export const ACTIVITY_TYPE_ICON: Record<ActivityType, ComponentType<IconProps>> = {
@@ -65,6 +71,11 @@ export const ACTIVITY_TYPE_ICON: Record<ActivityType, ComponentType<IconProps>> 
   lead_lost: IconX,
   lead_reopened: IconCheck,
   client_created: IconBuilding,
+  conversation_started: IconMessage,
+  conversation_closed: IconMessage,
+  message_sent: IconSend,
+  message_received: IconMessage,
+  conversation_owner_changed: IconUsers,
 };
 
 /** Fallback icon for a marketing-download timeline entry — not an

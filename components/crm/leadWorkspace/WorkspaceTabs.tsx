@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LeadCommunicationTab } from "@/components/communication/LeadCommunicationTab";
 import { AgendaTab } from "@/components/crm/leadWorkspace/AgendaTab";
 import { ConversionsTab } from "@/components/crm/leadWorkspace/ConversionsTab";
 import { FilesTab } from "@/components/crm/leadWorkspace/FilesTab";
@@ -17,6 +18,7 @@ const TAB_KEYS = [
   "journey",
   "agenda",
   "conversions",
+  "communication",
   "notes",
   "tasks",
   "files",
@@ -26,9 +28,11 @@ const TAB_KEYS = [
 
 export function WorkspaceTabs({
   crmLeadId,
+  crmLeadName,
   refreshToken,
 }: {
   crmLeadId: string;
+  crmLeadName: string;
   refreshToken: string;
 }) {
   const [visited, setVisited] = useState<Set<(typeof TAB_KEYS)[number]>>(new Set(["timeline"]));
@@ -44,6 +48,7 @@ export function WorkspaceTabs({
         <TabsTrigger value="journey">Jornada Comercial</TabsTrigger>
         <TabsTrigger value="agenda">Agenda</TabsTrigger>
         <TabsTrigger value="conversions">Conversões</TabsTrigger>
+        <TabsTrigger value="communication">Comunicação</TabsTrigger>
         <TabsTrigger value="notes">Notas</TabsTrigger>
         <TabsTrigger value="tasks">Tarefas</TabsTrigger>
         <TabsTrigger value="files">Arquivos</TabsTrigger>
@@ -64,6 +69,11 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="conversions">
         {visited.has("conversions") && <ConversionsTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="communication">
+        {visited.has("communication") && (
+          <LeadCommunicationTab crmLeadId={crmLeadId} crmLeadName={crmLeadName} />
+        )}
       </TabsContent>
       <TabsContent value="notes">
         {visited.has("notes") && <NotesTab crmLeadId={crmLeadId} />}

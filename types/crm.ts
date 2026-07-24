@@ -123,7 +123,12 @@ export type ActivityType =
   | "automation"
   | "lead_lost"
   | "lead_reopened"
-  | "client_created";
+  | "client_created"
+  | "conversation_started"
+  | "conversation_closed"
+  | "message_sent"
+  | "message_received"
+  | "conversation_owner_changed";
 
 export interface LeadActivity {
   id: string;

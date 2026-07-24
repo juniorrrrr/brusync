@@ -9,6 +9,7 @@ import {
   IconDoc,
   IconFunnel,
   IconGrid,
+  IconMessage,
   IconPackage,
   IconReport,
   IconRobot,
@@ -31,6 +32,7 @@ export const CRM_NAV: NavSection[] = [
       { label: "Pipeline", href: "/pipeline", icon: IconFunnel },
       { label: "Clientes", href: "/clientes", icon: IconBuilding },
       { label: "Agenda", href: "/agenda", icon: IconCalendar },
+      { label: "Comunicação", href: "/comunicacao", icon: IconMessage },
     ],
   },
   {
