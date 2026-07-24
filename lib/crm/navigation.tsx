@@ -48,6 +48,7 @@ export const CRM_NAV: NavSection[] = [
   {
     title: "Inteligência",
     items: [
+      { label: "Central de Inteligência", href: "/inteligencia", icon: IconChart },
       { label: "Marketing Intelligence", href: "/marketing", icon: IconReport },
       { label: "Analytics", icon: IconChart, soon: true },
       { label: "Conversões", href: "/conversoes", icon: IconCheckCircle },

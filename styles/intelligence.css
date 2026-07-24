@@ -1,0 +1,131 @@
+/* Central de Inteligência (Fase 19) — reuses crm.css's tokens/generics
+   (crm-card, crm-badge, crm-kpi-grid, crm-tag, crm-drawer, crm-mini-list,
+   etc). Only the score/alert/insight/feed grids and the trend rows are new. */
+
+.crm-int-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.crm-int-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.crm-int-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.crm-int-card-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.crm-int-card-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.crm-int-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.crm-int-trend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.crm-int-trend-row:last-child {
+  border-bottom: none;
+}
+
+.crm-int-trend-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.crm-int-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.crm-int-feed-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  width: 100%;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+}
+.crm-int-feed-item:last-child {
+  border-bottom: none;
+}
+.crm-int-feed-item:hover {
+  background: var(--surface);
+}
+
+.crm-int-feed-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.crm-int-feed-dot.info {
+  background: #3b82f6;
+}
+.crm-int-feed-dot.atencao {
+  background: #d97706;
+}
+.crm-int-feed-dot.critico {
+  background: #dc2626;
+}
+
+.crm-int-evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.crm-int-evidence-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.crm-int-evidence-row:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 900px) {
+  .crm-int-grid {
+    grid-template-columns: 1fr;
+  }
+}
