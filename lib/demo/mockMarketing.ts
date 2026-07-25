@@ -20,7 +20,7 @@ import {
   MARKETING_ORIGINS,
 } from "@/domain/marketing/originRules";
 import { percentChange } from "@/domain/marketing/period";
-import { DEMO_LEADS, DEMO_PIPELINE_STAGES } from "@/lib/demo/mockSeed";
+import { DEMO_LEADS, DEMO_OWNERS, DEMO_PIPELINE_STAGES } from "@/lib/demo/mockSeed";
 import type { BadgeTone } from "@/types/crm";
 import type {
   CampaignRow,
@@ -53,12 +53,19 @@ interface DemoEnrichedLead {
   id: string;
   name: string;
   company: string;
+  city: string | null;
+  ownerId: string | null;
+  ownerName: string | null;
+  stageId: string;
+  stageKey: string;
   stageLabel: string;
   stageColor: BadgeTone;
+  stagePosition: number;
   isWon: boolean;
   isLost: boolean;
   isQualifiedOrBeyond: boolean;
   isProposalOrBeyond: boolean;
+  potentialValue: number;
   createdAt: string;
   revenue: number;
   clientCreatedAt: string | null;
@@ -75,6 +82,7 @@ interface DemoEnrichedLead {
   ttclid: string | null;
   origin: MarketingOrigin;
   campaignKey: string;
+  hasAttribution: boolean;
   firstVisit: string;
   lastVisit: string;
 }
@@ -84,22 +92,34 @@ const QUALIFIED_POSITION =
 const PROPOSAL_POSITION =
   DEMO_PIPELINE_STAGES.find((s) => s.key === "proposta")?.position ?? Infinity;
 
-const DEMO_ENRICHED_LEADS: DemoEnrichedLead[] = DEMO_LEADS.map((seed) => {
+/** Único dataset demo "por lead" do módulo de Marketing — todo dashboard de
+ * Marketing Intelligence e, a partir da Fase 22, o Revenue Intelligence
+ * também, derivam suas fixtures agrupando/reduzindo este mesmo array (nunca
+ * um segundo dataset paralelo com números digitados à parte). */
+export const DEMO_ENRICHED_LEADS: DemoEnrichedLead[] = DEMO_LEADS.map((seed) => {
   const stage = DEMO_PIPELINE_STAGES.find((s) => s.key === seed.stageKey);
   if (!stage) throw new Error(`Estágio demo desconhecido: ${seed.stageKey}`);
   const isWon = stage.isWon;
   const utm = seed.utm;
+  const owner = seed.ownerIndex !== null ? DEMO_OWNERS[seed.ownerIndex] : null;
 
   return {
     id: seed.id,
     name: seed.name,
     company: seed.company,
+    city: seed.city,
+    ownerId: owner?.id ?? null,
+    ownerName: owner?.name ?? owner?.email ?? null,
+    stageId: stage.id,
+    stageKey: stage.key,
     stageLabel: stage.label,
     stageColor: stage.color,
+    stagePosition: stage.position,
     isWon,
     isLost: !!seed.lost,
     isQualifiedOrBeyond: stage.position >= QUALIFIED_POSITION,
     isProposalOrBeyond: stage.position >= PROPOSAL_POSITION,
+    potentialValue: seed.potentialValue,
     createdAt: daysAgoIso(seed.daysAgoCreated),
     revenue: isWon ? seed.potentialValue : 0,
     clientCreatedAt: seed.becameClient ? daysAgoIso(seed.daysInStage) : null,
@@ -128,6 +148,7 @@ const DEMO_ENRICHED_LEADS: DemoEnrichedLead[] = DEMO_LEADS.map((seed) => {
       utmSource: utm?.source ?? null,
       utmCampaign: utm?.campaign ?? null,
     }),
+    hasAttribution: utm !== null,
     firstVisit: daysAgoIso(seed.daysAgoCreated + 3),
     lastVisit: daysAgoIso(seed.lastInteractionDaysAgo ?? seed.daysAgoCreated),
   };

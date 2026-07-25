@@ -230,7 +230,10 @@ function transactionToLedgerRows(transaction: FinancialTransaction): FinancialLe
   });
 }
 
-function buildDemoLedgerRows(): FinancialLedgerRow[] {
+/** Exportada para a Fase 22 (Revenue Intelligence) reaproveitar o mesmo
+ * ledger fictício ao calcular LTV em Modo Demonstração, em vez de duplicar
+ * uma segunda lista de lançamentos fictícios. */
+export function buildDemoLedgerRows(): FinancialLedgerRow[] {
   return buildDemoTransactions().flatMap(transactionToLedgerRows);
 }
 

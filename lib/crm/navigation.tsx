@@ -16,6 +16,7 @@ import {
   IconReport,
   IconRobot,
   IconSettings,
+  IconTag,
   IconTarget,
   IconUsers,
   IconWallet,
@@ -54,7 +55,7 @@ export const CRM_NAV: NavSection[] = [
     items: [
       { label: "Central de Inteligência", href: "/inteligencia", icon: IconChart },
       { label: "Marketing Intelligence", href: "/marketing", icon: IconReport },
-      { label: "Analytics", icon: IconChart, soon: true },
+      { label: "Revenue Intelligence", href: "/receita", icon: IconTag },
       { label: "Conversões", href: "/conversoes", icon: IconCheckCircle },
       { label: "Integrações", href: "/integracoes", icon: IconArrowSwap },
       { label: "Automações", href: "/automacoes", icon: IconBolt },

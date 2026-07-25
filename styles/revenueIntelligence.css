@@ -1,0 +1,98 @@
+/* Revenue Intelligence (Fase 22) — reusa os tokens/genéricos já existentes
+   em crm.css (crm-card, crm-badge, crm-kpi-grid, crm-table, crm-empty) e os
+   grids/cards da Central de Inteligência (crm-int-grid, crm-int-card-row,
+   crm-int-evidence-*, importados de styles/intelligence.css sempre que essa
+   página também estiver montada). Só o heatmap e os pequenos layouts de
+   forecast abaixo são novos. */
+
+.crm-rev-chart-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.crm-rev-annual-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.crm-rev-annual-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.crm-rev-heatmaps-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.crm-rev-heatmap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.crm-rev-heatmap-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.crm-rev-heatmap-grid {
+  display: grid;
+  gap: 3px;
+  min-width: max-content;
+}
+
+.crm-rev-heatmap-corner {
+  min-width: 96px;
+}
+
+.crm-rev-heatmap-col-label {
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.crm-rev-heatmap-row {
+  display: contents;
+}
+
+.crm-rev-heatmap-row-label {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  padding-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.crm-rev-heatmap-cell {
+  min-width: 28px;
+  min-height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--primary);
+}
+
+@media (max-width: 900px) {
+  .crm-rev-annual-row {
+    grid-template-columns: 1fr;
+  }
+}
