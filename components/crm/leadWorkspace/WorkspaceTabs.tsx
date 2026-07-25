@@ -11,11 +11,13 @@ import { MetaTab } from "@/components/crm/leadWorkspace/MetaTab";
 import { NotesTab } from "@/components/crm/leadWorkspace/NotesTab";
 import { TasksTab } from "@/components/crm/leadWorkspace/TasksTab";
 import { TimelineTab } from "@/components/crm/leadWorkspace/TimelineTab";
+import { LeadPlaybookTab } from "@/components/playbooks/LeadPlaybookTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TAB_KEYS = [
   "timeline",
   "journey",
+  "playbook",
   "agenda",
   "conversions",
   "communication",
@@ -46,6 +48,7 @@ export function WorkspaceTabs({
       <TabsList>
         <TabsTrigger value="timeline">Timeline</TabsTrigger>
         <TabsTrigger value="journey">Jornada Comercial</TabsTrigger>
+        <TabsTrigger value="playbook">Playbook</TabsTrigger>
         <TabsTrigger value="agenda">Agenda</TabsTrigger>
         <TabsTrigger value="conversions">Conversões</TabsTrigger>
         <TabsTrigger value="communication">Comunicação</TabsTrigger>
@@ -63,6 +66,9 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="journey">
         {visited.has("journey") && <JourneyTab crmLeadId={crmLeadId} refreshToken={refreshToken} />}
+      </TabsContent>
+      <TabsContent value="playbook">
+        {visited.has("playbook") && <LeadPlaybookTab crmLeadId={crmLeadId} />}
       </TabsContent>
       <TabsContent value="agenda">
         {visited.has("agenda") && <AgendaTab crmLeadId={crmLeadId} />}
