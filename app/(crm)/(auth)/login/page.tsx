@@ -12,7 +12,7 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  const safeNext = next?.startsWith("/") ? next : "/dashboard";
+  const safeNext = next?.startsWith("/") ? next : "/operacoes";
 
   return (
     <div className="crm-login-page">

@@ -1,0 +1,101 @@
+/* Central de Operações (Fase 20) — reuses crm.css's tokens/generics
+   (crm-card, crm-badge, crm-kpi-grid, crm-mini-list, crm-tag, crm-drawer,
+   etc). Only the operations card grid, module health grid, feed list and
+   widget settings rows are new. */
+
+.crm-ops-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.crm-ops-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-left: 3px solid var(--border);
+  transition: border-color 0.15s ease;
+}
+.crm-ops-card:hover {
+  border-color: var(--accent);
+}
+.crm-ops-card.ok {
+  border-left-color: #16a34a;
+}
+.crm-ops-card.info {
+  border-left-color: #3b82f6;
+}
+.crm-ops-card.atencao {
+  border-left-color: #d97706;
+}
+.crm-ops-card.critico {
+  border-left-color: #dc2626;
+}
+
+.crm-ops-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crm-ops-card-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.crm-ops-card-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.crm-ops-health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.crm-ops-health-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.crm-ops-widget-section {
+  margin-top: 20px;
+}
+
+.crm-ops-widget-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.crm-ops-widget-settings-row:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 900px) {
+  .crm-ops-card-grid,
+  .crm-ops-health-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .crm-ops-card-grid,
+  .crm-ops-health-grid {
+    grid-template-columns: 1fr;
+  }
+}

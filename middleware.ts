@@ -57,7 +57,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && isPublicCrmPath) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/operacoes", request.url));
   }
 
   return response;

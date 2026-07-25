@@ -10,6 +10,7 @@ import {
   IconDoc,
   IconFunnel,
   IconGrid,
+  IconLayers,
   IconMessage,
   IconPackage,
   IconReport,
@@ -24,7 +25,10 @@ import type { NavSection } from "@/types/crm";
 export const CRM_NAV: NavSection[] = [
   {
     title: "Geral",
-    items: [{ label: "Dashboard", href: "/dashboard", icon: IconGrid }],
+    items: [
+      { label: "Central de Operações", href: "/operacoes", icon: IconLayers },
+      { label: "Dashboard", href: "/dashboard", icon: IconGrid },
+    ],
   },
   {
     title: "CRM",
