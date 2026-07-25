@@ -1,6 +1,7 @@
 import "server-only";
 
 import { DEFAULT_OPERATIONS_LAYOUT, mergeLayoutWithCatalog } from "@/domain/operations/widgets";
+import { isAchieved } from "@/domain/performance/scoring";
 import { DEMO_CURRENT_USER_ID } from "@/lib/demo/mockOperations";
 import * as favoritesRepo from "@/repositories/operations/favoritesRepository";
 import * as layoutsRepo from "@/repositories/operations/layoutsRepository";
@@ -16,6 +17,7 @@ import {
   computeOperationsNextActions,
   computeOperationsQueue,
 } from "@/services/operations/operationsQueueService";
+import { getPerformanceExecutiveData } from "@/services/performance/performanceService";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { IntelligencePeriodKey } from "@/types/intelligence";
 import type { OperationsDashboardData } from "@/types/operations";
@@ -25,7 +27,10 @@ export async function buildOperationsDashboard(
   period: IntelligencePeriodKey = "hoje",
 ): Promise<OperationsDashboardData> {
   const demo = await isDemoModeActive();
-  const data = await buildOperationsData(period);
+  const [data, performance] = await Promise.all([
+    buildOperationsData(period),
+    getPerformanceExecutiveData(),
+  ]);
 
   const [favorites, savedLayout] = demo
     ? [[], null]
@@ -77,6 +82,14 @@ export async function buildOperationsDashboard(
       completed: data.projectsHealth.completedProjects,
       overdue: data.projectsHealth.overdueProjects,
       dueSoon: data.projectsDueSoon.length,
+    },
+    performanceSnapshot: {
+      activeGoals: performance.companyGoals.length,
+      achievedGoals: performance.companyGoals.filter((g) => isAchieved(g.progressStatus)).length,
+      atRiskGoals: performance.companyGoals.filter(
+        (g) => g.progressStatus === "em_risco" || g.progressStatus === "abaixo_50",
+      ).length,
+      overallPercentComplete: performance.overallPercentComplete,
     },
     layout: savedLayout ? mergeLayoutWithCatalog(savedLayout) : DEFAULT_OPERATIONS_LAYOUT,
   };

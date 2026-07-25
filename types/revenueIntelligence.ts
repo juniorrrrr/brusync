@@ -11,6 +11,9 @@ import type { MarketingOrigin, Metric } from "@/types/marketing";
  * o que de fato usam. */
 export interface RevenueLeadRow {
   createdAt: string;
+  /** Adicionado na Fase 23 (Performance) para permitir agrupar por
+   * vendedor/equipe com precisão — antes só existia ownerName. */
+  ownerId: string | null;
   ownerName: string | null;
   city: string | null;
   stageId: string;

@@ -1,0 +1,33 @@
+/* Performance (Fase 23) — reusa os tokens/genéricos já existentes em
+   crm.css (crm-card, crm-badge, crm-kpi-grid, crm-table, crm-empty, crm-field,
+   crm-modal-*) e os grids/cards da Central de Inteligência (crm-int-grid,
+   crm-int-card-row, crm-int-evidence-*, importados de styles/intelligence.css
+   sempre que essa página também estiver montada). Só a barra de progresso de
+   meta é nova. */
+
+.crm-perf-goal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.crm-perf-progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.crm-perf-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.crm-perf-goal-values {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 15px;
+}

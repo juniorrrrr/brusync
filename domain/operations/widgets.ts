@@ -11,6 +11,7 @@ export const OPERATIONS_WIDGET_LABEL: Record<OperationsWidgetKey, string> = {
   financeiro: "Saúde financeira",
   marketing: "Saúde de marketing",
   projetos: "Saúde de projetos",
+  performance: "Metas e performance",
 };
 
 /** Every user starts with every widget visible, in this order — the only
@@ -29,6 +30,7 @@ export const DEFAULT_OPERATIONS_LAYOUT: OperationsWidgetConfig[] = [
   { key: "financeiro", visible: true, order: 7 },
   { key: "marketing", visible: true, order: 8 },
   { key: "projetos", visible: true, order: 9 },
+  { key: "performance", visible: true, order: 10 },
 ];
 
 /** Merges a user's saved layout with the widget catalog above — any widget

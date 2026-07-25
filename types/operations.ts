@@ -22,6 +22,14 @@ export interface OperationsProjectsSnapshot {
   dueSoon: number;
 }
 
+/** Fase 23 (Performance) — resumo de metas ativas para o Mission Control. */
+export interface OperationsPerformanceSnapshot {
+  activeGoals: number;
+  achievedGoals: number;
+  atRiskGoals: number;
+  overallPercentComplete: number | null;
+}
+
 export type OperationsCardKey =
   | "leads_aguardando_contato"
   | "leads_atrasados"
@@ -130,7 +138,8 @@ export type OperationsWidgetKey =
   | "timeline"
   | "financeiro"
   | "marketing"
-  | "projetos";
+  | "projetos"
+  | "performance";
 
 export interface OperationsWidgetConfig {
   key: OperationsWidgetKey;
@@ -188,5 +197,6 @@ export interface OperationsDashboardData {
   financialSnapshot: OperationsFinancialSnapshot;
   marketingSnapshot: OperationsMarketingSnapshot;
   projectsSnapshot: OperationsProjectsSnapshot;
+  performanceSnapshot: OperationsPerformanceSnapshot;
   layout: OperationsWidgetConfig[];
 }

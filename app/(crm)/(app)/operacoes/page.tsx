@@ -11,6 +11,7 @@ import { OperationsInsightsWidget } from "@/components/operations/OperationsInsi
 import { OperationsMarketingWidget } from "@/components/operations/OperationsMarketingWidget";
 import { OperationsModuleHealthGrid } from "@/components/operations/OperationsModuleHealthGrid";
 import { OperationsNextActionsPanel } from "@/components/operations/OperationsNextActionsPanel";
+import { OperationsPerformanceWidget } from "@/components/operations/OperationsPerformanceWidget";
 import { OperationsProjectsWidget } from "@/components/operations/OperationsProjectsWidget";
 import { OperationsQueuePanel } from "@/components/operations/OperationsQueuePanel";
 import { OperationsTimeline } from "@/components/operations/OperationsTimeline";
@@ -94,6 +95,9 @@ export default async function OperacoesPage() {
           </OperationsWidgetSection>
           <OperationsWidgetSection widgetKey="projetos">
             <OperationsProjectsWidget snapshot={data.projectsSnapshot} />
+          </OperationsWidgetSection>
+          <OperationsWidgetSection widgetKey="performance">
+            <OperationsPerformanceWidget snapshot={data.performanceSnapshot} />
           </OperationsWidgetSection>
         </div>
 
