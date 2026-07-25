@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { sendClientMessageAction } from "@/application/clientPortal/portalMessagesActions";
 import type { PortalMessage } from "@/types/clientPortal";
 
@@ -65,11 +65,12 @@ export function PortalMessagesProvider({
     [projectId],
   );
 
-  return (
-    <PortalMessagesContext.Provider value={{ messages, sending, error, send }}>
-      {children}
-    </PortalMessagesContext.Provider>
+  const value = useMemo(
+    () => ({ messages, sending, error, send }),
+    [messages, sending, error, send],
   );
+
+  return <PortalMessagesContext.Provider value={value}>{children}</PortalMessagesContext.Provider>;
 }
 
 export function usePortalMessages() {

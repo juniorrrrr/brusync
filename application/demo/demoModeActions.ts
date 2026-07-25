@@ -19,6 +19,9 @@ export async function setDemoModeAction(enabled: boolean): Promise<void> {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
       sameSite: "lax",
+      // Não httpOnly: components/layout/DemoModeToggle.tsx lê este cookie via
+      // document.cookie de propósito (reconcilia com localStorage no mount).
+      secure: process.env.NODE_ENV === "production",
     });
   } else {
     store.delete(DEMO_MODE_COOKIE);

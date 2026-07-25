@@ -8,6 +8,7 @@ import {
   listFilesForProject,
   uploadProjectFile,
 } from "@/repositories/projects/projectFilesRepository";
+import { validateDocumentFile } from "@/schemas/shared/fileValidation";
 import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { ProjectFile } from "@/types/projects";
@@ -18,8 +19,7 @@ const DEMO_WRITE_BLOCKED_MESSAGE =
 const MAX_PROJECT_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 
 function validateProjectFile(file: File): string | null {
-  if (file.size > MAX_PROJECT_FILE_SIZE_BYTES) return "Arquivo maior que 15MB.";
-  return null;
+  return validateDocumentFile(file, MAX_PROJECT_FILE_SIZE_BYTES);
 }
 
 export interface FileActionState {

@@ -84,7 +84,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)
         {/* End Google Tag Manager (noscript) */}
         {/* Meta Pixel Code (noscript) */}
         <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* biome-ignore lint/performance/noImgElement: Meta Pixel noscript tracking pixel, not an optimizable asset */}
           <img
             height="1"
             width="1"

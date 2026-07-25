@@ -25,12 +25,38 @@ function getClientIp(hdrs: Headers) {
 }
 
 // DIAGNÓSTICO TEMPORÁRIO (remover após identificar a causa da regressão):
-// loga tudo que o Supabase/PostgREST devolve, em vez de engolir o erro.
+// loga o resultado do Supabase/PostgREST em vez de engolir o erro, mas nunca
+// os dados pessoais do lead (nome, e-mail, telefone, mensagem, IP) — apenas
+// metadados de diagnóstico (status, mensagem de erro, quais campos vieram).
+function redactForLog(payload: unknown): unknown {
+  if (!payload || typeof payload !== "object") return payload;
+  const PII_KEYS = new Set([
+    "payload",
+    "name",
+    "email",
+    "company",
+    "phone",
+    "message",
+    "ip_address",
+  ]);
+  const source = payload as Record<string, unknown>;
+  const result: Record<string, unknown> = {};
+  for (const key of Object.getOwnPropertyNames(source)) {
+    const value = source[key];
+    if (PII_KEYS.has(key)) {
+      result[key] =
+        value && typeof value === "object"
+          ? `<redacted:${Object.keys(value).length} fields>`
+          : "<redacted>";
+      continue;
+    }
+    result[key] = value;
+  }
+  return result;
+}
+
 function logSupabaseIssue(label: string, payload: unknown) {
-  console.error(
-    `[submitLead:DIAG] ${label}`,
-    JSON.stringify(payload, Object.getOwnPropertyNames((payload as object) ?? {}), 2),
-  );
+  console.error(`[submitLead:DIAG] ${label}`, JSON.stringify(redactForLog(payload), null, 2));
 }
 
 export async function submitLead(

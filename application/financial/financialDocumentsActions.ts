@@ -7,6 +7,7 @@ import {
   listDocumentsForTransaction,
   uploadDocument,
 } from "@/repositories/financial/documentsRepository";
+import { validateDocumentFile } from "@/schemas/shared/fileValidation";
 import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { FinancialDocumentType } from "@/types/financial";
@@ -43,8 +44,9 @@ export async function uploadFinancialDocumentAction(
   if (!transactionId || !(file instanceof File) || file.size === 0) {
     return { status: "error", message: "Selecione um arquivo." };
   }
-  if (file.size > MAX_DOCUMENT_SIZE_BYTES) {
-    return { status: "error", message: "Arquivo maior que 15MB." };
+  const validationError = validateDocumentFile(file, MAX_DOCUMENT_SIZE_BYTES);
+  if (validationError) {
+    return { status: "error", message: validationError };
   }
 
   const supabase = await getSupabaseAuthClient();

@@ -5,6 +5,7 @@ import { requireCrmProfile } from "@/application/crm/authGuard";
 import { getDemoKnowledgeFiles } from "@/lib/demo/mockKnowledge";
 import * as filesRepo from "@/repositories/knowledge/filesRepository";
 import * as viewsRepo from "@/repositories/knowledge/viewsRepository";
+import { validateDocumentFile } from "@/schemas/shared/fileValidation";
 import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { KnowledgeFile } from "@/types/knowledge";
@@ -58,8 +59,8 @@ export async function uploadKnowledgeFileAction(
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0)
     return { status: "error", message: "Selecione um arquivo." };
-  if (file.size > MAX_FILE_SIZE_BYTES)
-    return { status: "error", message: "Arquivo maior que 25MB." };
+  const validationError = validateDocumentFile(file, MAX_FILE_SIZE_BYTES);
+  if (validationError) return { status: "error", message: validationError };
 
   const supabase = await getSupabaseAuthClient();
   const uploaded = await filesRepo.uploadKnowledgeFile(supabase, {

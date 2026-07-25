@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { fetchFinancialTransactionDetail } from "@/application/financial/financialTransactionsActions";
 import type { FinancialTransactionDetail, FinancialTransactionKind } from "@/types/financial";
 
@@ -98,25 +98,39 @@ export function FinancialEditorProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
+  const value = useMemo(
+    () => ({
+      mode,
+      kind,
+      transaction,
+      fixedClientId,
+      fixedClientCompany,
+      fixedProjectId,
+      loading,
+      error,
+      openCreate,
+      openEdit,
+      refresh,
+      close,
+    }),
+    [
+      mode,
+      kind,
+      transaction,
+      fixedClientId,
+      fixedClientCompany,
+      fixedProjectId,
+      loading,
+      error,
+      openCreate,
+      openEdit,
+      refresh,
+      close,
+    ],
+  );
+
   return (
-    <FinancialEditorContext.Provider
-      value={{
-        mode,
-        kind,
-        transaction,
-        fixedClientId,
-        fixedClientCompany,
-        fixedProjectId,
-        loading,
-        error,
-        openCreate,
-        openEdit,
-        refresh,
-        close,
-      }}
-    >
-      {children}
-    </FinancialEditorContext.Provider>
+    <FinancialEditorContext.Provider value={value}>{children}</FinancialEditorContext.Provider>
   );
 }
 

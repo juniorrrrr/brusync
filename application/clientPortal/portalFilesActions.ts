@@ -5,6 +5,7 @@ import {
   uploadProjectFile,
 } from "@/repositories/projects/projectFilesRepository";
 import { getProjectById } from "@/repositories/projects/projectsRepository";
+import { validateDocumentFile } from "@/schemas/shared/fileValidation";
 import { requirePortalAccess } from "@/services/clientPortal/portalAccessService";
 import { isDemoModeActive } from "@/services/demo/demoMode";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
@@ -39,8 +40,9 @@ export async function uploadPortalFileAction(
   if (!projectId || !(file instanceof File) || file.size === 0) {
     return { status: "error", message: "Selecione um arquivo." };
   }
-  if (file.size > MAX_PORTAL_FILE_SIZE_BYTES) {
-    return { status: "error", message: "Arquivo maior que 15MB." };
+  const validationError = validateDocumentFile(file, MAX_PORTAL_FILE_SIZE_BYTES);
+  if (validationError) {
+    return { status: "error", message: validationError };
   }
 
   const supabase = await getSupabaseAuthClient();
