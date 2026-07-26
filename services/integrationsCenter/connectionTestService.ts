@@ -7,7 +7,10 @@ import {
   getEncryptedAccessToken,
   getIntegrationByProvider,
 } from "@/repositories/integrations/integrationsRepository";
+import { getActiveMetaAccount } from "@/repositories/metaAds/accountsRepository";
+import { getCurrentTokenSecret } from "@/repositories/metaAds/tokensRepository";
 import { testMetaConnection } from "@/services/conversionsHub/dispatchMetaDelivery";
+import { getMetaAdsProvider } from "@/services/metaAds/metaAdsProviderFactory";
 import { decryptToken } from "@/services/metaConversionsApi/tokenCrypto";
 
 export interface ConnectionTestResult {
@@ -30,8 +33,9 @@ export async function testIntegrationConnection(
   const integration = await getIntegrationByProvider(supabase, provider);
   if (!integration) return { ok: false, message: "Integração não encontrada." };
 
-  // Meta Ads logs its own "teste_executado" row inside testMetaConnection —
-  // every other provider is logged here since there's no real test to run.
+  // Meta Ads (Pixel/Conversions API, Fase 9) logs its own "teste_executado"
+  // row inside testMetaConnection — every other provider is logged here
+  // since there's no real test to run.
   if (provider === "meta_ads") {
     const config = integration.config as { pixelId?: string };
     if (!config.pixelId) {
@@ -46,6 +50,44 @@ export async function testIntegrationConnection(
     }
     const accessToken = decryptToken(saved.ciphertext, saved.iv);
     return testMetaConnection(supabase, config.pixelId, accessToken);
+  }
+
+  // Meta Ads Manager (Marketing API, Fase 29) — testa o Access Token OAuth
+  // vigente da conta conectada (domain/metaAds/provider.ts::validateToken),
+  // nunca o mesmo Pixel/Access Token da integração acima.
+  if (provider === "meta_ads_manager") {
+    const account = await getActiveMetaAccount(supabase);
+    if (!account) {
+      return {
+        ok: false,
+        message: "Nenhuma conta conectada — conecte em Meta Ads → Configurações.",
+      };
+    }
+    const tokenSecret = await getCurrentTokenSecret(supabase, account.id);
+    if (!tokenSecret) {
+      return { ok: false, message: "Nenhum Access Token salvo para esta conta." };
+    }
+    const accessToken = decryptToken(
+      tokenSecret.access_token_ciphertext,
+      tokenSecret.access_token_iv,
+    );
+    const validation = await getMetaAdsProvider().validateToken({ accessToken });
+
+    await createIntegrationLog(supabase, {
+      integrationId: integration.id,
+      event: "teste_executado",
+      status: validation.ok ? "success" : "error",
+      message: validation.ok ? "Token válido." : (validation.error ?? "Falha ao validar token."),
+      origin: "crm",
+      destination: provider,
+    });
+
+    return {
+      ok: validation.ok,
+      message: validation.ok
+        ? "Conexão validada com sucesso."
+        : (validation.error ?? "Falha ao validar."),
+    };
   }
 
   const result: ConnectionTestResult = { ok: false, message: CONNECTION_NOT_IMPLEMENTED_MESSAGE };

@@ -195,6 +195,15 @@ export function IntegrationDrawer({
                   Ver painel completo da Meta →
                 </a>
               )}
+              {detail.integration.provider === "meta_ads_manager" && (
+                <a
+                  href="/meta-ads/configuracoes"
+                  className="crm-ig-action-btn"
+                  style={{ textAlign: "center", display: "block", marginTop: 12 }}
+                >
+                  Ver painel completo do Meta Ads Manager →
+                </a>
+              )}
             </div>
           </>
         )}

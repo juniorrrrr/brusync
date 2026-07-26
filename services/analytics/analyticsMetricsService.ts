@@ -13,6 +13,7 @@ import { getFinancialMarketingPageData } from "@/application/financial/financial
 import { getIntegrationHealthData } from "@/application/integrations/integrationHealthQueries";
 import { fetchIntelligenceDashboardData } from "@/application/intelligence/intelligenceDashboardQueries";
 import { getCampaignRows } from "@/application/marketingAnalytics/campaignsQueries";
+import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries";
 import { fetchPerformanceExecutiveData } from "@/application/performance/performanceQueries";
 import { getProjectsHealthData } from "@/application/projects/projectsHealthQueries";
 import { getProjectsPageData } from "@/application/projects/projectsQueries";
@@ -392,6 +393,38 @@ async function resolveIa(metric: AnalyticsMetricKey): Promise<AnalyticsMetricRes
   return result;
 }
 
+/** Nenhum número é recalculado aqui — apenas reformata o que
+ * application/metaAds/metaAdsQueries.ts::fetchMetaAdsDashboardData já
+ * resolve (que por sua vez só soma o que services/metaAds/
+ * metaAdsSyncService.ts sincronizou e domain/metaAds/metrics.ts derivou),
+ * mesmo espírito de resolveMarketing acima. */
+async function resolveMetaAds(metric: AnalyticsMetricKey): Promise<AnalyticsMetricResult> {
+  const result = empty(metric);
+  const data = await fetchMetaAdsDashboardData();
+
+  if (metric === "investimento_meta_ads") {
+    result.scalar = data.summary.spend;
+    result.series = series(
+      data.topCampaigns.map((c) => ({ label: c.campaign.name, value: c.summary.spend })),
+    );
+  } else if (metric === "roas_meta_ads") {
+    result.scalar = data.summary.metrics.roas;
+    result.series = series(
+      data.topCampaigns.map((c) => ({
+        label: c.campaign.name,
+        value: c.summary.metrics.roas ?? 0,
+      })),
+    );
+  } else if (metric === "cpa_meta_ads") {
+    result.scalar = data.summary.metrics.cpa;
+  } else if (metric === "conversoes_meta_ads") {
+    result.scalar = data.summary.conversions;
+    result.series = series(data.dailySpend.map((p) => ({ label: p.date, value: p.conversions })));
+  }
+
+  return result;
+}
+
 export async function resolveMetric(
   dataSource: AnalyticsDataSource,
   metric: AnalyticsMetricKey,
@@ -422,6 +455,8 @@ export async function resolveMetric(
       return resolveInteligencia(metric);
     case "ia":
       return resolveIa(metric);
+    case "meta_ads":
+      return resolveMetaAds(metric);
     default:
       return empty(metric);
   }

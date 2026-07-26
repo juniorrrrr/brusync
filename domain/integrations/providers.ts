@@ -22,6 +22,13 @@ export const INTEGRATION_PROVIDERS: IntegrationProviderMeta[] = [
       "Conecte campanhas do Facebook e Instagram Ads para sincronizar leads e conversões.",
   },
   {
+    provider: "meta_ads_manager",
+    category: "marketing",
+    name: "Meta Ads Manager",
+    description:
+      "Sincronize contas, campanhas, conjuntos, anúncios, criativos, públicos e métricas do Meta Ads (Marketing API oficial).",
+  },
+  {
     provider: "google_ads",
     category: "marketing",
     name: "Google Ads",

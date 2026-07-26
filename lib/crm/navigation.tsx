@@ -13,6 +13,7 @@ import {
   IconFunnel,
   IconGrid,
   IconLayers,
+  IconMegaphone,
   IconMessage,
   IconPackage,
   IconPhone,
@@ -45,6 +46,10 @@ export const CRM_NAV: NavSection[] = [
       { label: "Comunicação", href: "/comunicacao", icon: IconMessage },
       { label: "WhatsApp", href: "/whatsapp", icon: IconPhone },
     ],
+  },
+  {
+    title: "Marketing",
+    items: [{ label: "Meta Ads", href: "/meta-ads", icon: IconMegaphone }],
   },
   {
     title: "Gestão",

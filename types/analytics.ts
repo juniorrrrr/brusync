@@ -18,7 +18,8 @@ export type AnalyticsDataSource =
   | "integracoes"
   | "performance"
   | "inteligencia"
-  | "ia";
+  | "ia"
+  | "meta_ads";
 
 export type AnalyticsMetricKey =
   | "receita"
@@ -43,7 +44,11 @@ export type AnalyticsMetricKey =
   | "saude_integracoes"
   | "performance_equipe"
   | "alertas_inteligencia"
-  | "uso_ia";
+  | "uso_ia"
+  | "investimento_meta_ads"
+  | "roas_meta_ads"
+  | "cpa_meta_ads"
+  | "conversoes_meta_ads";
 
 export type AnalyticsMetricUnit = "moeda" | "numero" | "percentual" | "dias" | "minutos";
 

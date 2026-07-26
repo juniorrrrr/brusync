@@ -345,3 +345,9 @@ export const IconLayers = ({ size }: IconProps = {}) => (
     <path d="m3 12 9 5 9-5M3 17l9 5 9-5" />
   </Svg>
 );
+export const IconMegaphone = ({ size }: IconProps = {}) => (
+  <Svg size={size}>
+    <path d="M3 11v2a2 2 0 0 0 2 2h1l2 6h2l-1-6h4l7 4V5l-7 4H6a2 2 0 0 0-2 2Z" />
+    <path d="M11 9v6" />
+  </Svg>
+);

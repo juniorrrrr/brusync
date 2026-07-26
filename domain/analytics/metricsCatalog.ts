@@ -102,6 +102,30 @@ export const ANALYTICS_METRICS: Record<AnalyticsMetricKey, AnalyticsMetricCatalo
     sources: ["inteligencia"],
   },
   uso_ia: { key: "uso_ia", label: "Uso da IA", unit: "numero", sources: ["ia"] },
+  investimento_meta_ads: {
+    key: "investimento_meta_ads",
+    label: "Investimento Meta Ads",
+    unit: "moeda",
+    sources: ["meta_ads"],
+  },
+  roas_meta_ads: {
+    key: "roas_meta_ads",
+    label: "ROAS Meta Ads",
+    unit: "numero",
+    sources: ["meta_ads"],
+  },
+  cpa_meta_ads: {
+    key: "cpa_meta_ads",
+    label: "CPA Meta Ads",
+    unit: "moeda",
+    sources: ["meta_ads"],
+  },
+  conversoes_meta_ads: {
+    key: "conversoes_meta_ads",
+    label: "Conversões Meta Ads",
+    unit: "numero",
+    sources: ["meta_ads"],
+  },
 };
 
 export const ANALYTICS_METRIC_KEYS = Object.keys(ANALYTICS_METRICS) as AnalyticsMetricKey[];
@@ -119,6 +143,7 @@ export const ANALYTICS_SOURCE_LABEL: Record<AnalyticsDataSource, string> = {
   performance: "Performance Comercial",
   inteligencia: "Central de Inteligência",
   ia: "IA",
+  meta_ads: "Meta Ads",
 };
 
 export const ANALYTICS_SOURCES: AnalyticsDataSource[] = Object.keys(
