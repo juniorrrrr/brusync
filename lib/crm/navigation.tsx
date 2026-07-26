@@ -65,7 +65,7 @@ export const CRM_NAV: NavSection[] = [
       { label: "Conversões", href: "/conversoes", icon: IconCheckCircle },
       { label: "Integrações", href: "/integracoes", icon: IconArrowSwap },
       { label: "Automações", href: "/automacoes", icon: IconBolt },
-      { label: "IA", icon: IconRobot, soon: true },
+      { label: "IA", href: "/ia", icon: IconRobot },
     ],
   },
   {

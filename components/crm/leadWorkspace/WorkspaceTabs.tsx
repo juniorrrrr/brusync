@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AiLeadAssistantTab } from "@/components/ai/AiLeadAssistantTab";
 import { LeadCommunicationTab } from "@/components/communication/LeadCommunicationTab";
 import { AgendaTab } from "@/components/crm/leadWorkspace/AgendaTab";
 import { ConversionsTab } from "@/components/crm/leadWorkspace/ConversionsTab";
@@ -18,6 +19,7 @@ const TAB_KEYS = [
   "timeline",
   "journey",
   "playbook",
+  "ia",
   "agenda",
   "conversions",
   "communication",
@@ -49,6 +51,7 @@ export function WorkspaceTabs({
         <TabsTrigger value="timeline">Timeline</TabsTrigger>
         <TabsTrigger value="journey">Jornada Comercial</TabsTrigger>
         <TabsTrigger value="playbook">Playbook</TabsTrigger>
+        <TabsTrigger value="ia">IA</TabsTrigger>
         <TabsTrigger value="agenda">Agenda</TabsTrigger>
         <TabsTrigger value="conversions">Conversões</TabsTrigger>
         <TabsTrigger value="communication">Comunicação</TabsTrigger>
@@ -69,6 +72,9 @@ export function WorkspaceTabs({
       </TabsContent>
       <TabsContent value="playbook">
         {visited.has("playbook") && <LeadPlaybookTab crmLeadId={crmLeadId} />}
+      </TabsContent>
+      <TabsContent value="ia">
+        {visited.has("ia") && <AiLeadAssistantTab crmLeadId={crmLeadId} />}
       </TabsContent>
       <TabsContent value="agenda">
         {visited.has("agenda") && <AgendaTab crmLeadId={crmLeadId} />}
