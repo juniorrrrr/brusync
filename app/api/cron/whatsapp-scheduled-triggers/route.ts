@@ -6,14 +6,15 @@ import { runWhatsappAutomation } from "@/services/whatsapp/whatsappAutomationSer
 
 export const dynamic = "force-dynamic";
 
-/** Vercel Cron target (a ser adicionado em vercel.json, mesmo padrão de
- * automation-stalled-check e meta-retry) — checa os dois gatilhos de
- * WhatsApp que são baseados em tempo, não em evento de negócio ("lembrete":
- * lembretes da Agenda vencidos com lead vinculado). "Aniversário" está
- * preparado (WHATSAPP_AUTOMATION_TRIGGERS inclui 'aniversario') mas não tem
- * disparo automático nesta fase — o schema de leads/clientes não tem campo
- * de data de nascimento em nenhum módulo existente, e criar um exigiria
- * alterar o CRM, fora do escopo desta fase (ver relatório técnico). */
+/** Vercel Cron target (vercel.json, uma vez por dia — mesma cadência de
+ * meta-retry/automation-stalled-check; o plano do projeto não suporta
+ * schedule sub-diário) — checa o gatilho de WhatsApp baseado em tempo
+ * ("lembrete": lembretes da Agenda vencidos com lead vinculado).
+ * "Aniversário" está preparado (AUTOMATION_TRIGGERS inclui 'aniversario')
+ * mas não tem disparo automático nesta fase — o schema de leads/clientes
+ * não tem campo de data de nascimento em nenhum módulo existente, e criar
+ * um exigiria alterar o CRM, fora do escopo desta fase (ver relatório
+ * técnico). */
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
