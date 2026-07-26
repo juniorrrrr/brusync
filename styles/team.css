@@ -1,0 +1,121 @@
+/* Gestão de Equipe (Fase 25) — reusa os tokens/genéricos já existentes em
+   crm.css (crm-card, crm-badge, crm-kpi-grid, crm-modal-*, crm-field,
+   crm-mini-list) e os grids/cards de Performance/Processos (crm-int-grid,
+   crm-int-card-*, crm-perf-progress-*, crm-proc-card-meta, crm-proc-steps-list,
+   crm-proc-step), mesmo espírito de styles/processes.css. Só os elementos
+   específicos de People Ops (avatar, card de colaborador, ranking, feed de
+   feedback) são novos aqui. */
+
+.crm-team-avatar {
+  border-radius: 999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.crm-team-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.crm-team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.crm-team-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crm-team-card-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fg);
+}
+
+.crm-team-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.crm-team-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.crm-team-breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.crm-team-breakdown-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crm-team-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crm-team-ranking-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.crm-team-ranking-row:hover {
+  background: var(--surface);
+}
+
+.crm-team-ranking-position {
+  font-weight: 700;
+  color: var(--muted);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.crm-team-ranking-info {
+  flex: 1;
+}
+
+.crm-team-feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crm-team-feedback-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .crm-team-card-top {
+    flex-wrap: wrap;
+  }
+}
