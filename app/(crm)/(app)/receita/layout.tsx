@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { IntelligenceDrillDownPanel } from "@/components/intelligence/IntelligenceDrillDownPanel";
+import { IntelligenceHubNav } from "@/components/intelligence/IntelligenceHubNav";
 import { RevenueSubNav } from "@/components/revenueIntelligence/RevenueSubNav";
 import { IntelligenceDrillDownProvider } from "@/contexts/intelligence/IntelligenceDrillDownContext";
 import "@/styles/revenueIntelligence.css";
@@ -21,6 +22,10 @@ export default function ReceitaLayout({ children }: { children: ReactNode }) {
               Inteligência Operacional.
             </p>
           </div>
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <IntelligenceHubNav />
         </div>
 
         <div style={{ marginBottom: 16 }}>

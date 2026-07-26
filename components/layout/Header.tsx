@@ -1,7 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
 import { IconBell, IconLogout, IconMenu, IconSearch } from "@/components/ui/icons";
+import { getBreadcrumb } from "@/lib/crm/navigation";
 import { signOut } from "@/services/auth/logout";
 import type { Profile } from "@/services/auth/session";
 
@@ -31,6 +33,8 @@ export function Header({
 }) {
   const displayName = profile?.name || profile?.email || "Usuário";
   const roleLabel = profile ? ROLE_LABEL[profile.role] : "";
+  const pathname = usePathname();
+  const breadcrumb = getBreadcrumb(pathname);
 
   return (
     <header className="crm-header">
@@ -44,7 +48,10 @@ export function Header({
           <IconMenu />
         </button>
         <div>
-          <div className="crm-header-title">Brusync OS</div>
+          <div className="crm-header-title">{breadcrumb?.itemLabel ?? "Brusync OS"}</div>
+          {breadcrumb?.groupTitle && (
+            <div className="crm-header-crumb">{breadcrumb.groupTitle}</div>
+          )}
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IntelligenceHubNav } from "@/components/intelligence/IntelligenceHubNav";
 import "@/styles/analytics.css";
 
 export default function AnalyticsLayout({ children }: { children: ReactNode }) {
@@ -13,6 +14,11 @@ export default function AnalyticsLayout({ children }: { children: ReactNode }) {
           </p>
         </div>
       </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <IntelligenceHubNav />
+      </div>
+
       {children}
     </div>
   );

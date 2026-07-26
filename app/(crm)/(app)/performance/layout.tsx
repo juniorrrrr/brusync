@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { fetchPerformanceScopeOptions } from "@/application/performance/performanceQueries";
+import { IntelligenceHubNav } from "@/components/intelligence/IntelligenceHubNav";
 import { GoalEditorModal } from "@/components/performance/GoalEditorModal";
 import { PerformanceSubNav } from "@/components/performance/PerformanceSubNav";
 import { GoalEditorProvider } from "@/contexts/performance/GoalEditorContext";
@@ -23,6 +24,10 @@ export default async function PerformanceLayout({ children }: { children: ReactN
               financeiro e de marketing usando os dados já existentes da plataforma.
             </p>
           </div>
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <IntelligenceHubNav />
         </div>
 
         <div style={{ marginBottom: 16 }}>

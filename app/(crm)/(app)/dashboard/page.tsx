@@ -6,6 +6,7 @@ import { LossReasonsPanel } from "@/components/dashboard/LossReasonsPanel";
 import { OriginPanel } from "@/components/dashboard/OriginPanel";
 import { PerformancePanel } from "@/components/dashboard/PerformancePanel";
 import { PipelineSummaryPanel } from "@/components/dashboard/PipelineSummaryPanel";
+import { QuickShortcuts } from "@/components/dashboard/QuickShortcuts";
 import { RecentActivityPanel } from "@/components/dashboard/RecentActivityPanel";
 import { RecentDownloadsPanel } from "@/components/dashboard/RecentDownloadsPanel";
 import { StageConversionPanel } from "@/components/dashboard/StageConversionPanel";
@@ -41,6 +42,8 @@ export default async function DashboardPage() {
           <p className="crm-page-sub">Visão geral da operação Brusync</p>
         </div>
       </div>
+
+      <QuickShortcuts />
 
       <div className="crm-kpi-grid">
         <KpiCard label="Leads Hoje" value={String(kpis.leadsToday)} icon={IconTarget} />

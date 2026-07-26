@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { getOwnerOptions } from "@/application/crm/leadsQueries";
+import { IntelligenceHubNav } from "@/components/intelligence/IntelligenceHubNav";
 import { MarketingFilterBar } from "@/components/marketing/MarketingFilterBar";
 import { MarketingSubNav } from "@/components/marketing/MarketingSubNav";
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
@@ -17,6 +18,10 @@ export default async function MarketingLayout({ children }: { children: ReactNod
           <h1 className="crm-page-title">Marketing Intelligence</h1>
           <p className="crm-page-sub">Marketing e Comercial conectados de ponta a ponta</p>
         </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <IntelligenceHubNav />
       </div>
 
       <div style={{ marginBottom: 16 }}>

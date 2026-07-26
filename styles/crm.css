@@ -78,16 +78,74 @@
   flex-direction: column;
   gap: 2px;
 }
-.crm-nav-section {
+.crm-nav-group {
+  margin-top: 4px;
+}
+.crm-nav-group-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 9px;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #5f7395;
-  padding: 16px 10px 6px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
-.crm-nav-section:first-child {
-  padding-top: 4px;
+.crm-nav-group-head svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.crm-nav-group-head:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #b9c6dc;
+}
+.crm-nav-group-head.active {
+  color: var(--accent);
+}
+.crm-nav-group-head.active svg {
+  opacity: 1;
+  color: var(--accent);
+}
+.crm-nav-group-head .label {
+  flex: 1;
+  text-align: left;
+}
+.crm-nav-chevron {
+  display: flex;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.crm-nav-chevron svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.7;
+}
+.crm-nav-chevron.open {
+  transform: rotate(180deg);
+}
+.crm-nav-group-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease;
+}
+.crm-nav-group-body.open {
+  grid-template-rows: 1fr;
+}
+.crm-nav-group-body-inner {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px;
 }
 .crm-nav-item {
   display: flex;
@@ -413,6 +471,52 @@
   font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
+}
+
+/* ===== Dashboard quick shortcuts ===== */
+.crm-dash-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.crm-dash-shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  color: var(--primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.crm-dash-shortcut svg {
+  color: var(--accent);
+}
+.crm-dash-shortcut:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md, var(--shadow-sm));
+}
+@media (max-width: 900px) {
+  .crm-dash-shortcuts {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .crm-dash-shortcuts {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* ===== KPI grid ===== */

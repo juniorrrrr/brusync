@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IntelligenceHubNav } from "@/components/intelligence/IntelligenceHubNav";
 import "@/styles/conversions.css";
 
 export default function ConversoesLayout({ children }: { children: ReactNode }) {
@@ -11,6 +12,10 @@ export default function ConversoesLayout({ children }: { children: ReactNode }) 
             Conversions Hub — eventos do CRM preparados para plataformas externas
           </p>
         </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <IntelligenceHubNav />
       </div>
 
       {children}

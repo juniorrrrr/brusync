@@ -8,8 +8,13 @@ export interface NavItem {
   soon?: boolean;
 }
 
-export interface NavSection {
+export interface NavGroup {
+  /** Stable key used for accordion state + localStorage persistence. */
+  id: string;
   title: string;
+  icon?: ComponentType<IconProps>;
+  /** Rendered flat, without an accordion header (e.g. Dashboard). */
+  standalone?: boolean;
   items: NavItem[];
 }
 
