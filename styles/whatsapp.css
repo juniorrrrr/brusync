@@ -1,0 +1,27 @@
+/* WhatsApp Business Cloud API (Fase 28) — reaproveita quase 100% do design
+   system existente: o layout de 3 painéis e as bolhas de mensagem vêm de
+   styles/communication.css (Fase 15: crm-comm-layout, crm-comm-pane,
+   crm-comm-row-*, crm-comm-bubble, crm-comm-composer), os cards/badges de
+   crm.css, e os grids/linhas de styles/analytics.css (crm-int-grid,
+   crm-an-row). Nenhum Design System paralelo — só um ajuste de altura do
+   layout de 3 colunas para a tela principal do módulo. */
+
+.crm-wa-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr 300px;
+  gap: 0;
+  height: calc(100dvh - var(--crm-header-h) - 220px);
+  min-height: 480px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  .crm-wa-layout {
+    grid-template-columns: 280px 1fr;
+  }
+  .crm-wa-layout > *:last-child {
+    display: none;
+  }
+}

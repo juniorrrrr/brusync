@@ -15,6 +15,7 @@ import {
   IconLayers,
   IconMessage,
   IconPackage,
+  IconPhone,
   IconReport,
   IconRobot,
   IconSettings,
@@ -42,6 +43,7 @@ export const CRM_NAV: NavSection[] = [
       { label: "Clientes", href: "/clientes", icon: IconBuilding },
       { label: "Agenda", href: "/agenda", icon: IconCalendar },
       { label: "Comunicação", href: "/comunicacao", icon: IconMessage },
+      { label: "WhatsApp", href: "/whatsapp", icon: IconPhone },
     ],
   },
   {

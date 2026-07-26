@@ -17,6 +17,7 @@ import { getLeadById, updateLeadStage } from "@/repositories/crm/leadsRepository
 import { listPipelineStages } from "@/repositories/crm/pipelineStagesRepository";
 import { createTask } from "@/repositories/crm/tasksRepository";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { dispatchWhatsappAutomationForEvent } from "@/services/whatsapp/whatsappAutomationDispatcher";
 import type { AutomationTriggerType, AutomationWorkflow } from "@/types/automation";
 import type { CrmLeadWithRelations } from "@/types/crm";
 
@@ -202,6 +203,11 @@ export async function runAutomationsForEvent(
   payload: Record<string, unknown>,
 ): Promise<void> {
   if (await isDemoModeActive()) return;
+
+  // Fase 28 — aditivo: mesmo dispatcher central, ramal separado para as
+  // automações de WhatsApp (whatsapp_automations, não automation_workflows).
+  // Nunca lança e não interfere no fluxo abaixo.
+  await dispatchWhatsappAutomationForEvent(supabase, eventType, payload);
 
   const triggerType = EVENT_TYPE_TO_AUTOMATION_TRIGGER[eventType];
   if (!triggerType) return;
