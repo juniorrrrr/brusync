@@ -1,10 +1,16 @@
 import { type AiSuggestionDraft, formatCurrency } from "@/domain/ai/suggestionDraft";
 import type { CampaignRow } from "@/types/marketing";
+import type { MetaAdsDashboardData } from "@/types/metaAds";
 
 export interface MarketingInsightsInput {
   campaigns: CampaignRow[];
   overallCac: number | null;
   overallRoas: number | null;
+  /** Meta Ads data já sincronizado pela Central de Integrações (Fase 34) —
+   * disponibilizado aqui para uma futura fase de IA usar; nenhuma sugestão
+   * abaixo lê este campo ainda ("apenas disponibilização dos dados", sem
+   * lógica de IA nova nesta fase). */
+  metaAds: MetaAdsDashboardData | null;
 }
 
 function campaignLabel(campaign: CampaignRow): string {

@@ -8,6 +8,8 @@ import {
 } from "@/application/integrations/integrationsActions";
 import { MetaConfigForm } from "@/components/integrations/MetaConfigForm";
 import { ActivateToggleButton } from "@/components/integrationsCenter/ActivateToggleButton";
+import { DisconnectButton } from "@/components/integrationsCenter/DisconnectButton";
+import { SyncNowButton } from "@/components/integrationsCenter/SyncNowButton";
 import { TestConnectionButton } from "@/components/integrationsCenter/TestConnectionButton";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { formatDateTime } from "@/domain/crm/format";
@@ -118,6 +120,43 @@ export function IntegrationDrawer({
                 </div>
               )}
 
+              {detail.liveStatus && (
+                <>
+                  <div className="crm-ig-field">
+                    <label htmlFor="ig-health">Saúde</label>
+                    <span id="ig-health">
+                      {detail.liveStatus.healthScore !== null
+                        ? `${detail.liveStatus.healthScore}/100`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="crm-ig-field">
+                    <label htmlFor="ig-queue">Fila</label>
+                    <span id="ig-queue">
+                      {detail.liveStatus.queuedJobs > 0
+                        ? `${detail.liveStatus.queuedJobs} sincronização(ões) pendente(s)`
+                        : "Vazia"}
+                    </span>
+                  </div>
+                  <div className="crm-ig-field">
+                    <label htmlFor="ig-avg-duration">Tempo médio de sincronização</label>
+                    <span id="ig-avg-duration">
+                      {detail.liveStatus.averageDurationMs !== null
+                        ? `${Math.round(detail.liveStatus.averageDurationMs / 1000)}s`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="crm-ig-field">
+                    <label htmlFor="ig-token-exp">Expiração do token</label>
+                    <span id="ig-token-exp">
+                      {detail.liveStatus.tokenExpiresAt
+                        ? formatDateTime(detail.liveStatus.tokenExpiresAt)
+                        : "—"}
+                    </span>
+                  </div>
+                </>
+              )}
+
               {detail.integration.provider === "meta_ads" ? (
                 <MetaConfigForm onChanged={reload} />
               ) : (
@@ -161,6 +200,12 @@ export function IntegrationDrawer({
                       enabled={detail.integration.enabled}
                       onChanged={reload}
                     />
+                    {detail.isImplemented && (
+                      <SyncNowButton provider={detail.integration.provider} onChanged={reload} />
+                    )}
+                    {detail.isImplemented && detail.integration.status === "conectado" && (
+                      <DisconnectButton provider={detail.integration.provider} onChanged={reload} />
+                    )}
                   </div>
                 </form>
               )}

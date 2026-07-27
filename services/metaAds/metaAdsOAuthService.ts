@@ -2,6 +2,11 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
+import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
+import {
+  getIntegrationByProvider,
+  updateIntegration,
+} from "@/repositories/integrations/integrationsRepository";
 import { upsertMetaAccount } from "@/repositories/metaAds/accountsRepository";
 import { enqueueSyncJob } from "@/repositories/metaAds/syncJobsRepository";
 import { insertMetaToken } from "@/repositories/metaAds/tokensRepository";
@@ -9,6 +14,8 @@ import { getMetaAdsProvider } from "@/services/metaAds/metaAdsProviderFactory";
 import { encryptToken } from "@/services/metaConversionsApi/tokenCrypto";
 import { getSupabaseServerClient } from "@/services/supabase/server";
 import type { MetaAccount } from "@/types/metaAds";
+
+const META_ADS_MANAGER_PROVIDER = "meta_ads_manager";
 
 const STATE_COOKIE = "meta_ads_oauth_state";
 
@@ -89,6 +96,28 @@ export async function handleOAuthCallback(
       triggerSource: "manual",
       createdBy: actorProfileId,
     });
+
+    // Mantém a linha genérica de public.integrations (lida pelo board da
+    // Central de Integrações, pela Central de Operações e pelo Drawer)
+    // honesta sobre o estado real da conta — sem isso, meta_ads_manager
+    // ficaria "desconectado" para sempre nessas telas mesmo já conectado.
+    const integration = await getIntegrationByProvider(supabase, META_ADS_MANAGER_PROVIDER);
+    if (integration) {
+      await updateIntegration(supabase, META_ADS_MANAGER_PROVIDER, {
+        status: "conectado",
+        enabled: true,
+        connectedAt: new Date().toISOString(),
+        error: null,
+      });
+      await createIntegrationLog(supabase, {
+        integrationId: integration.id,
+        event: "conexao_criada",
+        status: "success",
+        message: `Conta conectada: ${me.name ?? me.metaUserId}.`,
+        origin: "meta_ads_manager",
+        destination: "crm",
+      });
+    }
 
     return { ok: true, account };
   } catch (error) {

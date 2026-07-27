@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
 import { getIntegrationLogsPageData } from "@/application/integrations/integrationLogsQueries";
 import { getIntegrationsPageData } from "@/application/integrations/integrationsQueries";
+import type { IntegrationStatusSnapshot } from "@/domain/integrations/provider";
 import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
 import {
   getIntegrationByProvider,
   updateIntegration,
 } from "@/repositories/integrations/integrationsRepository";
 import { isDemoModeActive } from "@/services/demo/demoMode";
+import { getIntegrationProvider } from "@/services/integrationsCenter/integrationProviderRegistry";
 import { getSupabaseAuthClient } from "@/services/supabase/authServer";
 import type { Integration, IntegrationLog } from "@/types/integrations";
 
@@ -19,6 +21,11 @@ const DEMO_WRITE_BLOCKED_MESSAGE =
 export interface IntegrationDetail {
   integration: Integration;
   recentLogs: IntegrationLog[];
+  /** Live figures beyond what's persisted on the row (fila, tempo médio,
+   * expiração do token) — null for the `meta_ads` Pixel integration, which
+   * predates the Fase 34 provider layer and isn't registered in it. */
+  liveStatus: IntegrationStatusSnapshot | null;
+  isImplemented: boolean;
 }
 
 export async function fetchIntegrationDetail(provider: string): Promise<IntegrationDetail | null> {
@@ -29,7 +36,16 @@ export async function fetchIntegrationDetail(provider: string): Promise<Integrat
   if (!integration) return null;
 
   const { logs } = await getIntegrationLogsPageData({ provider, limit: 20 });
-  return { integration, recentLogs: logs };
+
+  const dispatched = provider === "meta_ads" ? null : getIntegrationProvider(provider);
+  const liveStatus = dispatched?.isImplemented() ? await dispatched.getStatus() : null;
+
+  return {
+    integration,
+    recentLogs: logs,
+    liveStatus,
+    isImplemented: dispatched?.isImplemented() ?? false,
+  };
 }
 
 export interface ConfigureIntegrationState {

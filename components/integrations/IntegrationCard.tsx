@@ -2,6 +2,7 @@
 
 import { ProviderLogo } from "@/components/integrations/logos";
 import { ActivateToggleButton } from "@/components/integrationsCenter/ActivateToggleButton";
+import { SyncNowButton } from "@/components/integrationsCenter/SyncNowButton";
 import { TestConnectionButton } from "@/components/integrationsCenter/TestConnectionButton";
 import { formatDate } from "@/domain/crm/format";
 import {
@@ -57,8 +58,9 @@ export function IntegrationCard({
         </a>
       </div>
 
-      <div style={{ marginTop: 8 }}>
+      <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
         <TestConnectionButton provider={integration.provider} />
+        <SyncNowButton provider={integration.provider} />
       </div>
     </div>
   );

@@ -12,6 +12,8 @@ export const INTEGRATION_LOG_EVENT_LABEL: Record<string, string> = {
   reconexao: "Reconexão",
   ativada: "Integração ativada",
   desativada: "Integração desativada",
+  sincronizacao_concluida: "Sincronização concluída",
+  sincronizacao_falhou: "Falha na sincronização",
 };
 
 export function integrationLogEventLabel(event: string): string {

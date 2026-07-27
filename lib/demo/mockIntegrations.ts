@@ -18,6 +18,7 @@ function daysAgoIso(days: number): string {
  * real Meta/Google connections). */
 const DEMO_CONNECTED: Record<string, { healthScore: number; lastSyncDaysAgo: number }> = {
   meta_ads: { healthScore: 96, lastSyncDaysAgo: 0 },
+  meta_ads_manager: { healthScore: 94, lastSyncDaysAgo: 0 },
   google_ads: { healthScore: 91, lastSyncDaysAgo: 0 },
   ga4: { healthScore: 88, lastSyncDaysAgo: 1 },
   whatsapp: { healthScore: 99, lastSyncDaysAgo: 0 },
@@ -60,7 +61,7 @@ export const DEMO_INTEGRATIONS: Integration[] = INTEGRATION_PROVIDERS.map((meta)
     healthScore: connected?.healthScore ?? (DEMO_ERROR[meta.provider] ? 20 : null),
     createdAt: daysAgoIso(60),
     updatedAt: daysAgoIso(connected?.lastSyncDaysAgo ?? 10),
-    hasAccessToken: meta.provider === "meta_ads",
+    hasAccessToken: meta.provider === "meta_ads" || meta.provider === "meta_ads_manager",
   };
 });
 
@@ -146,6 +147,24 @@ const DEMO_LOG_SEEDS: DemoLogSeed[] = [
     daysAgo: 0,
     durationMs: 0,
     destination: "meta_ads",
+  },
+  {
+    provider: "meta_ads_manager",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (full) concluída.",
+    daysAgo: 0,
+    durationMs: 8400,
+    destination: "meta_ads_manager",
+  },
+  {
+    provider: "meta_ads_manager",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (insights) concluída.",
+    daysAgo: 1,
+    durationMs: 3100,
+    destination: "meta_ads_manager",
   },
 ];
 

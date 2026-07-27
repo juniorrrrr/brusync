@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { MAX_SYNC_ATTEMPTS } from "@/domain/metaAds/syncBackoff";
+import { MAX_SYNC_ATTEMPTS } from "@/domain/integrations/syncBackoff";
 import type {
   MetaSyncJob,
   MetaSyncJobStatus,
@@ -156,6 +156,22 @@ export async function listRecentJobs(
 
   if (error) throw new Error(`Falha ao carregar histórico de sincronizações: ${error.message}`);
   return ((data ?? []) as SyncJobRow[]).map(mapJob);
+}
+
+/** Jobs still pending or running for this account — "Fila" on the Central
+ * de Integrações card (domain/integrations/provider.ts::queuedJobs). */
+export async function countQueuedJobs(
+  supabase: SupabaseClient,
+  accountId: string,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("meta_sync_jobs")
+    .select("id", { count: "exact", head: true })
+    .eq("account_id", accountId)
+    .in("status", ["pendente", "executando"]);
+
+  if (error) throw new Error(`Falha ao contar sincronizações na fila: ${error.message}`);
+  return count ?? 0;
 }
 
 export async function listRecentFailedJobs(

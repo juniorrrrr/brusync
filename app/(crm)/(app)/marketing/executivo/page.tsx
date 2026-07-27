@@ -3,9 +3,11 @@ import { getExecutiveComparison } from "@/application/marketingAnalytics/compari
 import { getExecutiveMetrics } from "@/application/marketingAnalytics/executiveQueries";
 import { parseMarketingFilters } from "@/application/marketingAnalytics/filters";
 import { getMarketingTimeSeries } from "@/application/marketingAnalytics/timeSeriesQueries";
+import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { LineChart } from "@/components/dashboard-mock/primitives/charts";
 import { ComparativosPanel } from "@/components/marketing/ComparativosPanel";
+import { MetaAdsSyncedPanel } from "@/components/marketing/MetaAdsSyncedPanel";
 import { MetricValue } from "@/components/marketing/MetricValue";
 import {
   IconBuilding,
@@ -40,10 +42,11 @@ export default async function MarketingExecutivoPage({
   const params = await searchParams;
   const { preset, filters } = parseMarketingFilters(params);
 
-  const [metrics, comparison, timeSeries] = await Promise.all([
+  const [metrics, comparison, timeSeries, metaAds] = await Promise.all([
     getExecutiveMetrics(filters),
     getExecutiveComparison(preset),
     getMarketingTimeSeries(filters),
+    fetchMetaAdsDashboardData(),
   ]);
 
   const leadsPath = buildSparklinePath(
@@ -134,6 +137,10 @@ export default async function MarketingExecutivoPage({
           </div>
         </div>
         <ComparativosPanel comparison={comparison} />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <MetaAdsSyncedPanel data={metaAds} />
       </div>
     </div>
   );

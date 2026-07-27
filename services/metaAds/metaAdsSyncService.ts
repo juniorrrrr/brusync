@@ -1,8 +1,14 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { computeHealthScore } from "@/domain/integrations/health";
+import { MAX_SYNC_ATTEMPTS, nextAttemptAt } from "@/domain/integrations/syncBackoff";
 import type { MetaAdsOAuthCredentials } from "@/domain/metaAds/provider";
-import { MAX_SYNC_ATTEMPTS, nextAttemptAt } from "@/domain/metaAds/syncBackoff";
+import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
+import {
+  getIntegrationByProvider,
+  updateIntegration,
+} from "@/repositories/integrations/integrationsRepository";
 import {
   getMetaAccountById,
   setMetaAccountStatus,
@@ -23,6 +29,7 @@ import { upsertInsights } from "@/repositories/metaAds/insightsRepository";
 import {
   enqueueSyncJob,
   listDueSyncJobs,
+  listRecentJobs,
   markJobFailed,
   markJobRunning,
   markJobSucceeded,
@@ -33,6 +40,57 @@ import type { MetaSyncJob } from "@/types/metaAds";
 
 const INITIAL_SYNC_DAYS = 30;
 const INCREMENTAL_SYNC_DAYS = 3;
+const META_ADS_MANAGER_PROVIDER = "meta_ads_manager";
+
+/** Espelha o resultado de um job (sucesso ou falha) na linha genérica de
+ * public.integrations + integration_logs — o mesmo par de tabelas que todo
+ * outro provider (Fase 34) usa, para que o card/Drawer da Central de
+ * Integrações e o monitoramento da Central de Operações reflitam o estado
+ * real do Meta Ads sem conhecer nada específico da Graph API. Nunca lança:
+ * uma falha aqui não pode derrubar o processamento do job em si. */
+async function reflectJobOutcomeOnIntegration(
+  supabase: SupabaseClient,
+  accountId: string,
+  outcome: "success" | "error",
+  message: string,
+  durationMs: number | null,
+  /** Só vira "erro" no card quando a fila já esgotou as tentativas — uma
+   * falha isolada que ainda vai reprocessar sozinha em minutos (backoff)
+   * não deveria fazer o badge piscar "Erro" para o usuário. */
+  exhaustedRetries: boolean,
+): Promise<void> {
+  try {
+    const integration = await getIntegrationByProvider(supabase, META_ADS_MANAGER_PROVIDER);
+    if (!integration) return;
+
+    const recentJobs = await listRecentJobs(supabase, accountId, 10);
+    const healthScore = computeHealthScore(
+      recentJobs
+        .filter((j) => j.status === "concluido" || j.status === "falhou")
+        .map((j) => (j.status === "concluido" ? "success" : "error")),
+    );
+
+    const shouldMarkErrored = outcome === "error" && exhaustedRetries;
+    await updateIntegration(supabase, META_ADS_MANAGER_PROVIDER, {
+      status: outcome === "success" ? "conectado" : shouldMarkErrored ? "erro" : integration.status,
+      lastSync: outcome === "success" ? new Date().toISOString() : integration.lastSync,
+      healthScore,
+      error: shouldMarkErrored ? message : outcome === "success" ? null : integration.error,
+    });
+
+    await createIntegrationLog(supabase, {
+      integrationId: integration.id,
+      event: outcome === "success" ? "sincronizacao_concluida" : "sincronizacao_falhou",
+      status: outcome,
+      message,
+      origin: "meta_ads_manager",
+      destination: "crm",
+      durationMs,
+    });
+  } catch {
+    // Best-effort — nunca deve derrubar o job real por causa do espelho.
+  }
+}
 
 function isoDaysAgo(days: number): string {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -336,10 +394,14 @@ async function runIncrementalInsightsSync(
 
 /** Processa um job da fila — chamado tanto pela ação de "Sincronizar agora"
  * (manual) quanto pelo cron (app/api/cron/meta-ads-sync). Nunca lança para
- * fora: erros viram `falhou` + backoff exponencial (domain/metaAds/
- * syncBackoff.ts), mesmo padrão do retry de conversões da Fase 8. */
+ * fora: erros viram `falhou` + backoff exponencial (domain/integrations/
+ * syncBackoff.ts), mesmo padrão do retry de conversões da Fase 8. Também
+ * espelha o resultado na linha genérica de public.integrations
+ * (reflectJobOutcomeOnIntegration) para o card da Central de Integrações e
+ * a Central de Operações refletirem o estado real. */
 export async function processSyncJob(supabase: SupabaseClient, job: MetaSyncJob): Promise<void> {
   await markJobRunning(supabase, job.id);
+  const startedAt = Date.now();
 
   try {
     const stats =
@@ -349,13 +411,30 @@ export async function processSyncJob(supabase: SupabaseClient, job: MetaSyncJob)
 
     await markJobSucceeded(supabase, job.id, stats);
     await setMetaAccountStatus(supabase, job.accountId, "conectado");
+    await reflectJobOutcomeOnIntegration(
+      supabase,
+      job.accountId,
+      "success",
+      `Sincronização (${job.jobType}) concluída.`,
+      Date.now() - startedAt,
+      false,
+    );
   } catch (error) {
     const attempts = job.attempts + 1;
     const message = error instanceof Error ? error.message : "Falha desconhecida na sincronização.";
     await markJobFailed(supabase, job.id, attempts, nextAttemptAt(attempts), message);
-    if (attempts >= MAX_SYNC_ATTEMPTS) {
+    const exhaustedRetries = attempts >= MAX_SYNC_ATTEMPTS;
+    if (exhaustedRetries) {
       await setMetaAccountStatus(supabase, job.accountId, "erro", { error: message });
     }
+    await reflectJobOutcomeOnIntegration(
+      supabase,
+      job.accountId,
+      "error",
+      message,
+      Date.now() - startedAt,
+      exhaustedRetries,
+    );
   }
 }
 

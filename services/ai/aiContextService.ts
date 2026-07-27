@@ -12,6 +12,7 @@ import { getFinancialMarketingPageData } from "@/application/financial/financial
 import { fetchFinancialTransactions } from "@/application/financial/financialTransactionsActions";
 import { searchKnowledgeAction } from "@/application/knowledge/knowledgeSearchQueries";
 import { getCampaignRows } from "@/application/marketingAnalytics/campaignsQueries";
+import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries";
 import { fetchProjectDetail } from "@/application/projects/projectsActions";
 import { getProjectsPageData } from "@/application/projects/projectsQueries";
 import { fetchTeamDashboardData } from "@/application/team/teamQueries";
@@ -85,15 +86,17 @@ export async function buildLeadAssistantContext(leadId: string): Promise<LeadIns
 }
 
 export async function buildMarketingAssistantContext(): Promise<MarketingInsightsInput> {
-  const [{ rows }, financialMarketing] = await Promise.all([
+  const [{ rows }, financialMarketing, metaAds] = await Promise.all([
     getCampaignRows({ pageSize: 200 }),
     getFinancialMarketingPageData(),
+    fetchMetaAdsDashboardData(),
   ]);
 
   return {
     campaigns: rows,
     overallCac: financialMarketing.cac,
     overallRoas: financialMarketing.roas,
+    metaAds: metaAds.account ? metaAds : null,
   };
 }
 
