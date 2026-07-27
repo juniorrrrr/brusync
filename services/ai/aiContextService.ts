@@ -10,11 +10,14 @@ import {
 import { getFinancialDashboardPageData } from "@/application/financial/financialDashboardQueries";
 import { getFinancialMarketingPageData } from "@/application/financial/financialMarketingQueries";
 import { fetchFinancialTransactions } from "@/application/financial/financialTransactionsActions";
+import { fetchGa4DashboardData } from "@/application/ga4/ga4Queries";
+import { fetchGoogleAdsDashboardData } from "@/application/googleAds/googleAdsQueries";
 import { searchKnowledgeAction } from "@/application/knowledge/knowledgeSearchQueries";
 import { getCampaignRows } from "@/application/marketingAnalytics/campaignsQueries";
 import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries";
 import { fetchProjectDetail } from "@/application/projects/projectsActions";
 import { getProjectsPageData } from "@/application/projects/projectsQueries";
+import { fetchSearchConsoleDashboardData } from "@/application/searchConsole/searchConsoleQueries";
 import { fetchTeamDashboardData } from "@/application/team/teamQueries";
 import type { ComercialInsightsInput } from "@/domain/ai/insights/comercialInsights";
 import type { FinanceiroInsightsInput } from "@/domain/ai/insights/financeiroInsights";
@@ -86,10 +89,13 @@ export async function buildLeadAssistantContext(leadId: string): Promise<LeadIns
 }
 
 export async function buildMarketingAssistantContext(): Promise<MarketingInsightsInput> {
-  const [{ rows }, financialMarketing, metaAds] = await Promise.all([
+  const [{ rows }, financialMarketing, metaAds, googleAds, ga4, searchConsole] = await Promise.all([
     getCampaignRows({ pageSize: 200 }),
     getFinancialMarketingPageData(),
     fetchMetaAdsDashboardData(),
+    fetchGoogleAdsDashboardData(),
+    fetchGa4DashboardData(),
+    fetchSearchConsoleDashboardData(),
   ]);
 
   return {
@@ -97,6 +103,9 @@ export async function buildMarketingAssistantContext(): Promise<MarketingInsight
     overallCac: financialMarketing.cac,
     overallRoas: financialMarketing.roas,
     metaAds: metaAds.account ? metaAds : null,
+    googleAds: googleAds.account ? googleAds : null,
+    ga4: ga4.property ? ga4 : null,
+    searchConsole: searchConsole.site ? searchConsole : null,
   };
 }
 

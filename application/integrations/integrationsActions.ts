@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import { requireCrmProfile } from "@/application/crm/authGuard";
 import { getIntegrationLogsPageData } from "@/application/integrations/integrationLogsQueries";
 import { getIntegrationsPageData } from "@/application/integrations/integrationsQueries";
-import type { IntegrationStatusSnapshot } from "@/domain/integrations/provider";
+import type {
+  IntegrationSelectableEntity,
+  IntegrationStatusSnapshot,
+} from "@/domain/integrations/provider";
 import { createIntegrationLog } from "@/repositories/integrations/integrationLogsRepository";
 import {
   getIntegrationByProvider,
@@ -26,6 +29,15 @@ export interface IntegrationDetail {
    * predates the Fase 34 provider layer and isn't registered in it. */
   liveStatus: IntegrationStatusSnapshot | null;
   isImplemented: boolean;
+  /** True quando o OAuth já foi concluído mas nenhuma conta/propriedade/
+   * container/site foi escolhida ainda — o Drawer troca o formulário
+   * genérico pelo GoogleEntityPicker (Fase 35) enquanto isso for true. */
+  needsEntitySelection: boolean;
+  selectableEntities: IntegrationSelectableEntity[];
+  /** Para onde o botão "Conectar" deve apontar — rota OAuth /start própria
+   * (Google Ads/GA4/GTM/Search Console) ou null quando o fluxo mora inteiro
+   * na tela de getManageUrl() (Meta Ads) ou o provider não é real. */
+  connectUrl: string | null;
 }
 
 export async function fetchIntegrationDetail(provider: string): Promise<IntegrationDetail | null> {
@@ -38,13 +50,23 @@ export async function fetchIntegrationDetail(provider: string): Promise<Integrat
   const { logs } = await getIntegrationLogsPageData({ provider, limit: 20 });
 
   const dispatched = provider === "meta_ads" ? null : getIntegrationProvider(provider);
-  const liveStatus = dispatched?.isImplemented() ? await dispatched.getStatus() : null;
+  const isImplemented = dispatched?.isImplemented() ?? false;
+  const liveStatus = isImplemented && dispatched ? await dispatched.getStatus() : null;
+  const needsEntitySelection =
+    isImplemented && dispatched ? await dispatched.needsEntitySelection() : false;
+  const selectableEntities =
+    needsEntitySelection && dispatched?.listSelectableEntities
+      ? await dispatched.listSelectableEntities()
+      : [];
 
   return {
     integration,
     recentLogs: logs,
     liveStatus,
-    isImplemented: dispatched?.isImplemented() ?? false,
+    isImplemented,
+    needsEntitySelection,
+    selectableEntities,
+    connectUrl: dispatched?.getConnectUrl() ?? null,
   };
 }
 

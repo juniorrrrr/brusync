@@ -100,3 +100,27 @@ export interface IntegrationHealthSummary {
   averageDurationMs: number | null;
   successRate: number | null;
 }
+
+export type IntegrationSyncJobStatus = "pendente" | "executando" | "concluido" | "falhou";
+export type IntegrationSyncTriggerSource = "manual" | "automatico" | "webhook";
+
+/** Generic sync job queue (Fase 35, `public.integration_sync_jobs`) — every
+ * integration without its own bespoke queue table (everything except Meta
+ * Ads, which keeps `meta_sync_jobs`) enqueues/processes jobs here. */
+export interface IntegrationSyncJob {
+  id: string;
+  integrationId: string | null;
+  provider: string;
+  jobType: string;
+  status: IntegrationSyncJobStatus;
+  triggerSource: IntegrationSyncTriggerSource;
+  attempts: number;
+  maxAttempts: number;
+  nextAttemptAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+  error: string | null;
+  stats: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -10,6 +10,8 @@ import { getDashboardData } from "@/application/crm/dashboardQueries";
 import { getLeadsPageData, getPipelineData } from "@/application/crm/leadsQueries";
 import { getFinancialDashboardPageData } from "@/application/financial/financialDashboardQueries";
 import { getFinancialMarketingPageData } from "@/application/financial/financialMarketingQueries";
+import { fetchGa4DashboardData } from "@/application/ga4/ga4Queries";
+import { fetchGoogleAdsDashboardData } from "@/application/googleAds/googleAdsQueries";
 import { getIntegrationHealthData } from "@/application/integrations/integrationHealthQueries";
 import { fetchIntelligenceDashboardData } from "@/application/intelligence/intelligenceDashboardQueries";
 import { getCampaignRows } from "@/application/marketingAnalytics/campaignsQueries";
@@ -17,6 +19,7 @@ import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries"
 import { fetchPerformanceExecutiveData } from "@/application/performance/performanceQueries";
 import { getProjectsHealthData } from "@/application/projects/projectsHealthQueries";
 import { getProjectsPageData } from "@/application/projects/projectsQueries";
+import { fetchSearchConsoleDashboardData } from "@/application/searchConsole/searchConsoleQueries";
 import { fetchTeamDashboardData } from "@/application/team/teamQueries";
 import { ANALYTICS_METRICS } from "@/domain/analytics/metricsCatalog";
 import { resolveAnalyticsPeriod } from "@/domain/analytics/periods";
@@ -425,6 +428,70 @@ async function resolveMetaAds(metric: AnalyticsMetricKey): Promise<AnalyticsMetr
   return result;
 }
 
+/** Fase 35 — mesmo espírito de resolveMetaAds acima: nenhum número
+ * recalculado, só reformata application/googleAds/googleAdsQueries.ts::
+ * fetchGoogleAdsDashboardData. */
+async function resolveGoogleAds(metric: AnalyticsMetricKey): Promise<AnalyticsMetricResult> {
+  const result = empty(metric);
+  const data = await fetchGoogleAdsDashboardData();
+
+  if (metric === "investimento_google_ads") {
+    result.scalar = data.summary.spend;
+    result.series = series(data.dailySpend.map((p) => ({ label: p.date, value: p.cost })));
+  } else if (metric === "roas_google_ads") {
+    result.scalar = data.summary.roas;
+  } else if (metric === "cpa_google_ads") {
+    result.scalar = data.summary.cpa;
+  } else if (metric === "conversoes_google_ads") {
+    result.scalar = data.summary.conversions;
+    result.series = series(data.dailySpend.map((p) => ({ label: p.date, value: p.conversions })));
+  }
+
+  return result;
+}
+
+/** Fase 35 — reformata application/ga4/ga4Queries.ts::fetchGa4DashboardData. */
+async function resolveGa4(metric: AnalyticsMetricKey): Promise<AnalyticsMetricResult> {
+  const result = empty(metric);
+  const data = await fetchGa4DashboardData();
+
+  if (metric === "sessoes_ga4") {
+    result.scalar = data.summary.sessions;
+    result.series = series(data.dailyMetrics.map((p) => ({ label: p.date, value: p.sessions })));
+  } else if (metric === "usuarios_ga4") {
+    result.scalar = data.summary.users;
+    result.series = series(data.dailyMetrics.map((p) => ({ label: p.date, value: p.users })));
+  } else if (metric === "receita_ga4") {
+    result.scalar = data.summary.revenue;
+    result.series = series(data.dailyMetrics.map((p) => ({ label: p.date, value: p.revenue })));
+  } else if (metric === "conversoes_ga4") {
+    result.scalar = data.summary.conversions;
+    result.series = series(data.dailyMetrics.map((p) => ({ label: p.date, value: p.conversions })));
+  }
+
+  return result;
+}
+
+/** Fase 35 — reformata application/searchConsole/searchConsoleQueries.ts::
+ * fetchSearchConsoleDashboardData. */
+async function resolveSearchConsole(metric: AnalyticsMetricKey): Promise<AnalyticsMetricResult> {
+  const result = empty(metric);
+  const data = await fetchSearchConsoleDashboardData();
+
+  if (metric === "cliques_search_console") {
+    result.scalar = data.summary.clicks;
+    result.series = series(data.topQueries.map((q) => ({ label: q.query, value: q.clicks })));
+  } else if (metric === "impressoes_search_console") {
+    result.scalar = data.summary.impressions;
+  } else if (metric === "ctr_search_console") {
+    result.scalar = data.summary.ctr;
+  } else if (metric === "posicao_search_console") {
+    result.scalar = data.summary.avgPosition;
+  }
+
+  return result;
+}
+
 export async function resolveMetric(
   dataSource: AnalyticsDataSource,
   metric: AnalyticsMetricKey,
@@ -457,6 +524,12 @@ export async function resolveMetric(
       return resolveIa(metric);
     case "meta_ads":
       return resolveMetaAds(metric);
+    case "google_ads":
+      return resolveGoogleAds(metric);
+    case "ga4":
+      return resolveGa4(metric);
+    case "search_console":
+      return resolveSearchConsole(metric);
     default:
       return empty(metric);
   }

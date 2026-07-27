@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { fetchGoogleAdsDashboardData } from "@/application/googleAds/googleAdsQueries";
 import { getExecutiveComparison } from "@/application/marketingAnalytics/comparisonQueries";
 import { getExecutiveMetrics } from "@/application/marketingAnalytics/executiveQueries";
 import { parseMarketingFilters } from "@/application/marketingAnalytics/filters";
@@ -7,6 +8,7 @@ import { fetchMetaAdsDashboardData } from "@/application/metaAds/metaAdsQueries"
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { LineChart } from "@/components/dashboard-mock/primitives/charts";
 import { ComparativosPanel } from "@/components/marketing/ComparativosPanel";
+import { GoogleAdsSyncedPanel } from "@/components/marketing/GoogleAdsSyncedPanel";
 import { MetaAdsSyncedPanel } from "@/components/marketing/MetaAdsSyncedPanel";
 import { MetricValue } from "@/components/marketing/MetricValue";
 import {
@@ -42,11 +44,12 @@ export default async function MarketingExecutivoPage({
   const params = await searchParams;
   const { preset, filters } = parseMarketingFilters(params);
 
-  const [metrics, comparison, timeSeries, metaAds] = await Promise.all([
+  const [metrics, comparison, timeSeries, metaAds, googleAds] = await Promise.all([
     getExecutiveMetrics(filters),
     getExecutiveComparison(preset),
     getMarketingTimeSeries(filters),
     fetchMetaAdsDashboardData(),
+    fetchGoogleAdsDashboardData(),
   ]);
 
   const leadsPath = buildSparklinePath(
@@ -139,8 +142,9 @@ export default async function MarketingExecutivoPage({
         <ComparativosPanel comparison={comparison} />
       </div>
 
-      <div style={{ marginTop: 16 }}>
+      <div className="crm-row" style={{ marginTop: 16 }}>
         <MetaAdsSyncedPanel data={metaAds} />
+        <GoogleAdsSyncedPanel data={googleAds} />
       </div>
     </div>
   );

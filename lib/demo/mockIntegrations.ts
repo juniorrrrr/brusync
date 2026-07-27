@@ -21,6 +21,8 @@ const DEMO_CONNECTED: Record<string, { healthScore: number; lastSyncDaysAgo: num
   meta_ads_manager: { healthScore: 94, lastSyncDaysAgo: 0 },
   google_ads: { healthScore: 91, lastSyncDaysAgo: 0 },
   ga4: { healthScore: 88, lastSyncDaysAgo: 1 },
+  gtm: { healthScore: 96, lastSyncDaysAgo: 0 },
+  search_console: { healthScore: 98, lastSyncDaysAgo: 0 },
   whatsapp: { healthScore: 99, lastSyncDaysAgo: 0 },
   slack: { healthScore: 100, lastSyncDaysAgo: 0 },
   n8n: { healthScore: 74, lastSyncDaysAgo: 2 },
@@ -61,7 +63,14 @@ export const DEMO_INTEGRATIONS: Integration[] = INTEGRATION_PROVIDERS.map((meta)
     healthScore: connected?.healthScore ?? (DEMO_ERROR[meta.provider] ? 20 : null),
     createdAt: daysAgoIso(60),
     updatedAt: daysAgoIso(connected?.lastSyncDaysAgo ?? 10),
-    hasAccessToken: meta.provider === "meta_ads" || meta.provider === "meta_ads_manager",
+    hasAccessToken: [
+      "meta_ads",
+      "meta_ads_manager",
+      "google_ads",
+      "ga4",
+      "gtm",
+      "search_console",
+    ].includes(meta.provider),
   };
 });
 
@@ -165,6 +174,42 @@ const DEMO_LOG_SEEDS: DemoLogSeed[] = [
     daysAgo: 1,
     durationMs: 3100,
     destination: "meta_ads_manager",
+  },
+  {
+    provider: "google_ads",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (full) concluída.",
+    daysAgo: 0,
+    durationMs: 6200,
+    destination: "google_ads",
+  },
+  {
+    provider: "ga4",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (metrics) concluída.",
+    daysAgo: 0,
+    durationMs: 2900,
+    destination: "ga4",
+  },
+  {
+    provider: "gtm",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (entities) concluída.",
+    daysAgo: 0,
+    durationMs: 1800,
+    destination: "gtm",
+  },
+  {
+    provider: "search_console",
+    event: "sincronizacao_concluida",
+    status: "success",
+    message: "Sincronização (queries) concluída.",
+    daysAgo: 0,
+    durationMs: 2400,
+    destination: "search_console",
   },
 ];
 

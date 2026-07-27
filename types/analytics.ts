@@ -19,7 +19,10 @@ export type AnalyticsDataSource =
   | "performance"
   | "inteligencia"
   | "ia"
-  | "meta_ads";
+  | "meta_ads"
+  | "google_ads"
+  | "ga4"
+  | "search_console";
 
 export type AnalyticsMetricKey =
   | "receita"
@@ -48,7 +51,19 @@ export type AnalyticsMetricKey =
   | "investimento_meta_ads"
   | "roas_meta_ads"
   | "cpa_meta_ads"
-  | "conversoes_meta_ads";
+  | "conversoes_meta_ads"
+  | "investimento_google_ads"
+  | "roas_google_ads"
+  | "cpa_google_ads"
+  | "conversoes_google_ads"
+  | "sessoes_ga4"
+  | "usuarios_ga4"
+  | "receita_ga4"
+  | "conversoes_ga4"
+  | "cliques_search_console"
+  | "impressoes_search_console"
+  | "ctr_search_console"
+  | "posicao_search_console";
 
 export type AnalyticsMetricUnit = "moeda" | "numero" | "percentual" | "dias" | "minutos";
 

@@ -14,6 +14,10 @@ export function createNotImplementedProvider(providerKey: string): IntegrationPr
     key: providerKey,
     isImplemented: () => false,
     getManageUrl: () => null,
+    getConnectUrl: () => null,
+    async needsEntitySelection() {
+      return false;
+    },
     async getStatus() {
       return {
         status: "em_desenvolvimento",

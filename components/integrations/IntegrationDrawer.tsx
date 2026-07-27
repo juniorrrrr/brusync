@@ -6,6 +6,7 @@ import {
   fetchIntegrationDetail,
   type IntegrationDetail,
 } from "@/application/integrations/integrationsActions";
+import { GoogleEntityPicker } from "@/components/integrations/GoogleEntityPicker";
 import { MetaConfigForm } from "@/components/integrations/MetaConfigForm";
 import { ActivateToggleButton } from "@/components/integrationsCenter/ActivateToggleButton";
 import { DisconnectButton } from "@/components/integrationsCenter/DisconnectButton";
@@ -159,6 +160,25 @@ export function IntegrationDrawer({
 
               {detail.integration.provider === "meta_ads" ? (
                 <MetaConfigForm onChanged={reload} />
+              ) : detail.needsEntitySelection ? (
+                <GoogleEntityPicker
+                  provider={detail.integration.provider}
+                  entities={detail.selectableEntities}
+                  onSelected={reload}
+                />
+              ) : detail.connectUrl && detail.integration.status !== "conectado" ? (
+                <div>
+                  <p className="crm-ig-desc" style={{ marginBottom: 10 }}>
+                    Conecte sua conta Google para começar a sincronizar.
+                  </p>
+                  <a
+                    href={detail.connectUrl}
+                    className="btn btn-accent"
+                    style={{ display: "inline-block" }}
+                  >
+                    Conectar
+                  </a>
+                </div>
               ) : (
                 <form action={formAction}>
                   <input type="hidden" name="provider" value={detail.integration.provider} />

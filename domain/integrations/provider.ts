@@ -32,6 +32,15 @@ export interface IntegrationSyncResult {
   message: string;
 }
 
+/** One connectable entity under an OAuth-connected identity — a Google Ads
+ * customer ID, a GA4 property, a GTM container, a Search Console site. Only
+ * meaningful for providers that expose `listSelectableEntities`. */
+export interface IntegrationSelectableEntity {
+  id: string;
+  label: string;
+  meta?: string;
+}
+
 /** The contract every integration (Meta Ads, and — as they're implemented —
  * Google Ads, GA4, Search Console, TikTok Ads, LinkedIn Ads, Microsoft Ads,
  * ...) must satisfy to plug into the Central de Integrações. No module
@@ -56,8 +65,30 @@ export interface IntegrationProvider {
   syncNow(actorProfileId: string | null): Promise<IntegrationSyncResult>;
   disconnect(): Promise<void>;
   getRecentLogs(limit?: number): Promise<IntegrationLog[]>;
-  /** Where "Conectar"/"Reconectar"/"Ver configuração completa" should point
-   * — null when the provider has no dedicated screen (falls back to the
-   * generic notes-only Drawer form). */
+  /** Where "Reconectar"/"Ver configuração completa" should point once the
+   * provider is already connected — null when it has no dedicated screen
+   * (falls back to the generic notes-only Drawer form, or — since Fase 35 —
+   * to `listSelectableEntities`/`selectEntity` for the in-Drawer picker). */
   getManageUrl(): string | null;
+  /** Where the very first "Conectar" click should send the user — the
+   * OAuth `/start` route for providers with no settings page of their own
+   * (Google Ads/GA4/GTM/Search Console, Fase 35). null when connecting
+   * happens entirely inside `getManageUrl()`'s own screen (Meta Ads). */
+  getConnectUrl(): string | null;
+  /** True once OAuth is connected but the user hasn't picked which account/
+   * property/container/site to actually sync yet — the Drawer renders the
+   * picker (components/integrations/GoogleEntityPicker.tsx) instead of the
+   * usual notes form while this is true. Providers with no such step (or
+   * not implemented) always return false. */
+  needsEntitySelection(): Promise<boolean>;
+  /** Lists the accounts/properties/containers/sites available under the
+   * connected OAuth identity — undefined for providers with no such concept
+   * (e.g. Meta Ads, which still picks its account via /meta-ads/
+   * configuracoes). Introduced in Fase 35 so Google Ads/GA4/GTM/Search
+   * Console can offer "Escolha da conta/organização" without a dedicated
+   * page — the Drawer is the only surface allowed to hold it. */
+  listSelectableEntities?(): Promise<IntegrationSelectableEntity[]>;
+  /** Persists which entity above is the one to sync and kicks off the first
+   * sync job — the second half of the in-Drawer picker flow. */
+  selectEntity?(entityId: string): Promise<void>;
 }

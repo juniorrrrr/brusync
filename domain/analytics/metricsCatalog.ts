@@ -126,6 +126,63 @@ export const ANALYTICS_METRICS: Record<AnalyticsMetricKey, AnalyticsMetricCatalo
     unit: "numero",
     sources: ["meta_ads"],
   },
+  investimento_google_ads: {
+    key: "investimento_google_ads",
+    label: "Investimento Google Ads",
+    unit: "moeda",
+    sources: ["google_ads"],
+  },
+  roas_google_ads: {
+    key: "roas_google_ads",
+    label: "ROAS Google Ads",
+    unit: "numero",
+    sources: ["google_ads"],
+  },
+  cpa_google_ads: {
+    key: "cpa_google_ads",
+    label: "CPA Google Ads",
+    unit: "moeda",
+    sources: ["google_ads"],
+  },
+  conversoes_google_ads: {
+    key: "conversoes_google_ads",
+    label: "Conversões Google Ads",
+    unit: "numero",
+    sources: ["google_ads"],
+  },
+  sessoes_ga4: { key: "sessoes_ga4", label: "Sessões (GA4)", unit: "numero", sources: ["ga4"] },
+  usuarios_ga4: { key: "usuarios_ga4", label: "Usuários (GA4)", unit: "numero", sources: ["ga4"] },
+  receita_ga4: { key: "receita_ga4", label: "Receita (GA4)", unit: "moeda", sources: ["ga4"] },
+  conversoes_ga4: {
+    key: "conversoes_ga4",
+    label: "Conversões (GA4)",
+    unit: "numero",
+    sources: ["ga4"],
+  },
+  cliques_search_console: {
+    key: "cliques_search_console",
+    label: "Cliques (Search Console)",
+    unit: "numero",
+    sources: ["search_console"],
+  },
+  impressoes_search_console: {
+    key: "impressoes_search_console",
+    label: "Impressões (Search Console)",
+    unit: "numero",
+    sources: ["search_console"],
+  },
+  ctr_search_console: {
+    key: "ctr_search_console",
+    label: "CTR (Search Console)",
+    unit: "percentual",
+    sources: ["search_console"],
+  },
+  posicao_search_console: {
+    key: "posicao_search_console",
+    label: "Posição média (Search Console)",
+    unit: "numero",
+    sources: ["search_console"],
+  },
 };
 
 export const ANALYTICS_METRIC_KEYS = Object.keys(ANALYTICS_METRICS) as AnalyticsMetricKey[];
@@ -144,6 +201,9 @@ export const ANALYTICS_SOURCE_LABEL: Record<AnalyticsDataSource, string> = {
   inteligencia: "Central de Inteligência",
   ia: "IA",
   meta_ads: "Meta Ads",
+  google_ads: "Google Ads",
+  ga4: "Google Analytics 4",
+  search_console: "Google Search Console",
 };
 
 export const ANALYTICS_SOURCES: AnalyticsDataSource[] = Object.keys(

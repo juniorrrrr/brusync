@@ -43,6 +43,11 @@ export function createMetaAdsIntegrationProvider(): IntegrationProvider {
     isImplemented: () => true,
 
     getManageUrl: () => MANAGE_URL,
+    getConnectUrl: () => null,
+
+    async needsEntitySelection() {
+      return false;
+    },
 
     async getStatus(): Promise<IntegrationStatusSnapshot> {
       const empty: IntegrationStatusSnapshot = {
