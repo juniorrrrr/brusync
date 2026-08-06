@@ -16,7 +16,7 @@ const PUBLIC_PORTAL_PATHS = ["/portal/login"];
 
 /** supabase.auth.getUser() makes a network call to the Supabase Auth API on
  * every single request to a protected route. With no bound on that call, a
- * slow or unreachable Auth API hangs the middleware until Vercel's platform
+ * slow or unreachable Auth API hangs the proxy until Vercel's platform
  * timeout kills it, surfacing as a site-wide 504 MIDDLEWARE_INVOCATION_TIMEOUT
  * — since the matcher below covers nearly every route in the app. Racing it
  * against a timeout turns that outage into a fast, safe redirect instead. */
@@ -26,7 +26,7 @@ const AUTH_TIMEOUT_MS = 5000;
  * the `matcher` below never touches the public site, so this can't affect
  * the landing page, cases, blog, or materiais even if something here
  * misbehaves. */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPortalPath = pathname === "/portal" || pathname.startsWith("/portal/");
   const isPublicPortalPath = PUBLIC_PORTAL_PATHS.some(
@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
 
   if (result === "timeout") {
     console.error(
-      `[middleware] supabase.auth.getUser() timed out after ${AUTH_TIMEOUT_MS}ms for ${pathname}`,
+      `[proxy] supabase.auth.getUser() timed out after ${AUTH_TIMEOUT_MS}ms for ${pathname}`,
     );
     return failClosed();
   }
@@ -88,7 +88,7 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-export const config = {
+export const proxyConfig = {
   matcher: [
     "/login",
     "/dashboard/:path*",
