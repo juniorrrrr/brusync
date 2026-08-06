@@ -14,6 +14,14 @@ const PUBLIC_CRM_PATHS = ["/login"];
  * yet) must still be able to load that page without bouncing in a loop. */
 const PUBLIC_PORTAL_PATHS = ["/portal/login"];
 
+/** supabase.auth.getUser() makes a network call to the Supabase Auth API on
+ * every single request to a protected route. With no bound on that call, a
+ * slow or unreachable Auth API hangs the middleware until Vercel's platform
+ * timeout kills it, surfacing as a site-wide 504 MIDDLEWARE_INVOCATION_TIMEOUT
+ * — since the matcher below covers nearly every route in the app. Racing it
+ * against a timeout turns that outage into a fast, safe redirect instead. */
+const AUTH_TIMEOUT_MS = 5000;
+
 /** Protects the Brusync OS (CRM) routes and the Portal do Cliente routes —
  * the `matcher` below never touches the public site, so this can't affect
  * the landing page, cases, blog, or materiais even if something here
@@ -30,19 +38,36 @@ export async function middleware(request: NextRequest) {
 
   const { supabase, response } = getSupabaseMiddlewareClient(request);
 
-  if (!supabase) {
-    // Supabase Auth env vars missing — fail closed on protected routes
-    // rather than crash the whole request; never touch /login or
-    // /portal/login themselves (that would create a redirect loop).
+  const failClosed = () => {
+    // Fail closed on protected routes rather than hang/crash the whole
+    // request; never touch /login or /portal/login themselves (that would
+    // create a redirect loop).
     if (!isPublicCrmPath && !isPublicPortalPath) {
       return NextResponse.redirect(new URL(isPortalPath ? "/portal/login" : "/login", request.url));
     }
     return response;
+  };
+
+  if (!supabase) {
+    // Supabase Auth env vars missing.
+    return failClosed();
+  }
+
+  const timeout = new Promise<"timeout">((resolve) => {
+    setTimeout(() => resolve("timeout"), AUTH_TIMEOUT_MS);
+  });
+  const result = await Promise.race([supabase.auth.getUser(), timeout]);
+
+  if (result === "timeout") {
+    console.error(
+      `[middleware] supabase.auth.getUser() timed out after ${AUTH_TIMEOUT_MS}ms for ${pathname}`,
+    );
+    return failClosed();
   }
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = result;
 
   if (!user && isPortalPath && !isPublicPortalPath) {
     const redirectUrl = new URL("/portal/login", request.url);
