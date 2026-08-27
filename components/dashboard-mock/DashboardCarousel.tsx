@@ -6,17 +6,17 @@ import { SHOWCASE_AREAS } from "@/constants";
 import { useDraggableCarousel } from "@/hooks/useDraggableCarousel";
 import { useTilt } from "@/hooks/useTilt";
 
-const CAT_COLORS = ["#25D0C3", "#1F5EFF", "#081C3A", "#7B61FF", "#E9A23B"];
+const CAT_COLORS = ["#38BDF8", "#1F5EFF", "#081C3A", "#7B61FF", "#E9A23B"];
 const PALETTES: [string, string][] = [
-  ["#1F5EFF", "#25D0C3"],
-  ["#25D0C3", "#1F5EFF"],
+  ["#1F5EFF", "#38BDF8"],
+  ["#38BDF8", "#1F5EFF"],
   ["#1F5EFF", "#081C3A"],
-  ["#081C3A", "#25D0C3"],
-  ["#25D0C3", "#081C3A"],
+  ["#081C3A", "#38BDF8"],
+  ["#38BDF8", "#081C3A"],
 ];
 const NAMES: [string, string][] = [
   ["Ana P.", "#1F5EFF"],
-  ["Bruno S.", "#25D0C3"],
+  ["Bruno S.", "#38BDF8"],
   ["Carla M.", "#081C3A"],
 ];
 const UPDATED = ["agora", "há 1 min", "há 2 min", "há 3 min"];
@@ -158,7 +158,7 @@ const ShowcaseCard = memo(function ShowcaseCard({
         </div>
         <div className="show-kpi">
           <div className="k-label">Var.</div>
-          <div className="k-val" style={{ color: "#12A594" }}>
+          <div className="k-val" style={{ color: "#1F5EFF" }}>
             <span className="cnt" data-target={data.variation} data-fmt="pluspctint">
               +{data.variation}%
             </span>
@@ -176,7 +176,7 @@ const ShowcaseCard = memo(function ShowcaseCard({
               pathLength={1}
               points={sparkPoints(index + 3)}
               fill="none"
-              stroke="#12A594"
+              stroke="#1F5EFF"
               strokeWidth="1.6"
             />
           </svg>
@@ -295,7 +295,7 @@ const ShowcaseCard = memo(function ShowcaseCard({
           <span className="avatar" style={{ background: "#1F5EFF" }}>
             AP
           </span>
-          <span className="avatar" style={{ background: "#25D0C3" }}>
+          <span className="avatar" style={{ background: "#38BDF8" }}>
             BS
           </span>
           <span className="avatar" style={{ background: "#081C3A" }}>

@@ -57,7 +57,7 @@ export function useDataFlow({ wrapRef, linesRef, particlesRef }: DataFlowRefs) {
       const dot = document.createElementNS(NS, "circle");
       dot.setAttribute("class", "df-particle");
       dot.setAttribute("r", "2.6");
-      dot.setAttribute("fill", Math.random() < 0.5 ? "#25D0C3" : "#1F5EFF");
+      dot.setAttribute("fill", Math.random() < 0.5 ? "#38BDF8" : "#1F5EFF");
       particlesG.appendChild(dot);
       particles.push({
         path,

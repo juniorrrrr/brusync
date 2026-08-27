@@ -320,7 +320,7 @@ export function TransformationSection() {
               <defs>
                 <linearGradient id="dfGrad" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#1F5EFF" />
-                  <stop offset="100%" stopColor="#25D0C3" />
+                  <stop offset="100%" stopColor="#143FB0" />
                 </linearGradient>
               </defs>
               <g className="df-lines" ref={linesRef} />

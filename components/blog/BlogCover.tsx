@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const TOPIC_STYLE: Record<BlogTopic, { gradient: string; icon: ReactNode }> = {
   ai: {
-    gradient: "linear-gradient(135deg, #1f5eff, #25d0c3)",
+    gradient: "linear-gradient(135deg, #1f5eff, #38bdf8)",
     icon: (
       <svg
         aria-hidden="true"
@@ -38,7 +38,7 @@ const TOPIC_STYLE: Record<BlogTopic, { gradient: string; icon: ReactNode }> = {
     ),
   },
   integration: {
-    gradient: "linear-gradient(135deg, #25d0c3, #081c3a)",
+    gradient: "linear-gradient(135deg, #38bdf8, #081c3a)",
     icon: (
       <svg
         aria-hidden="true"

@@ -46,7 +46,7 @@ export function BiDashboardDesktop() {
             <DonutChart
               segments={[
                 { value: 58, color: "#1F5EFF" },
-                { value: 42, color: "#25D0C3" },
+                { value: 42, color: "#38BDF8" },
               ]}
             />
           </Panel>
@@ -56,9 +56,9 @@ export function BiDashboardDesktop() {
             <BarChart
               bars={[
                 { value: 32, color: "#1F5EFF" },
-                { value: 44, color: "#25D0C3" },
+                { value: 44, color: "#38BDF8" },
                 { value: 26, color: "#1F5EFF", opacity: 0.6 },
-                { value: 38, color: "#25D0C3", opacity: 0.7 },
+                { value: 38, color: "#38BDF8", opacity: 0.7 },
                 { value: 30, color: "#081C3A", opacity: 0.5 },
               ]}
             />
@@ -175,7 +175,7 @@ export function BiKpis() {
                 { value: 34, color: "#EAF0F8" },
                 { value: 44, color: "#1F5EFF" },
                 { value: 30, color: "#EAF0F8" },
-                { value: 40, color: "#25D0C3" },
+                { value: 40, color: "#38BDF8" },
               ]}
             />
           </Panel>
@@ -203,7 +203,7 @@ export function BiFinanceiro() {
           <Panel label="Fluxo de caixa">
             <LineChart
               d="M0 60 C30 66,50 50,70 44 S110 62,130 56 S165 30,185 34 S225 46,250 40 S285 18,300 20"
-              color="#25D0C3"
+              color="#1F5EFF"
             />
           </Panel>
           <Panel label="Distribuição de custos">
@@ -211,7 +211,7 @@ export function BiFinanceiro() {
               segments={[
                 { value: 44, color: "#081C3A" },
                 { value: 32, color: "#1F5EFF" },
-                { value: 24, color: "#25D0C3" },
+                { value: 24, color: "#38BDF8" },
               ]}
             />
           </Panel>
@@ -228,7 +228,7 @@ export function BiFinanceiro() {
             <tr>
               <td>Mídia paga (Ads)</td>
               <td className="num">R$ 160K</td>
-              <td className="num" style={{ color: "#12A594" }}>
+              <td className="num" style={{ color: "#1F5EFF" }}>
                 ▲ 11%
               </td>
             </tr>
@@ -240,7 +240,7 @@ export function BiFinanceiro() {
             <tr>
               <td>Infraestrutura</td>
               <td className="num">R$ 94K</td>
-              <td className="num" style={{ color: "#12A594" }}>
+              <td className="num" style={{ color: "#1F5EFF" }}>
                 ▼ 6%
               </td>
             </tr>

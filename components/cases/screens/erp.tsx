@@ -46,7 +46,7 @@ export function ErpDashboard() {
             <BarChart
               bars={[
                 { value: 40, color: "#1F5EFF" },
-                { value: 28, color: "#25D0C3" },
+                { value: 28, color: "#38BDF8" },
                 { value: 34, color: "#081C3A", opacity: 0.6 },
               ]}
             />
@@ -74,7 +74,7 @@ export function ErpFinanceiro() {
         <Panel label="Fluxo de caixa — próximos 30 dias">
           <LineChart
             d="M0 50 C30 44,50 60,70 56 S110 34,130 38 S165 58,185 52 S225 30,250 26 S285 44,300 40"
-            color="#25D0C3"
+            color="#1F5EFF"
           />
         </Panel>
         <table className="data-table" style={{ marginTop: 9 }}>
@@ -259,9 +259,9 @@ export function ErpPedidosMobile() {
 
 export function ErpEstoque() {
   const rows = [
-    { name: "Chapa de aço 2mm", stock: 82, min: 40, pct: 82, color: "#12A594" },
+    { name: "Chapa de aço 2mm", stock: 82, min: 40, pct: 82, color: "#1F5EFF" },
     { name: "Parafuso M6 (cx 100un)", stock: 18, min: 30, pct: 30, color: "#e5484d" },
-    { name: "Tinta industrial 20L", stock: 54, min: 25, pct: 70, color: "#12A594" },
+    { name: "Tinta industrial 20L", stock: 54, min: 25, pct: 70, color: "#1F5EFF" },
     { name: "Correia transportadora", stock: 9, min: 15, pct: 22, color: "#e5484d" },
   ];
   return (
@@ -334,7 +334,7 @@ export function ErpRelatorios() {
             <BarChart
               bars={[
                 { value: 24, color: "#1F5EFF" },
-                { value: 30, color: "#25D0C3" },
+                { value: 30, color: "#38BDF8" },
                 { value: 18, color: "#081C3A", opacity: 0.6 },
                 { value: 34, color: "#1F5EFF", opacity: 0.7 },
               ]}

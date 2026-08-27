@@ -33,7 +33,7 @@ const CFG = {
   depthFactor: 0.5,
   pulseSpeed: 2,
   fieldStrength: 12,
-  colors: ["#1F5EFF", "#25D0C3"],
+  colors: ["#1F5EFF", "#38BDF8"],
 };
 
 function countForWidth(width: number) {

@@ -96,8 +96,8 @@ export function BrandedAppMockup() {
                 >
                   <defs>
                     <linearGradient id="bamGrowth" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#25D0C3" stopOpacity="0.35" />
-                      <stop offset="100%" stopColor="#25D0C3" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#1F5EFF" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#1F5EFF" stopOpacity="0" />
                     </linearGradient>
                   </defs>
                   <path
@@ -109,7 +109,7 @@ export function BrandedAppMockup() {
                     pathLength={1}
                     d="M0 80 C30 74,50 62,70 64 S110 40,130 44 S165 22,185 26 S225 10,250 14 S285 4,300 6"
                     fill="none"
-                    stroke="#25D0C3"
+                    stroke="#1F5EFF"
                     strokeWidth="2.2"
                   />
                 </svg>
@@ -144,7 +144,7 @@ export function BrandedAppMockup() {
                     cy="21"
                     r="15.9"
                     fill="none"
-                    stroke="#25D0C3"
+                    stroke="#38BDF8"
                     strokeWidth="6"
                     strokeDasharray="22 78"
                     strokeDashoffset="63"

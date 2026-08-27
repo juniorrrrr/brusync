@@ -44,13 +44,13 @@ export function CrmDashboard() {
           <Panel label="Vendas — últimos 6 meses">
             <LineChart
               d="M0 70 C30 62,50 66,70 54 S110 48,130 40 S165 44,185 30 S225 26,250 18 S285 10,300 8"
-              color="#25D0C3"
+              color="#1F5EFF"
             />
           </Panel>
           <Panel label="Origem dos leads">
             <DonutChart
               segments={[
-                { value: 46, color: "#25D0C3" },
+                { value: 46, color: "#38BDF8" },
                 { value: 34, color: "#1F5EFF" },
                 { value: 20, color: "#081C3A" },
               ]}

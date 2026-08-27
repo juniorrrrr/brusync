@@ -256,7 +256,7 @@ export function OmniRelatorios() {
             <BarChart
               bars={[
                 { value: 38, color: "#1F5EFF" },
-                { value: 44, color: "#25D0C3" },
+                { value: 44, color: "#38BDF8" },
                 { value: 30, color: "#081C3A", opacity: 0.6 },
                 { value: 26, color: "#1F5EFF", opacity: 0.7 },
               ]}

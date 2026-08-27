@@ -1,7 +1,7 @@
 :root {
   --primary: #081c3a;
   --secondary: #1f5eff;
-  --accent: #25d0c3;
+  --accent: #1f5eff;
   --bg: #ffffff;
   --surface: #f7fafc;
   --text: #081c3a;
@@ -108,9 +108,9 @@ button {
 }
 .btn-accent:hover,
 .btn-accent:active {
-  background: #1fbfb3;
+  background: #1848c9;
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(37, 208, 195, 0.35);
+  box-shadow: 0 10px 24px rgba(31, 94, 255, 0.35);
 }
 .btn-outline {
   background: transparent;
@@ -230,7 +230,7 @@ button {
   border-radius: 999px;
   background: var(--primary);
   box-shadow:
-    0 0 14px 1px rgba(37, 208, 195, 0.22),
+    0 0 14px 1px rgba(31, 94, 255, 0.22),
     0 2px 8px rgba(8, 28, 58, 0.18);
   opacity: 0;
   transform-origin: left center;
@@ -293,7 +293,7 @@ button {
   left: -80px;
   width: 420px;
   height: 320px;
-  background-image: radial-gradient(rgba(37, 208, 195, 0.35) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(rgba(31, 94, 255, 0.35) 1.5px, transparent 1.5px);
   background-size: 18px 18px;
   opacity: 0.5;
   pointer-events: none;
@@ -388,7 +388,7 @@ button {
   opacity: 0.8;
 }
 .dash-item.on {
-  background: rgba(37, 208, 195, 0.12);
+  background: rgba(31, 94, 255, 0.12);
   color: #fff;
   border-left-color: var(--accent);
 }
@@ -439,7 +439,7 @@ button {
 .kpi .k-delta {
   font-size: 9px;
   font-weight: 700;
-  color: #12a594;
+  color: #1f5eff;
   margin-top: 2px;
 }
 .dash-row {
@@ -478,9 +478,9 @@ button {
   flex-wrap: wrap;
 }
 .flow-chip {
-  background: rgba(37, 208, 195, 0.12);
+  background: rgba(31, 94, 255, 0.12);
   color: var(--primary);
-  border: 1px solid rgba(37, 208, 195, 0.35);
+  border: 1px solid rgba(31, 94, 255, 0.35);
   border-radius: 999px;
   padding: 6px 12px;
   font-size: 11px;
@@ -689,7 +689,7 @@ button {
   background: radial-gradient(
     circle,
     rgba(31, 94, 255, 0.22),
-    rgba(37, 208, 195, 0.08) 55%,
+    rgba(31, 94, 255, 0.08) 55%,
     transparent 75%
   );
   filter: blur(18px);
@@ -780,7 +780,7 @@ button {
 .own2-glow-b {
   right: -60px;
   top: 30px;
-  background: radial-gradient(circle, rgba(37, 208, 195, 0.3), transparent 70%);
+  background: radial-gradient(circle, rgba(31, 94, 255, 0.3), transparent 70%);
 }
 .own2-noise {
   position: absolute;
@@ -831,7 +831,7 @@ button {
   background: conic-gradient(
     from var(--own2-angle, 0deg),
     transparent 0%,
-    rgba(37, 208, 195, 0.55) 12%,
+    rgba(31, 94, 255, 0.55) 12%,
     transparent 26%
   );
   -webkit-mask:
@@ -877,7 +877,7 @@ button {
 }
 .own2-card-good .own2-card-inner {
   box-shadow:
-    0 0 0 1px rgba(37, 208, 195, 0.14),
+    0 0 0 1px rgba(31, 94, 255, 0.14),
     var(--shadow-md);
 }
 
@@ -957,7 +957,7 @@ button {
   flex: 1;
   height: var(--h);
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, var(--accent), rgba(37, 208, 195, 0.25));
+  background: linear-gradient(180deg, var(--accent), rgba(31, 94, 255, 0.25));
   transform: scaleY(0);
   transform-origin: bottom;
   animation: own2Grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -1009,8 +1009,8 @@ button {
   font-size: 11px;
   font-weight: 700;
   color: var(--primary);
-  background: rgba(37, 208, 195, 0.1);
-  border: 1px solid rgba(37, 208, 195, 0.25);
+  background: rgba(31, 94, 255, 0.1);
+  border: 1px solid rgba(31, 94, 255, 0.25);
   border-radius: 8px;
   padding: 5px 8px;
   white-space: nowrap;
@@ -1165,7 +1165,7 @@ button {
   inset: 0;
   background:
     radial-gradient(700px 400px at 85% 10%, rgba(31, 94, 255, 0.18), transparent 60%),
-    radial-gradient(600px 400px at 5% 90%, rgba(37, 208, 195, 0.12), transparent 60%);
+    radial-gradient(600px 400px at 5% 90%, rgba(31, 94, 255, 0.12), transparent 60%);
 }
 .sol-grid {
   display: grid;
@@ -1202,8 +1202,8 @@ button {
   width: 40px;
   height: 40px;
   border-radius: 11px;
-  background: rgba(37, 208, 195, 0.13);
-  border: 1px solid rgba(37, 208, 195, 0.3);
+  background: rgba(31, 94, 255, 0.13);
+  border: 1px solid rgba(31, 94, 255, 0.3);
   display: grid;
   place-items: center;
   color: var(--accent);
@@ -1258,7 +1258,7 @@ button {
 .bento-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(37, 208, 195, 0.45);
+  border-color: rgba(31, 94, 255, 0.45);
 }
 .bento-card h3 {
   font-size: 16px;
@@ -1390,18 +1390,18 @@ button {
   margin-top: 10px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 0 rgba(37, 208, 195, 0.5);
+  box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.5);
   animation: bentoPing 2.2s ease-out infinite;
 }
 @keyframes bentoPing {
   0% {
-    box-shadow: 0 0 0 0 rgba(37, 208, 195, 0.45);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.45);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(37, 208, 195, 0);
+    box-shadow: 0 0 0 8px rgba(31, 94, 255, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(37, 208, 195, 0);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0);
   }
 }
 .bento-scene-flow {
@@ -1428,7 +1428,7 @@ button {
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.16), rgba(31, 94, 255, 0.12));
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.16), rgba(31, 94, 255, 0.12));
   color: var(--secondary);
   flex-shrink: 0;
 }
@@ -1449,7 +1449,7 @@ button {
   background: var(--border);
 }
 .bento-scale-bars span:last-child {
-  background: linear-gradient(180deg, var(--accent), rgba(37, 208, 195, 0.3));
+  background: linear-gradient(180deg, var(--accent), rgba(31, 94, 255, 0.3));
 }
 .bento-scale-arrow {
   margin-top: 8px;
@@ -1468,8 +1468,8 @@ button {
   font-size: 11.5px;
   font-weight: 700;
   color: var(--primary);
-  background: rgba(37, 208, 195, 0.12);
-  border: 1px solid rgba(37, 208, 195, 0.3);
+  background: rgba(31, 94, 255, 0.12);
+  border: 1px solid rgba(31, 94, 255, 0.3);
   border-radius: 8px;
   padding: 6px 10px;
 }
@@ -1554,7 +1554,7 @@ button {
   width: 42px;
   height: 42px;
   border-radius: 11px;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.14), rgba(31, 94, 255, 0.1));
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.14), rgba(31, 94, 255, 0.1));
   display: grid;
   place-items: center;
   color: var(--secondary);
@@ -1601,7 +1601,7 @@ button {
   cursor: grabbing;
 }
 .show-viewport:focus-visible {
-  outline: 2px solid rgba(37, 208, 195, 0.5);
+  outline: 2px solid rgba(31, 94, 255, 0.5);
   outline-offset: 6px;
 }
 .show-track {
@@ -1642,15 +1642,15 @@ button {
   filter: blur(0);
   opacity: 1;
   box-shadow:
-    0 0 0 1px rgba(37, 208, 195, 0.45),
-    0 0 34px -6px rgba(37, 208, 195, 0.3),
+    0 0 0 1px rgba(31, 94, 255, 0.45),
+    0 0 34px -6px rgba(31, 94, 255, 0.3),
     0 26px 52px -18px rgba(8, 28, 58, 0.34);
   z-index: 3;
   cursor: default;
 }
 .show-card:hover {
   box-shadow:
-    0 0 0 1px rgba(37, 208, 195, 0.32),
+    0 0 0 1px rgba(31, 94, 255, 0.32),
     0 20px 44px -16px rgba(8, 28, 58, 0.28);
 }
 .show-card .show-panel,
@@ -1688,7 +1688,7 @@ button {
   font-weight: 800;
   padding: 5px 12px;
   border-radius: 99px;
-  box-shadow: 0 4px 12px rgba(37, 208, 195, 0.4);
+  box-shadow: 0 4px 12px rgba(31, 94, 255, 0.4);
   z-index: 2;
   animation: featPulse 2.6s ease-in-out infinite;
 }
@@ -1720,18 +1720,18 @@ button {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #12a594;
-  box-shadow: 0 0 0 0 rgba(18, 165, 148, 0.45);
+  background: #1f5eff;
+  box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.45);
   animation: onlinePulse 2.2s ease-in-out infinite;
   flex-shrink: 0;
 }
 @keyframes onlinePulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(18, 165, 148, 0.4);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(18, 165, 148, 0);
+    box-shadow: 0 0 0 4px rgba(31, 94, 255, 0);
   }
 }
 .show-filter {
@@ -1840,8 +1840,8 @@ button {
   white-space: nowrap;
 }
 .badge-status.ok {
-  background: rgba(18, 165, 148, 0.13);
-  color: #12a594;
+  background: rgba(31, 94, 255, 0.13);
+  color: #1f5eff;
 }
 .badge-status.warn {
   background: rgba(233, 162, 59, 0.16);
@@ -1904,8 +1904,8 @@ button {
 .show-nav:hover {
   background: #fff;
   box-shadow:
-    0 0 0 1px rgba(37, 208, 195, 0.4),
-    0 12px 28px -8px rgba(37, 208, 195, 0.35);
+    0 0 0 1px rgba(31, 94, 255, 0.4),
+    0 12px 28px -8px rgba(31, 94, 255, 0.35);
   transform: translateY(-50%) scale(1.08);
 }
 .show-nav:active {
@@ -1985,7 +1985,7 @@ button {
   display: grid;
   place-items: center;
   margin: 0 auto;
-  box-shadow: 0 6px 16px rgba(37, 208, 195, 0.35);
+  box-shadow: 0 6px 16px rgba(31, 94, 255, 0.35);
   position: relative;
   z-index: 1;
   transition: transform 0.25s;
@@ -2080,7 +2080,7 @@ button {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(37, 208, 195, 0.4) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(rgba(31, 94, 255, 0.4) 1.5px, transparent 1.5px);
   background-size: 22px 22px;
   opacity: 0.14;
   mask-image: radial-gradient(60% 90% at 50% 100%, #000, transparent);
@@ -2172,7 +2172,7 @@ button {
   font-weight: 600;
 }
 .lead-form-status.success {
-  color: #12a594;
+  color: #1f5eff;
 }
 .lead-form-status.error {
   color: var(--danger);
@@ -2352,7 +2352,7 @@ button {
 }
 .outcome-step-marker[data-active] {
   background: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 208, 195, 0.18);
+  box-shadow: 0 0 0 3px rgba(31, 94, 255, 0.18);
 }
 .outcome-step-label {
   font-size: 13.5px;
@@ -2394,7 +2394,7 @@ button {
   background: conic-gradient(
     from var(--oc-angle, 0deg),
     transparent 0%,
-    rgba(37, 208, 195, 0.6) 14%,
+    rgba(31, 94, 255, 0.6) 14%,
     transparent 30%
   );
   -webkit-mask:
@@ -2534,7 +2534,7 @@ button {
   border-radius: 2px;
 }
 .foot-col a:active {
-  color: #1fbfb3;
+  color: #1848c9;
 }
 .foot-contact {
   display: flex;
@@ -2580,7 +2580,7 @@ button {
   color: var(--primary);
   border-color: var(--accent);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(37, 208, 195, 0.3);
+  box-shadow: 0 8px 20px rgba(31, 94, 255, 0.3);
 }
 .foot-social a:focus-visible {
   outline: 2px solid var(--accent);
@@ -2732,7 +2732,7 @@ button {
   background: radial-gradient(circle, rgba(31, 94, 255, 0.5), transparent 70%);
 }
 .orb-teal {
-  background: radial-gradient(circle, rgba(37, 208, 195, 0.45), transparent 70%);
+  background: radial-gradient(circle, rgba(31, 94, 255, 0.45), transparent 70%);
 }
 @keyframes drift1 {
   0%,
@@ -2789,7 +2789,7 @@ canvas.particles {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(37, 208, 195, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, rgba(31, 94, 255, 0.55), transparent);
   z-index: 1;
 }
 
@@ -2805,7 +2805,7 @@ canvas.particles {
   border-radius: inherit;
   background: radial-gradient(
     240px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(37, 208, 195, 0.16),
+    rgba(31, 94, 255, 0.16),
     transparent 60%
   );
   opacity: 0;
@@ -2883,10 +2883,10 @@ canvas.particles {
 @keyframes glowPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(37, 208, 195, 0.5);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 0 12px rgba(37, 208, 195, 0);
+    box-shadow: 0 0 0 12px rgba(31, 94, 255, 0);
   }
 }
 .pulse-btn {
@@ -2896,13 +2896,13 @@ canvas.particles {
 /* Live KPI pulse */
 @keyframes kpiPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(37, 208, 195, 0.5);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0.5);
   }
   70% {
-    box-shadow: 0 0 0 9px rgba(37, 208, 195, 0);
+    box-shadow: 0 0 0 9px rgba(31, 94, 255, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(37, 208, 195, 0);
+    box-shadow: 0 0 0 0 rgba(31, 94, 255, 0);
   }
 }
 .kpi.pulse {
@@ -2998,7 +2998,7 @@ canvas.particles {
   z-index: 0;
   background:
     radial-gradient(640px 380px at 14% 18%, rgba(31, 94, 255, 0.055), transparent 60%),
-    radial-gradient(640px 420px at 86% 82%, rgba(37, 208, 195, 0.055), transparent 60%),
+    radial-gradient(640px 420px at 86% 82%, rgba(31, 94, 255, 0.055), transparent 60%),
     radial-gradient(480px 480px at 50% 50%, rgba(8, 28, 58, 0.03), transparent 70%);
 }
 .ag-field {
@@ -3057,7 +3057,7 @@ canvas.ag-canvas {
   background: radial-gradient(
     circle,
     rgba(31, 94, 255, 0.2),
-    rgba(37, 208, 195, 0.08) 55%,
+    rgba(31, 94, 255, 0.08) 55%,
     transparent 75%
   );
   filter: blur(22px);
@@ -3204,9 +3204,9 @@ canvas.ag-canvas {
   gap: 8px;
   padding: 7px 14px;
   border-radius: 999px;
-  background: rgba(37, 208, 195, 0.1);
-  border: 1px solid rgba(37, 208, 195, 0.3);
-  color: #12a594;
+  background: rgba(31, 94, 255, 0.1);
+  border: 1px solid rgba(31, 94, 255, 0.3);
+  color: #1f5eff;
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -3338,7 +3338,7 @@ canvas.ag-canvas {
   transition: all 0.25s ease;
 }
 .ownership-item:hover {
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
   transform: translateY(-4px);
   box-shadow: var(--shadow-sm);
 }
@@ -3349,7 +3349,7 @@ canvas.ag-canvas {
   margin: 0 auto 12px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.14), rgba(31, 94, 255, 0.1));
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.14), rgba(31, 94, 255, 0.1));
   color: var(--secondary);
 }
 .ownership-item span {
@@ -3391,7 +3391,7 @@ canvas.ag-canvas {
 .case-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
 }
 .case-badge {
   display: inline-flex;
@@ -3448,13 +3448,13 @@ canvas.ag-canvas {
 .material-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
 }
 .material-ico {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.14), rgba(31, 94, 255, 0.1));
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.14), rgba(31, 94, 255, 0.1));
   display: grid;
   place-items: center;
   color: var(--secondary);
@@ -3502,7 +3502,7 @@ canvas.ag-canvas {
 .blog-card:focus-visible {
   transform: translateY(-6px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
 }
 .blog-card:focus-visible {
   outline: 2px solid var(--accent);
@@ -4004,8 +4004,8 @@ canvas.ag-canvas {
 }
 .msg.ai {
   align-self: flex-start;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.14), rgba(31, 94, 255, 0.1));
-  border: 1px dashed rgba(37, 208, 195, 0.5);
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.14), rgba(31, 94, 255, 0.1));
+  border: 1px dashed rgba(31, 94, 255, 0.5);
   color: var(--primary);
 }
 
@@ -4026,7 +4026,7 @@ canvas.ag-canvas {
   border-bottom: none;
 }
 .inbox-item.active {
-  background: rgba(37, 208, 195, 0.08);
+  background: rgba(31, 94, 255, 0.08);
   border-radius: 8px;
 }
 .inbox-item .inbox-name {
@@ -4118,7 +4118,7 @@ canvas.ag-canvas {
   width: 24px;
   height: 24px;
   border-radius: 7px;
-  background: linear-gradient(135deg, rgba(37, 208, 195, 0.14), rgba(31, 94, 255, 0.1));
+  background: linear-gradient(135deg, rgba(31, 94, 255, 0.14), rgba(31, 94, 255, 0.1));
   display: grid;
   place-items: center;
   color: var(--secondary);
@@ -4223,7 +4223,7 @@ canvas.ag-canvas {
 .mscreen-card .mc-delta {
   font-size: 8.5px;
   font-weight: 700;
-  color: #12a594;
+  color: #1f5eff;
   margin-top: 2px;
 }
 .mscreen-panel {
@@ -4440,7 +4440,7 @@ canvas.ag-canvas {
 .mat-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
 }
 .mat-cover {
   height: 170px;
@@ -4670,7 +4670,7 @@ canvas.ag-canvas {
 .case-index-card:focus-visible {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
-  border-color: rgba(37, 208, 195, 0.5);
+  border-color: rgba(31, 94, 255, 0.5);
 }
 .case-index-card:focus-visible {
   outline: 2px solid var(--accent);
@@ -4829,9 +4829,9 @@ canvas.ag-canvas {
   gap: 6px;
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(37, 208, 195, 0.1);
-  border: 1px solid rgba(37, 208, 195, 0.3);
-  color: #12a594;
+  background: rgba(31, 94, 255, 0.1);
+  border: 1px solid rgba(31, 94, 255, 0.3);
+  color: #1f5eff;
   font-size: 11px;
   font-weight: 700;
 }
@@ -4881,11 +4881,11 @@ canvas.ag-canvas {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(37, 208, 195, 0.14);
+  background: rgba(31, 94, 255, 0.14);
   display: grid;
   place-items: center;
   margin: 0 auto 18px;
-  color: #12a594;
+  color: #1f5eff;
   animation: modalSuccessPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .modal-success h3 {

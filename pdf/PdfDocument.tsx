@@ -4,7 +4,8 @@ import type { PdfBlock, PdfDocumentData } from "./types";
 const COLOR = {
   primary: "#081C3A",
   navyDeep: "#050f22",
-  accent: "#25D0C3",
+  accent: "#1F5EFF",
+  accentAlt: "#38BDF8",
   secondary: "#1F5EFF",
   muted: "#5A6B85",
   border: "#E7EDF5",
@@ -114,7 +115,7 @@ function CoverPage({
         <View
           style={{
             alignSelf: "flex-start",
-            backgroundColor: "rgba(37,208,195,0.16)",
+            backgroundColor: "rgba(31,94,255,0.16)",
             borderColor: COLOR.accent,
             borderWidth: 0.8,
             borderRadius: 20,
@@ -492,7 +493,7 @@ function ChartPage({
                 width={barW}
                 height={h}
                 rx={4}
-                fill={i % 2 === 0 ? COLOR.secondary : COLOR.accent}
+                fill={i % 2 === 0 ? COLOR.secondary : COLOR.accentAlt}
               />
             );
           })}

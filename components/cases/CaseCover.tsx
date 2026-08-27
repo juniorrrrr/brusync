@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const CATEGORY_STYLE: Record<string, { gradient: string; icon: ReactNode }> = {
   "Business Intelligence": {
-    gradient: "linear-gradient(135deg, #1F5EFF, #25D0C3)",
+    gradient: "linear-gradient(135deg, #1F5EFF, #38BDF8)",
     icon: (
       <svg
         aria-hidden="true"
@@ -39,7 +39,7 @@ const CATEGORY_STYLE: Record<string, { gradient: string; icon: ReactNode }> = {
     ),
   },
   ERP: {
-    gradient: "linear-gradient(135deg, #25D0C3, #081C3A)",
+    gradient: "linear-gradient(135deg, #38BDF8, #081C3A)",
     icon: (
       <svg
         aria-hidden="true"

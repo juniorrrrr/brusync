@@ -186,7 +186,7 @@ export function SolutionDashboardMock() {
                   cy="21"
                   r="15.9"
                   fill="none"
-                  stroke="#25D0C3"
+                  stroke="#38BDF8"
                   strokeWidth="6"
                   strokeDasharray="30 70"
                   strokeDashoffset="80"
@@ -203,7 +203,7 @@ export function SolutionDashboardMock() {
                   <span style={{ ["--w" as string]: "78%", background: "#1F5EFF" }} />
                 </div>
                 <div className="pbar">
-                  <span style={{ ["--w" as string]: "62%", background: "#25D0C3" }} />
+                  <span style={{ ["--w" as string]: "62%", background: "#38BDF8" }} />
                 </div>
                 <div className="pbar">
                   <span style={{ ["--w" as string]: "41%", background: "#081C3A" }} />
@@ -235,7 +235,7 @@ export function SolutionDashboardMock() {
                   width="12"
                   height="36"
                   rx="2.5"
-                  fill="#25D0C3"
+                  fill="#38BDF8"
                 />
                 <rect
                   className="chart-bar"
@@ -254,7 +254,7 @@ export function SolutionDashboardMock() {
                   width="12"
                   height="30"
                   rx="2.5"
-                  fill="#25D0C3"
+                  fill="#38BDF8"
                   opacity=".6"
                 />
                 <rect

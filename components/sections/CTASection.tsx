@@ -16,7 +16,7 @@ export function CTASection() {
   const particlesRef = useParticleField<HTMLCanvasElement>({
     count: 28,
     speed: 0.14,
-    color: "rgba(37,208,195,.5)",
+    color: "rgba(31,94,255,.5)",
   });
   const [state, formAction, pending] = useActionState(submitLead, initialState);
   const [trackingContext, setTrackingContext] = useState("");
