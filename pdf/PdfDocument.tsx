@@ -108,7 +108,7 @@ function CoverPage({
       </Svg>
       <View style={{ position: "absolute", top: 50, left: 46 }}>
         <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 14, color: COLOR.white }}>
-          Brusync<Text style={{ color: COLOR.accent }}>.</Text>
+          Brusync<Text style={{ color: COLOR.accentAlt }}>.</Text>
         </Text>
       </View>
       <View style={{ position: "absolute", left: 46, right: 46, top: 330 }}>
@@ -124,7 +124,7 @@ function CoverPage({
             marginBottom: 18,
           }}
         >
-          <Text style={{ fontSize: 9, fontFamily: "Helvetica-Bold", color: COLOR.accent }}>
+          <Text style={{ fontSize: 9, fontFamily: "Helvetica-Bold", color: COLOR.accentAlt }}>
             {category}
           </Text>
         </View>
@@ -202,7 +202,7 @@ function DividerPage({
           style={{
             fontSize: 11,
             fontFamily: "Helvetica-Bold",
-            color: COLOR.accent,
+            color: COLOR.accentAlt,
             marginBottom: 14,
           }}
         >
@@ -536,7 +536,7 @@ function ClosingPage({ heading, text }: { heading: string; text: string }) {
             marginBottom: 4,
           }}
         >
-          Brusync<Text style={{ color: COLOR.accent }}>.</Text>
+          Brusync<Text style={{ color: COLOR.accentAlt }}>.</Text>
         </Text>
         <Text
           style={{
@@ -570,7 +570,7 @@ function ClosingPage({ heading, text }: { heading: string; text: string }) {
             paddingHorizontal: 22,
           }}
         >
-          <Text style={{ fontSize: 10.5, fontFamily: "Helvetica-Bold", color: COLOR.primary }}>
+          <Text style={{ fontSize: 10.5, fontFamily: "Helvetica-Bold", color: COLOR.white }}>
             brusync.com.br
           </Text>
         </View>

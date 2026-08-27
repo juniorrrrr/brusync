@@ -11,6 +11,13 @@
   --danger-bd: #ffe0dc;
   --danger: #e5484d;
   --radius: 14px;
+  /* Pares de contraste para o acento azul (WCAG AA — ver auditoria):
+     --accent sozinho (#1f5eff) não tem 4.5:1 contra --primary nem contra
+     si mesmo em fundos escuros, então texto/ícone "em cima" do acento
+     precisa de um destes em vez de reaproveitar --primary/--accent. */
+  --accent-foreground: #ffffff; /* texto/ícone sobre um preenchimento sólido de --accent */
+  --accent-on-dark: #38bdf8; /* texto/ícone na cor de acento dentro de seções escuras (--primary como fundo) */
+  --accent-text: #1848c9; /* texto/ícone na cor de acento sobre fundos claros/tint leve de --accent (badges, tags, eyebrows) */
   --shadow-sm: 0 1px 2px rgba(8, 28, 58, 0.05);
   --shadow-md: 0 8px 30px rgba(8, 28, 58, 0.08);
   --shadow-lg: 0 24px 60px rgba(8, 28, 58, 0.14);
@@ -104,7 +111,7 @@ button {
 }
 .btn-accent {
   background: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
 }
 .btn-accent:hover,
 .btn-accent:active {
@@ -370,7 +377,7 @@ button {
 }
 .dash-logo i {
   font-style: normal;
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 .dash-item {
   display: flex;
@@ -1206,7 +1213,7 @@ button {
   border: 1px solid rgba(31, 94, 255, 0.3);
   display: grid;
   place-items: center;
-  color: var(--accent);
+  color: var(--accent-on-dark);
   flex-shrink: 0;
 }
 .sol-item h4 {
@@ -1225,7 +1232,7 @@ button {
 }
 .sol-final i {
   font-style: normal;
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 
 /* ===== Diferenciais (bento) ===== */
@@ -1683,7 +1690,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
   font-size: 10px;
   font-weight: 800;
   padding: 5px 12px;
@@ -1841,7 +1848,7 @@ button {
 }
 .badge-status.ok {
   background: rgba(31, 94, 255, 0.13);
-  color: #1f5eff;
+  color: var(--accent-text);
 }
 .badge-status.warn {
   background: rgba(233, 162, 59, 0.16);
@@ -1979,7 +1986,7 @@ button {
   height: 44px;
   border-radius: 50%;
   background: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
   font-weight: 800;
   font-size: 14px;
   display: grid;
@@ -2099,7 +2106,7 @@ button {
 .cta .cta-sub {
   font-size: clamp(19px, 2.4vw, 26px);
   font-weight: 800;
-  color: var(--accent);
+  color: var(--accent-on-dark);
   margin-top: 10px;
 }
 .cta .btn {
@@ -2304,7 +2311,7 @@ button {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 .outcome-title {
   margin-top: 8px;
@@ -2451,7 +2458,7 @@ button {
 .outcome-card:hover .outcome-card-arrow {
   transform: translateX(0);
   opacity: 1;
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 
 .outcome-footnote {
@@ -2498,7 +2505,7 @@ button {
   font-size: 26px;
 }
 .foot-tag {
-  color: var(--accent);
+  color: var(--accent-on-dark);
   font-weight: 700;
   font-size: 13.5px;
   margin-top: 10px;
@@ -2526,15 +2533,15 @@ button {
 }
 .foot-col a:hover,
 .foot-col a:focus-visible {
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 .foot-col a:focus-visible {
-  outline: 1px solid var(--accent);
+  outline: 1px solid var(--accent-on-dark);
   outline-offset: 3px;
   border-radius: 2px;
 }
 .foot-col a:active {
-  color: #1848c9;
+  color: var(--accent-on-dark);
 }
 .foot-contact {
   display: flex;
@@ -2544,7 +2551,7 @@ button {
   margin-bottom: 13px;
 }
 .foot-contact svg {
-  color: var(--accent);
+  color: var(--accent-on-dark);
   flex-shrink: 0;
 }
 .foot-contact-link {
@@ -2553,10 +2560,10 @@ button {
 }
 .foot-contact-link:hover,
 .foot-contact-link:focus-visible {
-  color: var(--accent);
+  color: var(--accent-on-dark);
 }
 .foot-contact-link:focus-visible {
-  outline: 1px solid var(--accent);
+  outline: 1px solid var(--accent-on-dark);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -2577,13 +2584,13 @@ button {
 }
 .foot-social a:hover {
   background: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
   border-color: var(--accent);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(31, 94, 255, 0.3);
 }
 .foot-social a:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-on-dark);
   outline-offset: 2px;
 }
 .foot-social a:active {
@@ -3206,7 +3213,7 @@ canvas.ag-canvas {
   border-radius: 999px;
   background: rgba(31, 94, 255, 0.1);
   border: 1px solid rgba(31, 94, 255, 0.3);
-  color: #1f5eff;
+  color: var(--accent-text);
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -3426,7 +3433,7 @@ canvas.ag-canvas {
 .case-tag {
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--secondary);
+  color: var(--accent-text);
   background: rgba(31, 94, 255, 0.08);
   padding: 5px 10px;
   border-radius: 8px;
@@ -4283,7 +4290,7 @@ canvas.ag-canvas {
   border-radius: 999px;
   background: rgba(31, 94, 255, 0.08);
   border: 1px solid rgba(31, 94, 255, 0.25);
-  color: var(--secondary);
+  color: var(--accent-text);
   font-size: 12px;
   font-weight: 700;
 }
@@ -4496,7 +4503,7 @@ canvas.ag-canvas {
   align-self: flex-start;
   font-size: 11px;
   font-weight: 700;
-  color: var(--secondary);
+  color: var(--accent-text);
   background: rgba(31, 94, 255, 0.08);
   padding: 4px 10px;
   border-radius: 8px;
@@ -4543,7 +4550,7 @@ canvas.ag-canvas {
 .mat-download-btn:focus-visible {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--primary);
+  color: var(--accent-foreground);
   transform: translateY(-2px);
 }
 .mat-download-btn:focus-visible {
@@ -4831,7 +4838,7 @@ canvas.ag-canvas {
   border-radius: 999px;
   background: rgba(31, 94, 255, 0.1);
   border: 1px solid rgba(31, 94, 255, 0.3);
-  color: #1f5eff;
+  color: var(--accent-text);
   font-size: 11px;
   font-weight: 700;
 }
