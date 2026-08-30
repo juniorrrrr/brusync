@@ -3,16 +3,13 @@ import {
   SceneAi,
   SceneBlueprint,
   SceneDomain,
-  SceneIndependence,
   SceneIntegrations,
-  SceneOnce,
-  SceneScale,
   SceneWhiteLabel,
 } from "@/components/sections/BentoScenes";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 
-type BentoSize = "lg" | "sm" | "md";
+type BentoSize = "lg" | "sm";
 
 interface BentoItem {
   size: BentoSize;
@@ -53,24 +50,6 @@ const DIFFERENTIATORS: BentoItem[] = [
     title: "Inteligência Artificial embarcada",
     description: "Alertas, resumos e previsões nativos, não um chatbot colado por cima.",
     scene: <SceneAi />,
-  },
-  {
-    size: "sm",
-    title: "Escalável do primeiro dia",
-    description: "Arquitetura pronta para crescer junto com a operação.",
-    scene: <SceneScale />,
-  },
-  {
-    size: "md",
-    title: "Sem mensalidade de ferramenta pronta",
-    description: "Você investe uma vez na construção do seu ativo, não aluga acesso para sempre.",
-    scene: <SceneOnce />,
-  },
-  {
-    size: "md",
-    title: "Independência tecnológica total",
-    description: "O sistema é seu, sem depender de decisões ou preços de terceiros.",
-    scene: <SceneIndependence />,
   },
 ];
 
