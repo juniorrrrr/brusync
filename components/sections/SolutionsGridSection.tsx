@@ -11,6 +11,12 @@ const BrusyncCarouselAnimation = dynamic(() =>
   ),
 );
 
+const BrusyncCarouselAnimationMobile = dynamic(() =>
+  import("@/components/dashboard-mock/BrusyncCarouselAnimationMobile").then(
+    (m) => m.BrusyncCarouselAnimationMobile,
+  ),
+);
+
 const SOLUTION_MODULES: DifferentiatorItem[] = [
   {
     title: "CRM Personalizado",
@@ -258,6 +264,7 @@ export function SolutionsGridSection() {
         </Reveal>
         <Reveal delay={1}>
           <BrusyncCarouselAnimation />
+          <BrusyncCarouselAnimationMobile />
         </Reveal>
       </Container>
     </section>

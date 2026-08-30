@@ -2064,15 +2064,44 @@ canvas.particles {
   aspect-ratio: 1600 / 900;
   overflow: hidden;
 }
+
+/* Solutions grid section: dedicated 9:16 portrait carousel, mobile only */
+.brusync-carousel-frame-mobile {
+  display: none;
+}
+.brusync-carousel-stage-mobile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1080 / 1920;
+  overflow: hidden;
+}
+
 @media (max-width: 640px) {
   /* The animated scenes are a fixed 1600×900 canvas scaled to fit; on
      narrow phones that shrinks fine print a lot. Widening the card past
      the text column's padding buys back some legibility at no layout
      risk (still inside the section, no horizontal scroll). */
-  .brusync-anim-wrap,
-  .brusync-carousel-frame {
+  .brusync-anim-wrap {
     margin-left: -16px;
     margin-right: -16px;
+  }
+
+  /* Below 640px, swap the wide-screen carousel for the dedicated
+     portrait (9:16) mobile carousel — a different composition, not
+     just a scaled-down version of the desktop one. */
+  .brusync-carousel-frame {
+    display: none;
+  }
+  .brusync-carousel-frame-mobile {
+    display: block;
+    margin-top: 52px;
+    margin-left: -16px;
+    margin-right: -16px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f3f2f2;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
   }
 }
 
