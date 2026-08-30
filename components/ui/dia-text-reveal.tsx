@@ -72,20 +72,42 @@ export interface DiaTextRevealProps {
 }
 
 const DEFAULT_EASE: EaseValue = [0.23, 1, 0.32, 1];
-// A soft, on-brand light-sweep instead of the original multicolor band —
-// pale border tint -> sky accent -> brand accent.
-const DEFAULT_COLORS = ["var(--border)", "var(--accent-on-dark)", "var(--accent)"];
+// A single subtle highlight tint used only as the thin "scan line" glow that
+// rides the leading edge of the reveal mask — the text itself stays solid
+// `textColor`, this never becomes a multicolor band.
+const DEFAULT_COLORS = ["var(--accent-on-dark)"];
 
-function buildGradient(colors: string[], textColor: string, angle: number) {
-  const bandStart = 40;
-  const bandEnd = 60;
-  const stops = colors.map((color, index) => {
-    const t = colors.length === 1 ? 0.5 : index / (colors.length - 1);
-    const pct = bandStart + t * (bandEnd - bandStart);
-    return `${color} ${pct}%`;
-  });
+// Percentage-point width (relative to the element's own box, so it scales
+// automatically with the text at any viewport) of the soft antialiased edge
+// on the reveal mask.
+const MASK_FEATHER = 6;
+// Percentage-point half-width of the glow band riding that same edge.
+const GLOW_HALF_WIDTH = 3;
 
-  return `linear-gradient(${angle}deg, ${textColor} 0%, ${textColor} 33.33%, ${stops.join(", ")}, transparent 66.67%, transparent 100%)`;
+/** Builds a mask that is fully opaque from 0% up to `reveal`% (minus a soft
+ * feather) and fully transparent beyond — i.e. a hard left-to-right "scan"
+ * cutoff rather than a uniform opacity fade. `angle` (90/270deg) flips the
+ * sweep direction for rtl. */
+function buildScanMask(reveal: number, angle: number) {
+  if (reveal <= 0) return `linear-gradient(${angle}deg, transparent 0%, transparent 100%)`;
+  if (reveal >= 100) return `linear-gradient(${angle}deg, #000 0%, #000 100%)`;
+
+  const edgeStart = Math.max(0, reveal - MASK_FEATHER);
+  return `linear-gradient(${angle}deg, #000 0%, #000 ${edgeStart}%, transparent ${reveal}%, transparent 100%)`;
+}
+
+/** Solid `textColor` everywhere, except a thin `glowColor` band centered
+ * exactly on the current scan position — since the mask above hides
+ * everything past `reveal`%, this band reads as a subtle bright edge
+ * traveling with the scan line, not a color change on the revealed text. */
+function buildScanColor(reveal: number, textColor: string, glowColor: string, angle: number) {
+  if (reveal <= 0 || reveal >= 100) {
+    return `linear-gradient(${angle}deg, ${textColor} 0%, ${textColor} 100%)`;
+  }
+
+  const bandStart = Math.max(0, reveal - GLOW_HALF_WIDTH);
+  const bandEnd = Math.min(100, reveal + GLOW_HALF_WIDTH);
+  return `linear-gradient(${angle}deg, ${textColor} 0%, ${textColor} ${bandStart}%, ${glowColor} ${reveal}%, ${textColor} ${bandEnd}%, ${textColor} 100%)`;
 }
 
 function measureMaxWidth(element: HTMLElement, texts: string[]) {
@@ -112,9 +134,9 @@ function measureMaxWidth(element: HTMLElement, texts: string[]) {
   return max;
 }
 
-/** Cycles through `text` entries, revealing each with a light sweep across
- * the typography (a moving background-clip gradient), rather than any
- * transform/opacity animation on the surrounding layout. */
+/** Cycles through `text` entries, revealing each with a left-to-right scan:
+ * a `mask-image` sweep progressively uncovers the characters (not an
+ * opacity/fade), with a subtle bright highlight riding the scan edge. */
 export function DiaTextReveal({
   text,
   colors = DEFAULT_COLORS,
@@ -152,10 +174,15 @@ export function DiaTextReveal({
   const indexRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const sweep = useMotionValue(100);
-  const textOpacity = useMotionValue(0);
-  const backgroundPosition = useTransform(sweep, (v) => `${v}% 50%`);
+  // 0 = fully masked (nothing revealed yet), 100 = fully revealed.
+  const reveal = useMotionValue(0);
+  // Only used for the short fade-out between one word and the next — the
+  // entrance itself is driven entirely by the mask, not by opacity.
+  const textOpacity = useMotionValue(1);
   const angle = direction === "rtl" ? 270 : 90;
+  const glowColor = colors[0] ?? textColor;
+  const maskImage = useTransform(reveal, (v) => buildScanMask(v, angle));
+  const colorImage = useTransform(reveal, (v) => buildScanColor(v, textColor, glowColor, angle));
 
   useLayoutEffect(() => {
     const element = elementRef.current;
@@ -169,7 +196,7 @@ export function DiaTextReveal({
   }, [fixedWidth, isMulti, texts]);
 
   const clearCycle = useCallback(() => {
-    sweep.stop();
+    reveal.stop();
     textOpacity.stop();
 
     if (timerRef.current) {
@@ -177,17 +204,16 @@ export function DiaTextReveal({
     }
 
     timerRef.current = undefined;
-  }, [sweep, textOpacity]);
+  }, [reveal, textOpacity]);
 
   const playRef = useRef<() => void>(() => undefined);
 
   playRef.current = () => {
     clearCycle();
-    sweep.set(100);
-    textOpacity.set(0);
+    reveal.set(0);
+    textOpacity.set(1);
 
-    animate(sweep, 0, { duration, delay, ease });
-    animate(textOpacity, 1, {
+    animate(reveal, 100, {
       duration,
       delay,
       ease,
@@ -205,7 +231,8 @@ export function DiaTextReveal({
             onComplete() {
               indexRef.current = (indexRef.current + 1) % texts.length;
               setActiveIndex(indexRef.current);
-              sweep.set(100);
+              reveal.set(0);
+              textOpacity.set(1);
 
               timerRef.current = setTimeout(() => {
                 playRef.current();
@@ -242,8 +269,8 @@ export function DiaTextReveal({
     indexRef.current = 0;
     setActiveIndex(0);
     clearCycle();
-    sweep.set(100);
-    textOpacity.set(0);
+    reveal.set(0);
+    textOpacity.set(1);
 
     if (canAnimate) {
       playRef.current();
@@ -273,10 +300,6 @@ export function DiaTextReveal({
         prefersReducedMotion
           ? {
               color: resolvedColor,
-              WebkitTextFillColor: "transparent",
-              backgroundImage: buildGradient(colors, textColor, angle),
-              backgroundSize: "300% 100%",
-              backgroundPosition: "0% 50%",
               opacity: 1,
               ...(lockedWidth != null && {
                 width: lockedWidth,
@@ -286,9 +309,14 @@ export function DiaTextReveal({
           : {
               color: resolvedColor,
               WebkitTextFillColor: "transparent",
-              backgroundImage: buildGradient(colors, textColor, angle),
-              backgroundSize: "300% 100%",
-              backgroundPosition,
+              backgroundImage: colorImage,
+              backgroundSize: "100% 100%",
+              WebkitMaskImage: maskImage,
+              maskImage,
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
               opacity: textOpacity,
               ...(lockedWidth != null && {
                 width: lockedWidth,
