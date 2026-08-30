@@ -17,7 +17,6 @@ export function BrandedAppMockup() {
       }}
       className="reveal"
       data-delay="2"
-      id="heroDashWrap"
     >
       <div className="dash-glow tilt-wrap">
         <div className="app-mock" aria-hidden="true" data-tilt ref={tiltRef}>

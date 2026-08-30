@@ -5,8 +5,10 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import type { DifferentiatorItem } from "@/types";
 
-const DashboardCarousel = dynamic(() =>
-  import("@/components/dashboard-mock/DashboardCarousel").then((m) => m.DashboardCarousel),
+const BrusyncCarouselAnimation = dynamic(() =>
+  import("@/components/dashboard-mock/BrusyncCarouselAnimation").then(
+    (m) => m.BrusyncCarouselAnimation,
+  ),
 );
 
 const SOLUTION_MODULES: DifferentiatorItem[] = [
@@ -254,7 +256,9 @@ export function SolutionsGridSection() {
         <Reveal className="flow-mid" delay={2}>
           Um painel diferente para cada área da sua empresa.
         </Reveal>
-        <DashboardCarousel />
+        <Reveal delay={1}>
+          <BrusyncCarouselAnimation />
+        </Reveal>
       </Container>
     </section>
   );

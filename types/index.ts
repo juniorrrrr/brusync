@@ -18,21 +18,8 @@ export interface SourcePlatform {
   icon: ReactNode;
 }
 
-export interface SolutionItem {
-  title: string;
-  description: string;
-  icon: ReactNode;
-}
-
 export interface DifferentiatorItem {
   title: string;
-  description: string;
-  icon: ReactNode;
-}
-
-export interface TimelineStep {
-  number: string;
-  title: ReactNode;
   description: string;
   icon: ReactNode;
 }

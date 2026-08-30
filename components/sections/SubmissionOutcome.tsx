@@ -54,9 +54,9 @@ export function SubmissionOutcome({
             →
           </span>
         </a>
-        <a href="#processo" className="outcome-card">
-          <span className="outcome-card-label">Processo</span>
-          <span className="outcome-card-text">Como construímos o seu sistema</span>
+        <a href="/#solucoes" className="outcome-card">
+          <span className="outcome-card-label">Soluções</span>
+          <span className="outcome-card-text">Os módulos do seu sistema</span>
           <span className="outcome-card-arrow" aria-hidden="true">
             →
           </span>

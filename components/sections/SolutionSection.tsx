@@ -1,101 +1,6 @@
-import { SolutionDashboardMock } from "@/components/dashboard-mock/SolutionDashboardMock";
+import { BrusyncSystemAnimation } from "@/components/dashboard-mock/BrusyncSystemAnimation";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import type { SolutionItem } from "@/types";
-
-const SOLUTIONS: SolutionItem[] = [
-  {
-    title: "Marketing",
-    description: "Veja o retorno de cada campanha sem abrir uma planilha.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M3 3v18h18" />
-        <path d="m7 14 4-4 3 3 5-6" />
-      </svg>
-    ),
-  },
-  {
-    title: "Vendas",
-    description: "Acompanhe funil, oportunidades e previsões de fechamento em tempo real.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="9" cy="21" r="1.4" />
-        <circle cx="19" cy="21" r="1.4" />
-        <path d="M2 3h3l3 13h11l2-9H6" />
-      </svg>
-    ),
-  },
-  {
-    title: "Financeiro",
-    description: "Receitas, custos e lucratividade sempre atualizados, sem planilha paralela.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
-  },
-  {
-    title: "Operação",
-    description: "Indicadores da sua rotina, do seu jeito, para mais eficiência e controle.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="3" />
-        <circle cx="12" cy="12" r="8" />
-      </svg>
-    ),
-  },
-  {
-    title: "Comercial",
-    description: "Performance de equipes, metas e resultados, num painel só seu.",
-    icon: (
-      <svg
-        aria-hidden="true"
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-];
 
 export function SolutionSection() {
   return (
@@ -111,35 +16,9 @@ export function SolutionSection() {
         />
         <div className="grid-lines" style={{ opacity: 0.5 }} />
       </div>
-      <Container className="sol-grid">
+      <Container className="sol-video">
         <Reveal>
-          <SolutionDashboardMock />
-        </Reveal>
-
-        <Reveal delay={1}>
-          <h2>
-            Sua marca. Seu domínio.
-            <br />
-            <span className="accent">Seu sistema, do seu jeito.</span>
-          </h2>
-          <p className="sol-lead">
-            Veja como fica um painel construído para a sua empresa — com a sua identidade, os seus
-            dados e as métricas que realmente importam para a sua operação.
-          </p>
-          <div className="sol-list">
-            {SOLUTIONS.map((s) => (
-              <div key={s.title} className="sol-item">
-                <div className="sol-ico">{s.icon}</div>
-                <div>
-                  <h4>{s.title}</h4>
-                  <p>{s.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="sol-final">
-            Tudo dentro do <i>seu próprio sistema.</i>
-          </p>
+          <BrusyncSystemAnimation />
         </Reveal>
       </Container>
     </section>

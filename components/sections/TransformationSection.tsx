@@ -1,19 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { OwnershipCompare } from "@/components/sections/OwnershipCompare";
+import { CapabilityFlow } from "@/components/sections/CapabilityFlow";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { useDataFlow } from "@/hooks/useDataFlow";
 import type { SourcePlatform } from "@/types";
-
-const AFTER_CHIPS = [
-  "Plataforma única",
-  "CRM integrado",
-  "Automação",
-  "Agentes de IA",
-  "Indicadores em tempo real",
-];
 
 const PLATFORMS: SourcePlatform[] = [
   {
@@ -340,19 +332,8 @@ export function TransformationSection() {
           </div>
         </Reveal>
 
-        <Reveal className="flow-arrow" delay={4} aria-hidden="true">
-          ↓
-        </Reveal>
-        <Reveal className="flow-outputs" delay={4}>
-          {AFTER_CHIPS.map((chip) => (
-            <span className="flow-chip" key={chip}>
-              {chip}
-            </span>
-          ))}
-        </Reveal>
-
-        <Reveal delay={5}>
-          <OwnershipCompare />
+        <Reveal delay={4}>
+          <CapabilityFlow />
         </Reveal>
       </Container>
     </section>

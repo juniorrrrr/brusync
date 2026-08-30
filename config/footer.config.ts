@@ -14,7 +14,6 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { label: "Software sob medida", href: "/#solucoes" },
       { label: "White Label", href: "/#solucao" },
-      { label: "Integrações", href: "/#integracoes" },
       { label: "Agentes de IA", href: "/#solucoes" },
     ],
   },
