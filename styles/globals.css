@@ -2048,6 +2048,17 @@ canvas.particles {
   overflow: hidden;
 }
 
+/* Solution section: dedicated 9:16 portrait system-morph animation, mobile only */
+.brusync-anim-frame-mobile {
+  display: none;
+}
+.brusync-anim-stage-mobile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1080 / 1920;
+  overflow: hidden;
+}
+
 /* Solutions grid section: looping panel-showcase carousel */
 .brusync-carousel-frame {
   position: relative;
@@ -2084,6 +2095,22 @@ canvas.particles {
   .brusync-anim-wrap {
     margin-left: -16px;
     margin-right: -16px;
+  }
+
+  /* Below 640px, swap the wide-screen system-morph animation for the
+     dedicated portrait (9:16) mobile composition — a different layout
+     (horizontal sliding nav strip, single window), not just a
+     scaled-down version of the desktop one. */
+  .brusync-anim-frame {
+    display: none;
+  }
+  .brusync-anim-frame-mobile {
+    display: block;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #141110;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-lg);
   }
 
   /* Below 640px, swap the wide-screen carousel for the dedicated

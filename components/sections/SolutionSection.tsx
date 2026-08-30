@@ -1,4 +1,5 @@
 import { BrusyncSystemAnimation } from "@/components/dashboard-mock/BrusyncSystemAnimation";
+import { BrusyncSystemAnimationMobile } from "@/components/dashboard-mock/BrusyncSystemAnimationMobile";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -19,6 +20,7 @@ export function SolutionSection() {
       <Container className="sol-video">
         <Reveal>
           <BrusyncSystemAnimation />
+          <BrusyncSystemAnimationMobile />
         </Reveal>
       </Container>
     </section>
